@@ -1,0 +1,14 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Client {
+  id: ID!
+  name: String!
+  email: String!
+  country: String!
+}
+
+type Query {
+  clients: [Client!]!
+}
