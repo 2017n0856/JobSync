@@ -3,8 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClientsModule } from './modules/client/client.module';
 import { ConfigModule } from '@nestjs/config';
+import { ClientsModule } from './modules/client.module';
 
 @Module({
   imports: [
