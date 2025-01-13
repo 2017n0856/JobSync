@@ -9,4 +9,4 @@ import { ClientResolver } from 'src/resolvers/client.resolver';
   controllers: [],
   providers: [ClientResolver, ClientService],
 })
-export class ClientsModule {}
+export class ClientModule {}

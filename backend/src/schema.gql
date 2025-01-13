@@ -8,7 +8,6 @@ type Client {
   email: String
   country: String!
   phoneNumber: String!
-  instituteName: String
   metaData: String
 }
 

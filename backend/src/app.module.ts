@@ -4,7 +4,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule } from './modules/client.module';
+import { ClientModule } from './modules/client.module';
+import { WorkerModule } from './modules/worker.module';
+import { TaskModule } from './modules/task.module';
+import { InstituteModule } from './modules/institute.module';
 
 @Module({
   imports: [
@@ -25,7 +28,7 @@ import { ClientsModule } from './modules/client.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    ClientsModule,
+    ClientModule, WorkerModule, TaskModule, InstituteModule
   ],
 })
 

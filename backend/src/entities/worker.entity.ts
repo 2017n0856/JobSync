@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany, ManyToMany, JoinTable, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { NormalizeCountry, NormalizePhoneNumber } from 'src/common/transformers';
 import { IsValidCountry } from 'src/common/decorators';
@@ -9,7 +9,7 @@ import { Institute } from './institute.entity';
 @ObjectType()
 @Entity()
 @Unique(["phoneNumber"])
-export class Client {
+export class Worker {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
   id: number;
@@ -48,7 +48,18 @@ export class Client {
   @JoinColumn({ name: 'instituteId' })
   institute: Institute;
 
-  @OneToMany(() => Task, task => task.client)
+  @ManyToMany(() => Task, task => task.workers)
+  @JoinTable({
+    name: 'workers_tasks',
+    joinColumn: {
+        name: 'workerId',
+        referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+        name: 'taskId',
+        referencedColumnName: 'id'
+    }
+  })
   tasks: Task[];
 
   @Field(type => String, { nullable: true })

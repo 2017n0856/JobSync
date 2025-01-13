@@ -5,20 +5,19 @@ import { Client } from 'src/entities/client.entity';
 import { CreateClientInput } from 'src/types/client.type';
 import { UseFilters } from '@nestjs/common';
 import { GraphqlExceptionFilter } from 'src/common/exceptions.filter';
-import { sendResponse } from 'src/common/utils';
 
 @Resolver(of => Client)
 @UseFilters(new GraphqlExceptionFilter())
 export class ClientResolver {
   constructor(private clientService: ClientService) {}
 
-  @Query(()=>[Client]) // Do not pass the type argument directly in the decorator
+  @Query(()=>[Client])
   async clients(): Promise<Client[]> {
     const data = await this.clientService.findAll();
     return data;
   }
 
-  @Mutation(returns => Client) // Do not pass the type argument directly in the decorator
+  @Mutation(returns => Client)
   async addClient(
     @Args('createClientData') createClientData: CreateClientInput,
   ): Promise<Client> {
