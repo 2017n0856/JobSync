@@ -8,6 +8,7 @@ import { ClientModule } from './modules/client.module';
 import { WorkerModule } from './modules/worker.module';
 import { TaskModule } from './modules/task.module';
 import { InstituteModule } from './modules/institute.module';
+import { TaskAssignmentModule } from './modules/taskAssignment.module';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { InstituteModule } from './modules/institute.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    ClientModule, WorkerModule, TaskModule, InstituteModule
+    ClientModule, WorkerModule, TaskModule, InstituteModule, TaskAssignmentModule
   ],
 })
 

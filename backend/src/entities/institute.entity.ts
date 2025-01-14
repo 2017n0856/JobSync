@@ -18,8 +18,8 @@ export class Institute {
   @MaxLength(100, { message: 'Name must not exceed 100 characters' })
   name: string;
 
-  @Field()
-  @Column()
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   @IsOptional()
   @NormalizeCountry()
   @IsString({message: 'Invalid country name.'})
@@ -29,5 +29,5 @@ export class Institute {
   @Field(type => String, { nullable: true })
   @Column('simple-json', { nullable: true })
   @IsOptional()
-  metaData: any;
+  meta_data: any;
 }

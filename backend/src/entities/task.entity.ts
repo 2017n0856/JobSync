@@ -1,10 +1,21 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { IsNotEmpty, IsOptional, MaxLength } from 'class-validator';
 import { Client } from './client.entity';
 import { Institute } from './institute.entity';
-import { Worker } from './worker.entity';
+import { TaskStatus, TaskType } from 'src/shared/constants';
+import { TaskAssignment } from './taskAssignment.entity';
 
+
+registerEnumType(TaskStatus, {
+    name: 'TaskStatus',
+    description: 'The status of the task'
+});
+
+registerEnumType(TaskType, {
+    name: 'TaskType',
+    description: 'The type of the task'
+});
 @ObjectType()
 @Entity()
 export class Task {
@@ -25,13 +36,48 @@ export class Task {
   description: string;
 
   @ManyToOne(() => Client, client => client.tasks)
-  @JoinColumn({ name: 'clientId' })
+  @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @ManyToMany(() => Worker, worker => worker.tasks)
-  workers: Worker[];
+  @Field(() => Int)
+  @Column({ default: 0})
+  budget_allocated: number;
 
+  @Field(() => Int)
+  @Column({ default: 0})
+  payment_received: number;
+
+  @Field(() => Date)
+  @Column({ type: 'date' })
+  deadline: Date;
+
+  @Field(() => Date)
+  @Column({ type: 'date', nullable: true })
+  submitted: Date;
+
+  @Field(() => TaskStatus)
+  @Column({
+      type: 'enum',
+      enum: TaskStatus,
+      default: TaskStatus.Unassigned
+  })
+  status: TaskStatus;
+
+  @Field(() => TaskType)
+  @Column({
+      type: 'enum',
+      enum: TaskType,
+      default: TaskType.Assignment
+  })
+  type: TaskType;
+
+  @Field()
+  @IsOptional()
   @ManyToOne(() => Institute)
-  @JoinColumn({ name: 'instituteId' })
+  @JoinColumn({ name: 'institute_id' })
   institute: Institute;
+
+  @Field(() => [TaskAssignment])
+  @OneToMany(() => TaskAssignment, taskAssignment => taskAssignment.task)
+  assignments: TaskAssignment[];
 }

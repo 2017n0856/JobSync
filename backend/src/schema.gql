@@ -2,13 +2,25 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Institute {
+  id: ID!
+  name: String!
+  country: String
+  meta_data: String
+}
+
+type TaskAssignment {
+  budget_allocated: Int!
+  payment_made: Int!
+}
+
 type Client {
   id: ID!
   name: String!
   email: String
   country: String!
-  phoneNumber: String!
-  metaData: String
+  phone_number: String!
+  meta_data: String
 }
 
 type Query {

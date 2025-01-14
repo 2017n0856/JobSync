@@ -7,13 +7,13 @@ import { IsValidCountry } from 'src/common/decorators';
 
 @ObjectType({ isAbstract: true })
 @Entity()
-@Unique(["phoneNumber"])
+@Unique(["phone_number"])
 export abstract class Person extends BaseEntity {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
-   @Field()
+  @Field()
   @Column()
   @IsNotEmpty({ message: 'Name cannot be empty.' })
   @MaxLength(50, { message: 'Name must not exceed 50 characters' })
@@ -41,14 +41,15 @@ export abstract class Person extends BaseEntity {
   @NormalizePhoneNumber()
   @MinLength(12, { message: 'Invalid Phone Number' })
   @MaxLength(13, { message: 'Invalid Phone Number' })
-  phoneNumber: string;
+  phone_number: string;
 
+  @IsOptional()
   @ManyToOne(() => Institute)
-  @JoinColumn({ name: 'instituteId' })
+  @JoinColumn({ name: 'institute_id' })
   institute: Institute;
 
   @Field(type => String, { nullable: true })
   @Column('simple-json', { nullable: true })
   @IsOptional()
-  metaData: any;
+  meta_data: any;
 }

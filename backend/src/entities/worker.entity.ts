@@ -1,24 +1,14 @@
-import { ObjectType } from '@nestjs/graphql';
-import { Entity, ManyToMany, JoinTable } from 'typeorm';
-import { Task } from './task.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { Entity, OneToMany } from 'typeorm';
 import { Person } from './person.entity';
+import { TaskAssignment } from './taskAssignment.entity';
 
 @ObjectType()
 @Entity()
 export class Worker extends Person{
 
-  @ManyToMany(() => Task, task => task.workers)
-  @JoinTable({
-    name: 'workers_tasks',
-    joinColumn: {
-        name: 'workerId',
-        referencedColumnName: 'id'
-    },
-    inverseJoinColumn: {
-        name: 'taskId',
-        referencedColumnName: 'id'
-    }
-  })
-  tasks: Task[];
+  @Field(() => [TaskAssignment], {nullable: true})
+  @OneToMany(() => TaskAssignment, taskAssignment => taskAssignment.worker)
+  tasks: TaskAssignment[];
 
 }
