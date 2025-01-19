@@ -29,7 +29,7 @@ export class Task {
   @MaxLength(100, { message: 'Name must not exceed 100 characters' })
   name: string;
 
-  @Field()
+  @Field({nullable: true})
   @Column()
   @IsOptional()
   @MaxLength(300, { message: 'Description limit exceed' })
@@ -71,13 +71,13 @@ export class Task {
   })
   type: TaskType;
 
-  @Field()
+  @Field({nullable: true})
   @IsOptional()
   @ManyToOne(() => Institute)
   @JoinColumn({ name: 'institute_id' })
   institute: Institute;
 
-  @Field(() => [TaskAssignment])
+  @Field(() => [TaskAssignment], {nullable: true})
   @OneToMany(() => TaskAssignment, taskAssignment => taskAssignment.task)
   assignments: TaskAssignment[];
 }

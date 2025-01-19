@@ -12,7 +12,7 @@ export class ClientResolver {
   constructor(private clientService: ClientService) {}
 
   @Query(()=>[Client])
-  async clients(): Promise<Client[]> {
+  async getClients(): Promise<Client[]> {
     const data = await this.clientService.findAll();
     return data;
   }

@@ -8,7 +8,10 @@ import { Task } from 'src/entities/task.entity';
 export class TaskService {
   constructor(
     @InjectRepository(Task)
-    private clientsRepository: Repository<Task>,
+    private taskRepository: Repository<Task>,
   ) {}
 
+  async findAll(): Promise<Task[]> {
+    return await this.taskRepository.find(); 
+  }
 }
