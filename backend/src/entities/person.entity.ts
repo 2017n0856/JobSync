@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinColumn, ManyToOne, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinColumn, ManyToOne, Unique, BeforeInsert, BeforeUpdate } from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Institute } from './institute.entity';
 import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 import { NormalizeCountry, NormalizePhoneNumber } from 'src/common/transformers';
 import { IsValidCountry } from 'src/common/decorators';
+import { getCurrencyFromCountry } from 'src/common/utils';
 
 @ObjectType({ isAbstract: true })
 @Entity()
@@ -47,6 +48,16 @@ export abstract class Person extends BaseEntity {
   @ManyToOne(() => Institute)
   @JoinColumn({ name: 'institute_id' })
   institute: Institute;
+
+  @Field()
+  @Column({ nullable: true })
+  currency: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  assignCurrencyBasedOnCountry() {
+    this.currency = getCurrencyFromCountry(this.country);
+  }
 
   @Field(type => String, { nullable: true })
   @Column('simple-json', { nullable: true })

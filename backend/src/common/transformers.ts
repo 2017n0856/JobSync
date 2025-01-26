@@ -6,19 +6,7 @@ export function NormalizeCountry() {
     if (typeof value !== 'string') {
       return value;
     }
-    let normalized = value.toUpperCase().replace(/\./g, '');
-    switch (normalized) {
-      case 'UNITED STATES':
-      case 'USA':
-      case 'AMERICA':
-      case 'US':
-        return 'US';
-      case 'UNITED KINGDOM':
-      case 'ENGLAND':
-        return 'UK';
-      default:
-        return normalized;
-    }
+    return value.toUpperCase().replace(/\./g, '');
   });
 }
 

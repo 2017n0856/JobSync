@@ -18,8 +18,10 @@ type Task {
   id: ID!
   name: String!
   description: String
-  budget_allocated: Int!
+  payment_decided: Int!
   payment_received: Int!
+  total_marks: Int!
+  obtained_marks: Int!
   deadline: DateTime!
   submitted: DateTime!
   status: TaskStatus!
@@ -38,6 +40,9 @@ enum TaskStatus {
   Unassigned
   InProgress
   Delivered
+  Cancelled
+  InRevision
+  OnHold
 }
 
 """The type of the task"""
@@ -53,6 +58,7 @@ type Client {
   email: String
   country: String!
   phone_number: String!
+  currency: String!
   meta_data: String
 }
 
@@ -69,7 +75,5 @@ input CreateClientInput {
   name: String!
   email: String
   country: String!
-  phoneNumber: String!
-  instituteName: String
-  metaData: String
+  phone_number: String!
 }

@@ -21,7 +21,6 @@ export class ClientResolver {
   async addClient(
     @Args('createClientData') createClientData: CreateClientInput,
   ): Promise<Client> {
-    const client = await this.clientService.addClient(createClientData);
-    return client;
+    return this.clientService.addClient(createClientData);
   }
 }

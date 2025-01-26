@@ -1,5 +1,7 @@
 import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
-import { validCountries } from 'src/shared/constants';
+import * as countries from "i18n-iso-countries";
+
+countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 
 export function IsValidCountry(validationOptions?: ValidationOptions) {
   return function (object: Object, propertyName: string) {
@@ -10,10 +12,10 @@ export function IsValidCountry(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any) {
-          return validCountries.includes(value);
+          return countries.isValid(value);
         },
         defaultMessage(args: ValidationArguments) {
-          return `${args.property} is not in valid countries list`;
+          return `Invalid country`;
         }
       }
     });

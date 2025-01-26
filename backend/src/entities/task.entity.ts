@@ -26,7 +26,7 @@ export class Task {
   @Field()
   @Column()
   @IsNotEmpty({ message: 'Name cannot be empty.' })
-  @MaxLength(100, { message: 'Name must not exceed 100 characters' })
+  @MaxLength(100, { message: 'Name mlimit exceed' })
   name: string;
 
   @Field({nullable: true})
@@ -41,14 +41,22 @@ export class Task {
 
   @Field(() => Int)
   @Column({ default: 0})
-  budget_allocated: number;
+  payment_decided: number;
 
   @Field(() => Int)
   @Column({ default: 0})
   payment_received: number;
 
+  @Field(() => Int)
+  @Column({ nullable: true})
+  total_marks: number;
+
+  @Field(() => Int)
+  @Column({ nullable: true})
+  obtained_marks: number;
+
   @Field(() => Date)
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   deadline: Date;
 
   @Field(() => Date)
@@ -78,6 +86,8 @@ export class Task {
   institute: Institute;
 
   @Field(() => [TaskAssignment], {nullable: true})
-  @OneToMany(() => TaskAssignment, taskAssignment => taskAssignment.task)
+  @OneToMany(() => TaskAssignment,
+   taskAssignment => taskAssignment.task,
+  {cascade: ['insert', 'update']})
   assignments: TaskAssignment[];
 }

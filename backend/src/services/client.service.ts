@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Client } from 'src/entities/client.entity';
+import { CreateClientInput } from 'src/types/client.type';
 
 @Injectable()
 export class ClientService {
@@ -14,9 +15,8 @@ export class ClientService {
     return await this.clientsRepository.find(); 
   }
 
-  async addClient(clientData: Partial<Client>): Promise<Client> {
-      const client = this.clientsRepository.create(clientData);
-      await this.clientsRepository.save(client);
-      return client;
+  async addClient(createClientData: CreateClientInput): Promise<Client> {
+    const client = this.clientsRepository.create(createClientData);
+    return await this.clientsRepository.save(client);
   }
 }
