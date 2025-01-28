@@ -1,14 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client } from 'src/entities/client.entity';
 import { Institute } from 'src/entities/institute.entity';
+import { CreateInstituteInput } from 'src/types/institute.type';
 
 @Injectable()
 export class InstituteService {
   constructor(
     @InjectRepository(Institute)
-    private clientsRepository: Repository<Institute>,
+    private instituteRepository: Repository<Institute>,
   ) {}
 
+  async findAll(): Promise<Institute[]> {
+    return await this.instituteRepository.find(); 
+  }
+
+  async addInstitute(createInstituteData: CreateInstituteInput): Promise<Institute> {
+    const institute = this.instituteRepository.create(createInstituteData);
+    return await this.instituteRepository.save(institute);
+  }
 }

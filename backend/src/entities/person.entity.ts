@@ -58,9 +58,4 @@ export abstract class Person extends BaseEntity {
   assignCurrencyBasedOnCountry() {
     this.currency = getCurrencyFromCountry(this.country);
   }
-
-  @Field(type => String, { nullable: true })
-  @Column('simple-json', { nullable: true })
-  @IsOptional()
-  meta_data: any;
 }

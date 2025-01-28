@@ -26,7 +26,7 @@ export class Task {
   @Field()
   @Column()
   @IsNotEmpty({ message: 'Name cannot be empty.' })
-  @MaxLength(100, { message: 'Name mlimit exceed' })
+  @MaxLength(100, { message: 'Name limit exceed' })
   name: string;
 
   @Field({nullable: true})

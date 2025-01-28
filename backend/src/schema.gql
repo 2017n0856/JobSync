@@ -6,7 +6,16 @@ type Institute {
   id: ID!
   name: String!
   country: String
-  meta_data: String
+}
+
+type Worker {
+  id: ID!
+  name: String!
+  email: String
+  country: String!
+  phone_number: String!
+  currency: String!
+  tasks: [TaskAssignment!]
 }
 
 type TaskAssignment {
@@ -59,19 +68,29 @@ type Client {
   country: String!
   phone_number: String!
   currency: String!
-  meta_data: String
 }
 
 type Query {
   getClients: [Client!]!
+  getWorkers: [Worker!]!
   getTasks: [Task!]!
+  getInstitutes: [Institute!]!
+  getTaskAssignments: [TaskAssignment!]!
 }
 
 type Mutation {
-  addClient(createClientData: CreateClientInput!): Client!
+  addClient(createTaskAssignmentData: CreateTaskAssignmentInput!): TaskAssignment!
+  addWorker(createWorkerData: CreatePersonInput!): Worker!
 }
 
-input CreateClientInput {
+input CreateTaskAssignmentInput {
+  task_id: Int!
+  worker_id: Int!
+  budget_allocated: Int
+  payment_made: Int
+}
+
+input CreatePersonInput {
   name: String!
   email: String
   country: String!

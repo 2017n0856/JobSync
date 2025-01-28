@@ -25,9 +25,4 @@ export class Institute {
   @IsString({message: 'Invalid country name.'})
   @IsValidCountry({ message: 'Invalid country' })
   country: string;
-
-  @Field(type => String, { nullable: true })
-  @Column('simple-json', { nullable: true })
-  @IsOptional()
-  meta_data: any;
 }
