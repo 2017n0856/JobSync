@@ -9,6 +9,7 @@ import { WorkerModule } from './modules/worker.module';
 import { TaskModule } from './modules/task.module';
 import { InstituteModule } from './modules/institute.module';
 import { TaskAssignmentModule } from './modules/taskAssignment.module';
+import { TaskAssignmentSubscriber } from './common/subscribers';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TaskAssignmentModule } from './modules/taskAssignment.module';
       database: 'jobsync',
       autoLoadEntities: true,
       synchronize: true,
+      subscribers: [TaskAssignmentSubscriber],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
