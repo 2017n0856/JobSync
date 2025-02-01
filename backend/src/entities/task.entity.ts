@@ -47,20 +47,20 @@ export class Task {
   @Column({ default: 0})
   payment_received: number;
 
-  @Field(() => Int)
+  @Field(() => Int, {nullable: true})
   @Column({ nullable: true})
   total_marks: number;
 
-  @Field(() => Int)
+  @Field(() => Int, {nullable: true})
   @Column({ nullable: true})
   obtained_marks: number;
 
-  @Field(() => Date)
-  @Column({ type: 'date', nullable: true })
+  @Field(() => Date, {nullable: true})
+  @Column({ nullable: true })
   deadline: Date;
 
-  @Field(() => Date)
-  @Column({ type: 'date', nullable: true })
+  @Field(() => Date, {nullable: true})
+  @Column({ nullable: true })
   submitted: Date;
 
   @Field(() => TaskStatus)

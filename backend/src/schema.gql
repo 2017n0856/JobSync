@@ -29,10 +29,10 @@ type Task {
   description: String
   payment_decided: Int!
   payment_received: Int!
-  total_marks: Int!
-  obtained_marks: Int!
-  deadline: DateTime!
-  submitted: DateTime!
+  total_marks: Int
+  obtained_marks: Int
+  deadline: DateTime
+  submitted: DateTime
   status: TaskStatus!
   type: TaskType!
   institute: Institute
