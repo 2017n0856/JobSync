@@ -3,10 +3,10 @@ import { ClientService } from 'src/services/client.service';
 import { Client } from 'src/entities/client.entity';
 import { CreatePersonInput } from 'src/types/person.type';
 import { UseFilters } from '@nestjs/common';
-import { GraphqlExceptionFilter } from 'src/common/exceptions.filter';
+import { GlobalExceptionFilter } from 'src/common/exceptions.filter';
 
 @Resolver(of => Client)
-@UseFilters(new GraphqlExceptionFilter())
+@UseFilters(new GlobalExceptionFilter())
 export class ClientResolver {
   constructor(private clientService: ClientService) {}
 

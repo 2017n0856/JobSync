@@ -12,6 +12,7 @@ export function IsValidCountry(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any) {
+          console.log('here222', value, countries.isValid(value) );
           return countries.isValid(value);
         },
         defaultMessage(args: ValidationArguments) {

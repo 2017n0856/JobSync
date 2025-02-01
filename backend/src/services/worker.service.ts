@@ -15,8 +15,8 @@ export class WorkerService {
     return await this.workersRepository.find(); 
   }
 
-  async addWorker(createClientData: CreatePersonInput): Promise<Worker> {
-    const client = this.workersRepository.create(createClientData);
-    return await this.workersRepository.save(client);
+  async addWorker(createWorkerData: CreatePersonInput): Promise<Worker> {
+    const worker = this.workersRepository.create(createWorkerData);
+    return await this.workersRepository.save(worker);
   }
 }

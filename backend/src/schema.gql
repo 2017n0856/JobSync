@@ -79,15 +79,11 @@ type Query {
 }
 
 type Mutation {
-  addClient(createTaskAssignmentData: CreateTaskAssignmentInput!): TaskAssignment!
+  addClient(createClientData: CreatePersonInput!): Client!
   addWorker(createWorkerData: CreatePersonInput!): Worker!
-}
-
-input CreateTaskAssignmentInput {
-  task_id: Int!
-  worker_id: Int!
-  budget_allocated: Int
-  payment_made: Int
+  addTask(createTaskData: CreateTaskInput!): Task!
+  addInstitute(createInstituteData: CreateInstituteInput!): Institute!
+  addTaskAssignment(createTaskAssignmentData: CreateTaskAssignmentInput!): TaskAssignment!
 }
 
 input CreatePersonInput {
@@ -95,4 +91,28 @@ input CreatePersonInput {
   email: String
   country: String!
   phone_number: String!
+}
+
+input CreateTaskInput {
+  name: String!
+  description: String
+  budget_allocated: Int
+  payment_received: Int
+  deadline: DateTime!
+  institute_id: Int
+  client_id: Int
+  status: String
+  type: String
+}
+
+input CreateInstituteInput {
+  name: String!
+  country: String
+}
+
+input CreateTaskAssignmentInput {
+  task_id: Int!
+  worker_id: Int!
+  budget_allocated: Int
+  payment_made: Int
 }
