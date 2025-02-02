@@ -3,7 +3,6 @@ import { institutes } from 'src/shared/constants';
 
 export function NormalizeCountry() {
   return Transform(({ value }) => {
-    console.log('here333', value);
     if (typeof value !== 'string') {
       return value;
     }

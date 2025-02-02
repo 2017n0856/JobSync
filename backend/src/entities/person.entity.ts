@@ -6,10 +6,10 @@ import { NormalizeCountry, NormalizePhoneNumber } from 'src/common/transformers'
 import { IsValidCountry } from 'src/common/decorators';
 import { getCurrencyFromCountry } from 'src/common/utils';
 
-@ObjectType({ isAbstract: true })
+@ObjectType()
 @Entity()
 @Unique(["phone_number"])
-export abstract class Person extends BaseEntity {
+export class Person {
   @Field(type => ID)
   @PrimaryGeneratedColumn()
   id: number;
