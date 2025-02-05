@@ -10,8 +10,17 @@ import { TaskModule } from './modules/task.module';
 import { InstituteModule } from './modules/institute.module';
 import { TaskAssignmentModule } from './modules/taskAssignment.module';
 import { TaskAssignmentSubscriber } from './common/subscribers';
+import { formatError } from './common/utils';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
 
 @Module({
+  providers:[
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: GraphQLLoggingInterceptor,
+    },
+  ],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // This ensures that config is available globally
@@ -30,6 +39,7 @@ import { TaskAssignmentSubscriber } from './common/subscribers';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      formatError: formatError,
     }),
     ClientModule, WorkerModule, TaskModule, InstituteModule, TaskAssignmentModule
   ],

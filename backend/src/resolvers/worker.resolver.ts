@@ -1,12 +1,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UseFilters } from '@nestjs/common';
-import { GlobalExceptionFilter } from 'src/common/exceptions.filter';
 import { Worker } from 'src/entities/worker.entity';
 import { WorkerService } from 'src/services/worker.service';
 import { CreatePersonInput } from 'src/types/person.type';
 
 @Resolver(of => Worker)
-// @UseFilters(new GlobalExceptionFilter())
 export class WorkerResolver {
   constructor(private workerService: WorkerService) {}
 
@@ -20,6 +17,6 @@ export class WorkerResolver {
   async addWorker(
     @Args('createWorkerData') createWorkerData: CreatePersonInput,
   ): Promise<Worker> {
-    return this.workerService.addWorker(createWorkerData);
+      return this.workerService.addWorker(createWorkerData);
   }
 }

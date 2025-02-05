@@ -1,38 +1,10 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
-import { GqlArgumentsHost } from '@nestjs/graphql';
-import { QueryFailedError } from 'typeorm';
+import { ArgumentsHost, Catch, Logger } from '@nestjs/common';
+import { GqlExceptionFilter } from '@nestjs/graphql';
 
 @Catch()
-export class GlobalExceptionFilter implements ExceptionFilter {
-  catch(exception: unknown, host: ArgumentsHost) {
-    const gqlHost = GqlArgumentsHost.create(host);
-    const context = gqlHost.getContext();
-
-    let status = HttpStatus.INTERNAL_SERVER_ERROR;
-    let message = 'An unexpected error occurred';
-    if (exception instanceof HttpException) {
-      status = exception.getStatus();
-      message = exception.message;
-    } else if (exception instanceof QueryFailedError) {
-      status = HttpStatus.CONFLICT;
-      message = 'Database conflict occurred';
-    } else if (exception instanceof Error) {
-      message = exception.message;
-    }
-    console.error('Error:', exception);
-
-    const errorResponse = {
-      errors: [
-        {
-          message,
-          extensions: {
-            code: status,
-          },
-        },
-      ],
-      data: null,
-    };
-
-    throw new HttpException(errorResponse, status);
+export class GlobalExceptionFilter implements GqlExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+  catch(exception: any, host: ArgumentsHost) {
+    this.logger.error(`${exception.message}`, exception.stack);
   }
 }
