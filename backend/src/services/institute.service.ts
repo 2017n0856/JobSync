@@ -12,10 +12,12 @@ export class InstituteService {
   ) {}
 
   async findAll(): Promise<Institute[]> {
-    return await this.instituteRepository.find(); 
+    return await this.instituteRepository.find();
   }
 
-  async addInstitute(createInstituteData: CreateInstituteInput): Promise<Institute> {
+  async addInstitute(
+    createInstituteData: CreateInstituteInput,
+  ): Promise<Institute> {
     const institute = this.instituteRepository.create(createInstituteData);
     return await this.instituteRepository.save(institute);
   }

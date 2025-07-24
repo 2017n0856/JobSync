@@ -1,4 +1,10 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+  Logger,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable, tap } from 'rxjs';
 
@@ -17,8 +23,11 @@ export class GraphQLLoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const duration = Date.now() - startTime;
-        this.logger.log(`${resolverName} -> ${methodName} completed in ${duration}ms`, 'GraphQL');
-      })
+        this.logger.log(
+          `${resolverName} -> ${methodName} completed in ${duration}ms`,
+          'GraphQL',
+        );
+      }),
     );
   }
 }

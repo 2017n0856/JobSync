@@ -12,7 +12,7 @@ export class ClientService {
   ) {}
 
   async findAll(): Promise<Client[]> {
-    return await this.clientsRepository.find(); 
+    return await this.clientsRepository.find();
   }
 
   async addClient(createClientData: CreatePersonInput): Promise<Client> {

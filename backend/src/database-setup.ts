@@ -14,19 +14,25 @@ async function createDatabaseIfNotExists() {
 
   try {
     await client.connect();
-    
+
     // Check if database exists
     const result = await client.query(
-      "SELECT 1 FROM pg_database WHERE datname = $1",
-      [process.env.DATABASE_NAME || 'jobsync']
+      'SELECT 1 FROM pg_database WHERE datname = $1',
+      [process.env.DATABASE_NAME || 'jobsync'],
     );
 
     if (result.rows.length === 0) {
-      console.log(`Creating database: ${process.env.DATABASE_NAME || 'jobsync'}`);
-      await client.query(`CREATE DATABASE "${process.env.DATABASE_NAME || 'jobsync'}"`);
+      console.log(
+        `Creating database: ${process.env.DATABASE_NAME || 'jobsync'}`,
+      );
+      await client.query(
+        `CREATE DATABASE "${process.env.DATABASE_NAME || 'jobsync'}"`,
+      );
       console.log('Database created successfully!');
     } else {
-      console.log(`Database ${process.env.DATABASE_NAME || 'jobsync'} already exists.`);
+      console.log(
+        `Database ${process.env.DATABASE_NAME || 'jobsync'} already exists.`,
+      );
     }
   } catch (error) {
     console.error('Error creating database:', error);
@@ -49,4 +55,4 @@ if (require.main === module) {
     });
 }
 
-export { createDatabaseIfNotExists }; 
+export { createDatabaseIfNotExists };

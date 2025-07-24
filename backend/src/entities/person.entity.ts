@@ -1,16 +1,36 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, JoinColumn, ManyToOne, Unique, BeforeInsert, BeforeUpdate } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  ManyToOne,
+  Unique,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Institute } from './institute.entity';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
-import { NormalizeCountry, NormalizePhoneNumber } from 'src/common/transformers';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import {
+  NormalizeCountry,
+  NormalizePhoneNumber,
+} from 'src/common/transformers';
 import { IsValidCountry } from 'src/common/decorators';
 import { getCurrencyFromCountry } from 'src/common/utils';
 
 @ObjectType()
 @Entity()
-@Unique(["phone_number"])
+@Unique(['phone_number'])
 export class Person {
-  @Field(type => ID)
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -31,7 +51,7 @@ export class Person {
   @Column()
   @NormalizeCountry()
   @IsNotEmpty({ message: 'Country is required.' })
-  @IsString({message: 'Invalid country name.'})
+  @IsString({ message: 'Invalid country name.' })
   @IsValidCountry({ message: 'Invalid country' })
   country: string;
 

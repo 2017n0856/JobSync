@@ -15,7 +15,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
 
 @Module({
-  providers:[
+  providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: GraphQLLoggingInterceptor,
@@ -41,9 +41,11 @@ import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       formatError: formatError,
     }),
-    ClientModule, WorkerModule, TaskModule, InstituteModule, TaskAssignmentModule
+    ClientModule,
+    WorkerModule,
+    TaskModule,
+    InstituteModule,
+    TaskAssignmentModule,
   ],
 })
-
-
 export class AppModule {}

@@ -74,10 +74,10 @@ export class SampleData1700000000001 implements MigrationInterface {
     await queryRunner.query(`DELETE FROM "client"`);
     await queryRunner.query(`DELETE FROM "person" WHERE "id" > 0`);
     await queryRunner.query(`DELETE FROM "institute"`);
-    
+
     // Reset sequences
     await queryRunner.query(`ALTER SEQUENCE "institute_id_seq" RESTART WITH 1`);
     await queryRunner.query(`ALTER SEQUENCE "person_id_seq" RESTART WITH 1`);
     await queryRunner.query(`ALTER SEQUENCE "task_id_seq" RESTART WITH 1`);
   }
-} 
+}

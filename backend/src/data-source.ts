@@ -11,4 +11,4 @@ export const AppDataSource = new DataSource({
   database: process.env.DATABASE_NAME || 'jobsync',
   entities: [__dirname + '/entities/**/*.ts'],
   migrations: [__dirname + '/migrations/**/*.ts'],
-}); 
+});

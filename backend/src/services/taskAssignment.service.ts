@@ -12,11 +12,15 @@ export class TaskAssignmentService {
   ) {}
 
   async findAll(): Promise<TaskAssignment[]> {
-    return await this.taskAssignmentRepository.find(); 
+    return await this.taskAssignmentRepository.find();
   }
 
-  async addTaskAssignment(createTaskAssignmentData: CreateTaskAssignmentInput): Promise<TaskAssignment> {
-    const taskAssignment = this.taskAssignmentRepository.create(createTaskAssignmentData);
+  async addTaskAssignment(
+    createTaskAssignmentData: CreateTaskAssignmentInput,
+  ): Promise<TaskAssignment> {
+    const taskAssignment = this.taskAssignmentRepository.create(
+      createTaskAssignmentData,
+    );
     return await this.taskAssignmentRepository.save(taskAssignment);
   }
 }

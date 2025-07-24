@@ -1,6 +1,11 @@
-
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNotEmpty, MaxLength, IsOptional, Min, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  MaxLength,
+  IsOptional,
+  Min,
+  IsDateString,
+} from 'class-validator';
 import { TaskStatus, TaskType } from 'src/shared/constants';
 
 @InputType()

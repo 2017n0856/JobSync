@@ -5,22 +5,21 @@ import { Institute } from 'src/entities/institute.entity';
 import { InstituteService } from 'src/services/institute.service';
 import { CreateInstituteInput } from 'src/types/institute.type';
 
-@Resolver(of => Institute)
+@Resolver(() => Institute)
 @UseFilters(new GlobalExceptionFilter())
 export class InstituteResolver {
   constructor(private instituteService: InstituteService) {}
 
-  @Query(()=>[Institute])
+  @Query(() => [Institute])
   async getInstitutes(): Promise<Institute[]> {
     const data = await this.instituteService.findAll();
     return data;
   }
 
-  @Mutation(returns => Institute)
+  @Mutation(() => Institute)
   async addInstitute(
     @Args('createInstituteData') createInstituteData: CreateInstituteInput,
   ): Promise<Institute> {
     return this.instituteService.addInstitute(createInstituteData);
   }
-
 }

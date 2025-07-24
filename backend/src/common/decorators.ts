@@ -1,10 +1,11 @@
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
-import * as countries from "i18n-iso-countries";
+import { registerDecorator, ValidationOptions } from 'class-validator';
+import * as countries from 'i18n-iso-countries';
+import en from 'i18n-iso-countries';
 
-countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
+countries.registerLocale(en as any);
 
 export function IsValidCountry(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isCountry',
       target: object.constructor,
@@ -14,10 +15,10 @@ export function IsValidCountry(validationOptions?: ValidationOptions) {
         validate(value: any) {
           return countries.isValid(value);
         },
-        defaultMessage(args: ValidationArguments) {
+        defaultMessage() {
           return `Invalid country`;
-        }
-      }
+        },
+      },
     });
   };
 }

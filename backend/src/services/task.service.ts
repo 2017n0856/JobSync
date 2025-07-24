@@ -12,7 +12,7 @@ export class TaskService {
   ) {}
 
   async findAll(): Promise<Task[]> {
-    return await this.taskRepository.find(); 
+    return await this.taskRepository.find();
   }
 
   async addTask(createTaskData: CreateTaskInput): Promise<Task> {

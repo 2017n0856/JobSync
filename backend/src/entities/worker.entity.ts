@@ -5,10 +5,8 @@ import { TaskAssignment } from './taskAssignment.entity';
 
 @ObjectType()
 @Entity()
-export class Worker extends Person{
-
-  @Field(() => [TaskAssignment], {nullable: true})
-  @OneToMany(() => TaskAssignment, taskAssignment => taskAssignment.worker)
+export class Worker extends Person {
+  @Field(() => [TaskAssignment], { nullable: true })
+  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.worker)
   tasks: TaskAssignment[];
-
 }

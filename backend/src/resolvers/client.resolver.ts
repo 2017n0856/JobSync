@@ -5,18 +5,18 @@ import { CreatePersonInput } from 'src/types/person.type';
 import { UseFilters } from '@nestjs/common';
 import { GlobalExceptionFilter } from 'src/common/exceptions.filter';
 
-@Resolver(of => Client)
+@Resolver(() => Client)
 @UseFilters(new GlobalExceptionFilter())
 export class ClientResolver {
   constructor(private clientService: ClientService) {}
 
-  @Query(()=>[Client])
+  @Query(() => [Client])
   async getClients(): Promise<Client[]> {
     const data = await this.clientService.findAll();
     return data;
   }
 
-  @Mutation(returns => Client)
+  @Mutation(() => Client)
   async addClient(
     @Args('createClientData') createClientData: CreatePersonInput,
   ): Promise<Client> {

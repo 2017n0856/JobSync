@@ -14,11 +14,11 @@ export class WorkerService {
   ) {}
 
   async findAll(): Promise<Worker[]> {
-    return await this.workersRepository.find(); 
+    return await this.workersRepository.find();
   }
 
   async addWorker(createWorkerData: CreatePersonInput): Promise<Worker> {
-      const worker = this.workersRepository.create(createWorkerData);
-      return await this.workersRepository.save(worker);
+    const worker = this.workersRepository.create(createWorkerData);
+    return await this.workersRepository.save(worker);
   }
 }

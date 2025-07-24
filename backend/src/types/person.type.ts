@@ -1,8 +1,15 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
- @InputType()
- export class CreatePersonInput {
+@InputType()
+export class CreatePersonInput {
   @Field()
   @IsNotEmpty({ message: 'Name cannot be empty.' })
   @MaxLength(50, { message: 'Name must not exceed 50 characters' })

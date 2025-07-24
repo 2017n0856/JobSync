@@ -1,14 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
-import {  IsNotEmpty, IsOptional, IsString, MaxLength,  } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 import { NormalizeCountry } from 'src/common/transformers';
 import { IsValidCountry } from 'src/common/decorators';
 
 @ObjectType()
 @Entity()
-@Unique(["name"])
+@Unique(['name'])
 export class Institute {
-  @Field(type => ID)
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,7 +22,7 @@ export class Institute {
   @Column({ nullable: true })
   @IsOptional()
   @NormalizeCountry()
-  @IsString({message: 'Invalid country name.'})
+  @IsString({ message: 'Invalid country name.' })
   @IsValidCountry({ message: 'Invalid country' })
   country: string;
 }

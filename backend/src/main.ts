@@ -3,10 +3,19 @@ import { AppModule } from './app.module';
 import { ConsoleLogger, LogLevel, ValidationPipe } from '@nestjs/common';
 
 class CustomLogger extends ConsoleLogger {
-  private readonly allowedLogs: LogLevel[] = ['log', 'warn', 'error', 'debug', 'verbose'];
+  private readonly allowedLogs: LogLevel[] = [
+    'log',
+    'warn',
+    'error',
+    'debug',
+    'verbose',
+  ];
 
   log(message: string, context?: string) {
-    if (!context?.includes('InstanceLoader') && !context?.includes('NestFactory')) {
+    if (
+      !context?.includes('InstanceLoader') &&
+      !context?.includes('NestFactory')
+    ) {
       super.log(message, context);
     }
   }
@@ -29,8 +38,10 @@ class CustomLogger extends ConsoleLogger {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {logger: new CustomLogger()});
-   app.useGlobalPipes(new ValidationPipe());
+  const app = await NestFactory.create(AppModule, {
+    logger: new CustomLogger(),
+  });
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
