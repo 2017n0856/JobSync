@@ -13,6 +13,7 @@ import { TaskAssignmentSubscriber } from './common/subscribers';
 import { formatError } from './common/utils';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
+import { HealthController } from './controllers/health.controller';
 
 @Module({
   providers: [
@@ -21,6 +22,7 @@ import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
       useClass: GraphQLLoggingInterceptor,
     },
   ],
+  controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // This ensures that config is available globally
@@ -29,11 +31,11 @@ import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
       type: 'postgres',
       host: process.env.DATABASE_HOST,
       port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
+      username: process.env.DATABASE_USER || 'postgres',
+      password: process.env.DATABASE_PASSWORD || 'root',
       database: 'jobsync',
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false, // Disable synchronize to use migrations
       subscribers: [TaskAssignmentSubscriber],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({

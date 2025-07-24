@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:local": "nest start --watch",
+    "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -23,7 +23,12 @@
     "migration:run": "npm run typeorm -- migration:run",
     "migration:revert": "npm run typeorm -- migration:revert",
     "db:setup": "ts-node src/database-setup.ts && npm run migration:run",
-    "db:setup-with-data": "npm run db:setup && npm run migration:run -- --name SampleData1700000000001"
+    "db:setup-with-data": "npm run db:setup && npm run migration:run -- --name SampleData1700000000001",
+    "db:cleanup": "ts-node src/database-cleanup.ts",
+    "db:reset": "npm run db:cleanup && npm run db:setup-with-data",
+    "update:all": "npm update && npm audit fix",
+    "update:common": "npm update @nestjs/common @nestjs/core @nestjs/graphql @nestjs/typeorm @nestjs/apollo @nestjs/swagger",
+    "update:deps": "npm update && npm audit fix --force"
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
@@ -33,6 +38,7 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/graphql": "^12.2.1",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^8.1.1",
     "@nestjs/typeorm": "^10.0.2",
     "apollo-server-express": "^3.13.0",
     "class-transformer": "^0.5.1",
