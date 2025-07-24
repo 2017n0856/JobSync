@@ -13,7 +13,6 @@ import { TaskAssignmentSubscriber } from './common/subscribers';
 import { formatError } from './common/utils';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
-import { HealthController } from './controllers/health.controller';
 
 @Module({
   providers: [
@@ -22,7 +21,6 @@ import { HealthController } from './controllers/health.controller';
       useClass: GraphQLLoggingInterceptor,
     },
   ],
-  controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // This ensures that config is available globally
