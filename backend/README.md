@@ -26,6 +26,23 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Database Setup
+
+Before running the application, you need to set up the database. See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for detailed instructions.
+
+**Quick setup:**
+```bash
+cd backend
+npm install
+npm run db:setup  # Creates database and runs migrations automatically
+```
+
+**Manual setup:**
+1. Install PostgreSQL
+2. Create a database named `jobsync`
+3. Configure environment variables in `.env`
+4. Run `npm run migration:run`
+
 ## Project setup
 
 ```bash
