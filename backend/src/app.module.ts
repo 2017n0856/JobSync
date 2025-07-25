@@ -21,6 +21,7 @@ import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
       useClass: GraphQLLoggingInterceptor,
     },
   ],
+  controllers: [],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true, // This ensures that config is available globally
@@ -29,11 +30,11 @@ import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
       type: 'postgres',
       host: process.env.DATABASE_HOST,
       port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-      username: process.env.DATABASE_USER || 'postgres',
-      password: process.env.DATABASE_PASSWORD || 'root',
-      database: 'jobsync',
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME || 'jobsync',
       autoLoadEntities: true,
-      synchronize: false, // Disable synchronize to use migrations
+      synchronize: false, // Manual database setup
       subscribers: [TaskAssignmentSubscriber],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
