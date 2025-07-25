@@ -1,25 +1,21 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UseFilters } from '@nestjs/common';
-import { GlobalExceptionFilter } from 'src/common/exceptions.filter';
-import { Institute } from 'src/entities/institute.entity';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { InstituteService } from 'src/services/institute.service';
 import { CreateInstituteInput } from 'src/types/institute.type';
+import { Institute } from 'src/entities/institute.entity';
 
 @Resolver(() => Institute)
-@UseFilters(new GlobalExceptionFilter())
 export class InstituteResolver {
-  constructor(private instituteService: InstituteService) {}
+  constructor(private readonly instituteService: InstituteService) {}
 
   @Query(() => [Institute])
   async getInstitutes(): Promise<Institute[]> {
-    const data = await this.instituteService.findAll();
-    return data;
+    return await this.instituteService.findAll();
   }
 
   @Mutation(() => Institute)
   async addInstitute(
     @Args('createInstituteData') createInstituteData: CreateInstituteInput,
   ): Promise<Institute> {
-    return this.instituteService.addInstitute(createInstituteData);
+    return await this.instituteService.addInstitute(createInstituteData);
   }
 }

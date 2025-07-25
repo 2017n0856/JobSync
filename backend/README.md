@@ -41,7 +41,30 @@ npm run db:setup  # Creates database and runs migrations automatically
 1. Install PostgreSQL
 2. Create a database named `jobsync`
 3. Configure environment variables in `.env`
-4. Run `npm run migration:run`
+4. Run `npm run db:setup`
+
+## Updating Common Modules
+
+### Quick Update Commands
+
+```bash
+# Update all dependencies
+npm run update:all
+
+# Update only common NestJS modules
+npm run update:common
+
+# Force update all dependencies (use with caution)
+npm run update:deps
+```
+
+### What Gets Updated
+
+- **NestJS Core**: `@nestjs/common`, `@nestjs/core`
+- **GraphQL**: `@nestjs/graphql`, `@nestjs/apollo`, `graphql`
+- **Database**: `@nestjs/typeorm`, `typeorm`, `pg`
+- **Validation**: `class-validator`, `class-transformer`
+- **TypeScript**: `typescript`, `@types/node`, `ts-node`
 
 ## Project setup
 
@@ -53,53 +76,43 @@ $ npm install
 
 ```bash
 # development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
 
 # production mode
 $ npm run start:prod
 ```
 
-## Run tests
+## Available Scripts
 
-```bash
-# unit tests
-$ npm run test
+- **Start development**: `npm run start:dev`
+- **Start production**: `npm run start:prod`
+- **Build project**: `npm run build`
+- **Format code**: `npm run format`
+- **Lint code**: `npm run lint`
+- **Setup database**: `npm run db:setup`
+- **Reset database**: `npm run db:reset`
+- **Update dependencies**: `npm run update:all`
 
-# e2e tests
-$ npm run test:e2e
+## GraphQL Playground
 
-# test coverage
-$ npm run test:cov
+Once the application is running, you can access the GraphQL Playground at:
+http://localhost:3000/graphql
+
+## Project Structure
+
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
+src/
+├── common/           # Shared utilities and decorators
+├── entities/         # TypeORM entities
+├── modules/          # Feature modules
+├── resolvers/        # GraphQL resolvers
+├── services/         # Business logic services
+├── shared/           # Shared constants
+├── types/            # GraphQL input types
+├── app.module.ts     # Main application module
+├── database-setup.ts # Database setup script
+└── main.ts          # Application entry point
 ```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
 
 ## Support
 

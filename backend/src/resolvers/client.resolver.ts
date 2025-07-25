@@ -1,25 +1,21 @@
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { ClientService } from 'src/services/client.service';
-import { Client } from 'src/entities/client.entity';
 import { CreatePersonInput } from 'src/types/person.type';
-import { UseFilters } from '@nestjs/common';
-import { GlobalExceptionFilter } from 'src/common/exceptions.filter';
+import { Client } from 'src/entities/client.entity';
 
 @Resolver(() => Client)
-@UseFilters(new GlobalExceptionFilter())
 export class ClientResolver {
-  constructor(private clientService: ClientService) {}
+  constructor(private readonly clientService: ClientService) {}
 
   @Query(() => [Client])
   async getClients(): Promise<Client[]> {
-    const data = await this.clientService.findAll();
-    return data;
+    return await this.clientService.findAll();
   }
 
   @Mutation(() => Client)
   async addClient(
     @Args('createClientData') createClientData: CreatePersonInput,
   ): Promise<Client> {
-    return this.clientService.addClient(createClientData);
+    return await this.clientService.addClient(createClientData);
   }
 }

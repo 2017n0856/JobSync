@@ -42,6 +42,10 @@ async function bootstrap() {
     logger: new CustomLogger(),
   });
   app.useGlobalPipes(new ValidationPipe());
+
   await app.listen(process.env.PORT ?? 3000);
+  
+  console.log(`🚀 Application is running on: http://localhost:${process.env.PORT ?? 3000}`);
+  console.log(`🔍 GraphQL Playground: http://localhost:${process.env.PORT ?? 3000}/graphql`);
 }
 bootstrap();

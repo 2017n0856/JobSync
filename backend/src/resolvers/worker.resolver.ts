@@ -1,22 +1,21 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Worker } from 'src/entities/worker.entity';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { WorkerService } from 'src/services/worker.service';
 import { CreatePersonInput } from 'src/types/person.type';
+import { Worker } from 'src/entities/worker.entity';
 
 @Resolver(() => Worker)
 export class WorkerResolver {
-  constructor(private workerService: WorkerService) {}
+  constructor(private readonly workerService: WorkerService) {}
 
   @Query(() => [Worker])
   async getWorkers(): Promise<Worker[]> {
-    const data = await this.workerService.findAll();
-    return data;
+    return await this.workerService.findAll();
   }
 
   @Mutation(() => Worker)
   async addWorker(
     @Args('createWorkerData') createWorkerData: CreatePersonInput,
   ): Promise<Worker> {
-    return this.workerService.addWorker(createWorkerData);
+    return await this.workerService.addWorker(createWorkerData);
   }
 }

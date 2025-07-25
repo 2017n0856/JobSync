@@ -1,25 +1,21 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { UseFilters } from '@nestjs/common';
-import { GlobalExceptionFilter } from 'src/common/exceptions.filter';
-import { Task } from 'src/entities/task.entity';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { TaskService } from 'src/services/task.service';
 import { CreateTaskInput } from 'src/types/task.type';
+import { Task } from 'src/entities/task.entity';
 
 @Resolver(() => Task)
-@UseFilters(new GlobalExceptionFilter())
 export class TaskResolver {
-  constructor(private taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) {}
 
   @Query(() => [Task])
   async getTasks(): Promise<Task[]> {
-    const data = await this.taskService.findAll();
-    return data;
+    return await this.taskService.findAll();
   }
 
   @Mutation(() => Task)
   async addTask(
     @Args('createTaskData') createTaskData: CreateTaskInput,
   ): Promise<Task> {
-    return this.taskService.addTask(createTaskData);
+    return await this.taskService.addTask(createTaskData);
   }
 }
