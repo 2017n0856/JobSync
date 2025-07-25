@@ -72,18 +72,37 @@ type Client {
 
 type Query {
   getClients: [Client!]!
+  getClientById(id: Float!): Client
+  getClientByName(name: String!): Client
   getWorkers: [Worker!]!
+  getWorkerById(id: Float!): Worker
+  getWorkerByName(name: String!): Worker
   getTasks: [Task!]!
+  getTaskById(id: Float!): Task
+  getTaskByName(name: String!): Task
   getInstitutes: [Institute!]!
+  getInstituteById(id: Float!): Institute
+  getInstituteByName(name: String!): Institute
   getTaskAssignments: [TaskAssignment!]!
+  getTaskAssignmentById(taskId: Float!, workerId: Float!): TaskAssignment
 }
 
 type Mutation {
   addClient(createClientData: CreatePersonInput!): Client!
+  updateClient(id: Float!, updateData: CreatePersonInput!): Client!
+  deleteClient(id: Float!): Boolean!
   addWorker(createWorkerData: CreatePersonInput!): Worker!
+  updateWorker(id: Float!, updateData: CreatePersonInput!): Worker!
+  deleteWorker(id: Float!): Boolean!
   addTask(createTaskData: CreateTaskInput!): Task!
+  updateTask(id: Float!, updateData: CreateTaskInput!): Task!
+  deleteTask(id: Float!): Boolean!
   addInstitute(createInstituteData: CreateInstituteInput!): Institute!
+  updateInstitute(id: Float!, updateData: CreateInstituteInput!): Institute!
+  deleteInstitute(id: Float!): Boolean!
   addTaskAssignment(createTaskAssignmentData: CreateTaskAssignmentInput!): TaskAssignment!
+  updateTaskAssignment(taskId: Float!, workerId: Float!, updateData: CreateTaskAssignmentInput!): TaskAssignment!
+  deleteTaskAssignment(taskId: Float!, workerId: Float!): Boolean!
 }
 
 input CreatePersonInput {

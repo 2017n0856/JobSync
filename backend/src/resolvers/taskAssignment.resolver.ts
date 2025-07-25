@@ -12,6 +12,14 @@ export class TaskAssignmentResolver {
     return await this.taskAssignmentService.findAll();
   }
 
+  @Query(() => TaskAssignment, { nullable: true })
+  async getTaskAssignmentById(
+    @Args('taskId') taskId: number,
+    @Args('workerId') workerId: number,
+  ): Promise<TaskAssignment | null> {
+    return await this.taskAssignmentService.findById(taskId, workerId);
+  }
+
   @Mutation(() => TaskAssignment)
   async addTaskAssignment(
     @Args('createTaskAssignmentData')
@@ -20,5 +28,26 @@ export class TaskAssignmentResolver {
     return await this.taskAssignmentService.addTaskAssignment(
       createTaskAssignmentData,
     );
+  }
+
+  @Mutation(() => TaskAssignment)
+  async updateTaskAssignment(
+    @Args('taskId') taskId: number,
+    @Args('workerId') workerId: number,
+    @Args('updateData') updateData: CreateTaskAssignmentInput,
+  ): Promise<TaskAssignment> {
+    return await this.taskAssignmentService.updateTaskAssignment(
+      taskId,
+      workerId,
+      updateData,
+    );
+  }
+
+  @Mutation(() => Boolean)
+  async deleteTaskAssignment(
+    @Args('taskId') taskId: number,
+    @Args('workerId') workerId: number,
+  ): Promise<boolean> {
+    return await this.taskAssignmentService.deleteTaskAssignment(taskId, workerId);
   }
 }
