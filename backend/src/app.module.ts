@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import * as redisStore from 'cache-manager-redis-store';
       inject: [ConfigService],
       isGlobal: true,
     }),
+    UsersModule,
   ],
   controllers: [],
   providers: [],
