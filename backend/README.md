@@ -1,129 +1,151 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# JobSync Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based RESTful API with PostgreSQL, Redis, and Docker support.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Technologies Used
 
-## Description
+- **NestJS** - Progressive Node.js framework
+- **PostgreSQL** - Primary database
+- **Redis** - Caching layer
+- **Docker** - Containerization
+- **Swagger** - API documentation
+- **TypeORM** - Database ORM
+- **Class Validator** - Request validation
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Database Setup
+- Node.js (v18 or higher)
+- Docker and Docker Compose
+- PostgreSQL (if running locally)
+- Redis (if running locally)
 
-Before running the application, you need to set up the database. See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for detailed instructions.
+## Quick Start
 
-**Quick setup:**
-```bash
-cd backend
-npm install
-npm run db:setup  # Creates database and runs migrations automatically
-```
+### Using Docker (Recommended)
 
-**Manual setup:**
-1. Install PostgreSQL
-2. Create a database named `jobsync`
-3. Configure environment variables in `.env`
-4. Run `npm run db:setup`
+1. Clone the repository
+2. Copy the environment file:
+   ```bash
+   cp env.example .env
+   ```
 
-## Updating Common Modules
+3. Start all services with Docker Compose:
+   ```bash
+   docker-compose up -d
+   ```
 
-### Quick Update Commands
+4. The API will be available at:
+   - Application: http://localhost:3000
+   - Swagger Documentation: http://localhost:3000/docs
 
-```bash
-# Update all dependencies
-npm run update:all
+### Local Development
 
-# Update only common NestJS modules
-npm run update:common
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-# Force update all dependencies (use with caution)
-npm run update:deps
-```
+2. Copy the environment file:
+   ```bash
+   cp env.example .env
+   ```
 
-### What Gets Updated
+3. Update the `.env` file with your database and Redis credentials
 
-- **NestJS Core**: `@nestjs/common`, `@nestjs/core`
-- **GraphQL**: `@nestjs/graphql`, `@nestjs/apollo`, `graphql`
-- **Database**: `@nestjs/typeorm`, `typeorm`, `pg`
-- **Validation**: `class-validator`, `class-transformer`
-- **TypeScript**: `typescript`, `@types/node`, `ts-node`
+4. Start PostgreSQL and Redis services
 
-## Project setup
+5. Run the application:
+   ```bash
+   # Development mode
+   npm run start:dev
+   
+   # Production mode
+   npm run build
+   npm run start:prod
+   ```
 
-```bash
-$ npm install
-```
+## Environment Variables
 
-## Compile and run the project
+Create a `.env` file based on `env.example`:
 
-```bash
-# development
-$ npm run start:dev
+```env
+# Application Configuration
+NODE_ENV=development
+PORT=3000
 
-# production mode
-$ npm run start:prod
+# Database Configuration (PostgreSQL)
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=password
+DB_NAME=jobsync
+
+# Redis Configuration
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_TTL=300
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_EXPIRES_IN=24h
+
+# API Configuration
+API_PREFIX=api/v1
+CORS_ORIGIN=http://localhost:3000
+
+# Logging
+LOG_LEVEL=debug
 ```
 
 ## Available Scripts
 
-- **Start development**: `npm run start:dev`
-- **Start production**: `npm run start:prod`
-- **Build project**: `npm run build`
-- **Format code**: `npm run format`
-- **Lint code**: `npm run lint`
-- **Setup database**: `npm run db:setup`
-- **Reset database**: `npm run db:reset`
-- **Update dependencies**: `npm run update:all`
+- `npm run start:dev` - Start in development mode with hot reload
+- `npm run build` - Build the application
+- `npm run start:prod` - Start in production mode
+- `npm run lint` - Run ESLint
+- `npm run test` - Run tests
+- `npm run test:e2e` - Run end-to-end tests
 
-## GraphQL Playground
+## API Endpoints
 
-Once the application is running, you can access the GraphQL Playground at:
-http://localhost:3000/graphql
+### Swagger Documentation
+- `GET /docs` - Interactive API documentation
 
 ## Project Structure
 
 ```
 src/
-├── common/           # Shared utilities and decorators
-├── entities/         # TypeORM entities
-├── modules/          # Feature modules
-├── resolvers/        # GraphQL resolvers
-├── services/         # Business logic services
-├── shared/           # Shared constants
-├── types/            # GraphQL input types
-├── app.module.ts     # Main application module
-├── database-setup.ts # Database setup script
-└── main.ts          # Application entry point
+├── main.ts              # Application entry point
+├── app.module.ts        # Root module
+└── modules/             # Feature modules (to be added)
 ```
 
-## Support
+## Docker Commands
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+# Start all services
+docker-compose up -d
 
-## Stay in touch
+# View logs
+docker-compose logs -f
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Stop all services
+docker-compose down
 
-## License
+# Rebuild and start
+docker-compose up --build -d
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## Development
+
+This is a basic setup with:
+- ✅ NestJS framework
+- ✅ PostgreSQL database configuration
+- ✅ Redis caching
+- ✅ Docker setup
+- ✅ Swagger documentation at `/docs`
+- ✅ Environment configuration
+- ✅ TypeScript support
+
+Ready for you to add your specific business logic and entities!

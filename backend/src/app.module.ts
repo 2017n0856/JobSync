@@ -1,52 +1,49 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join } from 'path';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
-import { ClientModule } from './modules/client.module';
-import { WorkerModule } from './modules/worker.module';
-import { TaskModule } from './modules/task.module';
-import { InstituteModule } from './modules/institute.module';
-import { TaskAssignmentModule } from './modules/taskAssignment.module';
-import { TaskAssignmentSubscriber } from './common/subscribers';
-import { formatError } from './common/utils';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { GraphQLLoggingInterceptor } from './common/logging.interceptor';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: GraphQLLoggingInterceptor,
-    },
+  imports: [
+    // Configuration module
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+
+    // Database configuration
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST', 'localhost'),
+        port: configService.get('DB_PORT', 5432),
+        username: configService.get('DB_USERNAME', 'postgres'),
+        password: configService.get('DB_PASSWORD', 'password'),
+        database: configService.get('DB_NAME', 'jobsync'),
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        synchronize: configService.get('NODE_ENV') !== 'production',
+        logging: false,
+      }),
+      inject: [ConfigService],
+    }),
+
+    // Redis cache configuration
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        store: redisStore,
+        host: configService.get('REDIS_HOST', 'localhost'),
+        port: configService.get('REDIS_PORT', 6379),
+        password: configService.get('REDIS_PASSWORD'),
+        ttl: configService.get('REDIS_TTL', 300), // 5 minutes default
+      }),
+      inject: [ConfigService],
+      isGlobal: true,
+    }),
   ],
   controllers: [],
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true, // This ensures that config is available globally
-    }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME || 'jobsync',
-      autoLoadEntities: true,
-      synchronize: false, // Manual database setup
-      subscribers: [TaskAssignmentSubscriber],
-    }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      formatError: formatError,
-    }),
-    ClientModule,
-    WorkerModule,
-    TaskModule,
-    InstituteModule,
-    TaskAssignmentModule,
-  ],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule {} 
