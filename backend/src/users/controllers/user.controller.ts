@@ -7,15 +7,19 @@ import {
   Param, 
   HttpCode, 
   HttpStatus,
-  ParseIntPipe
+  ParseIntPipe,
+  UseGuards
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { UpdatePasswordDto } from '../domain/dtos/update-password.dto';
 import { UserResponseType } from '../domain/types/user-response.type';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @ApiTags('User')
 @Controller('user')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
