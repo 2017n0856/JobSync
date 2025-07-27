@@ -1,186 +1,71 @@
 # Institutes Module
 
-This module handles institute management with name and country information.
+This module handles institute-related operations including CRUD operations and enhanced fuzzy search functionality.
 
 ## Features
 
-- Create new institutes
-- Get institute by ID
-- Get all institutes with optional country filtering
-- Unique name validation
-- Input validation with class-validator
+### Enhanced Fuzzy Search
 
-## Endpoints
+The institute search supports advanced fuzzy matching with the following capabilities:
 
-### POST /institute
-Create a new institute.
+#### 1. **Spelling Error Handling**
+- Uses PostgreSQL's `pg_trgm` extension for true fuzzy matching
+- Handles typos and spelling errors
+- Example: "Havard" → "Harvard"
 
-**Request Body:**
-```json
-{
-  "name": "Harvard University",
-  "country": "United States"
-}
-```
+#### 2. **Substring Matching**
+- Searches for partial matches within institute names
+- Case-insensitive matching
+- Example: "harv" → "Harvard University"
 
-**Response:**
-```json
-{
-  "id": 1,
-  "name": "Harvard University",
-  "country": "United States",
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z"
-}
-```
+#### 3. **Multi-Word Search**
+- Supports searching for multiple words/terms
+- Each term must match somewhere in the institute name
+- Example: "aaa cc" → "aaaa bbbb ccc" (matches "aaa" and "cc" parts)
 
-### GET /institute/:id
-Get institute by ID.
+#### 4. **Configuration**
+- Similarity threshold controlled via environment variable: `FUZZY_SEARCH_SIMILARITY_THRESHOLD`
+- Default value: 0.3 (good balance between accuracy and flexibility)
+- Higher values = more strict matching
+- Lower values = more lenient matching
 
-**Response:**
-```json
-{
-  "id": 1,
-  "name": "Harvard University",
-  "country": "United States",
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T00:00:00.000Z"
-}
-```
+## API Endpoints
 
 ### GET /institute
-Get all institutes with optional country filter.
+Get all institutes with optional filtering and enhanced fuzzy search.
 
 **Query Parameters:**
-- `country` (optional): Filter institutes by country name (case-insensitive partial match)
+- `country` (optional): Filter by country name
+- `name` (optional): Enhanced fuzzy search by institute name
 
 **Examples:**
-- `GET /institute` - Get all institutes
-- `GET /institute?country=United States` - Get institutes in United States
-- `GET /institute?country=Canada` - Get institutes in Canada
-
-**Response:**
-```json
-[
-  {
-    "id": 1,
-    "name": "Harvard University",
-    "country": "United States",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
-    "id": 2,
-    "name": "MIT",
-    "country": "United States",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  }
-]
-```
-
-### PUT /institute/:id
-Update institute by ID.
-
-**Request Body:**
-```json
-{
-  "name": "Harvard University Updated",
-  "country": "United States"
-}
-```
-
-**Response:**
-```json
-{
-  "id": 1,
-  "name": "Harvard University Updated",
-  "country": "United States"
-}
-```
-
-## Architecture
-
-The institutes module follows the same architecture pattern as other modules:
-
-```
-institutes/
-├── controllers/
-│   └── institute.controller.ts
-├── domain/
-│   ├── dtos/
-│   │   ├── create-institute.dto.ts
-│   │   ├── update-institute.dto.ts
-│   │   ├── institute-response.dto.ts
-│   │   └── get-institutes-query.dto.ts
-│   └── entities/
-│       └── institute.entity.ts
-├── repositories/
-│   └── institute.repository.ts
-├── services/
-│   └── institute.service.ts
-└── institutes.module.ts
-```
-
-## Validation Rules
-
-- **Name**: Required, 2-255 characters, must be unique
-- **Country**: Required, 2-100 characters
-- **Country Filter**: Optional, 2-100 characters, case-insensitive partial match
-
-## Error Responses
-
-- **400 Bad Request**: Validation errors
-- **404 Not Found**: Institute not found
-- **409 Conflict**: Institute with this name already exists
-
-## Database Schema
-
-```sql
-CREATE TABLE institute (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL UNIQUE,
-  country VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_institute_name ON institute(name);
-```
-
-## Usage Examples
-
-**Create Institute:**
 ```bash
-curl -X POST http://localhost:3000/institute \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Stanford University",
-    "country": "United States"
-  }'
+# Basic search
+GET /institute?name=harvard
+
+# Multi-word search
+GET /institute?name=harvard university
+
+# Combined with country filter
+GET /institute?name=university&country=us
+
+# Substring search
+GET /institute?name=mit
 ```
 
-**Get Institute by ID:**
-```bash
-curl -X GET http://localhost:3000/institute/1
+## Environment Variables
+
+Add to your `.env` file:
+```
+FUZZY_SEARCH_SIMILARITY_THRESHOLD=0.3
 ```
 
-**Get All Institutes:**
-```bash
-curl -X GET http://localhost:3000/institute
-```
+## Database Requirements
 
-**Filter by Country:**
-```bash
-curl -X GET "http://localhost:3000/institute?country=United%20States"
-```
+The fuzzy search requires the `pg_trgm` PostgreSQL extension. This is automatically enabled via migration.
 
-**Update Institute:**
-```bash
-curl -X PUT http://localhost:3000/institute/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Harvard University Updated",
-    "country": "United States"
-  }'
-``` 
+## Performance
+
+- GIN index on institute name for fast fuzzy searches
+- Optimized for `gin_trgm_ops` operations
+- Fallback to LIKE search if extension unavailable 

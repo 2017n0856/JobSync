@@ -50,12 +50,18 @@ export class InstituteController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all institutes with optional country filter' })
+  @ApiOperation({ summary: 'Get all institutes with optional country and enhanced fuzzy name search' })
   @ApiQuery({ 
     name: 'country', 
     required: false, 
     description: 'Filter institutes by country name',
     example: 'United States'
+  })
+  @ApiQuery({ 
+    name: 'name', 
+    required: false, 
+    description: 'Enhanced fuzzy search institutes by name (handles spelling errors, substrings, and multi-word searches)',
+    example: 'Harvard'
   })
   @ApiResponse({ 
     status: 200, 

@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InstituteRepository } from '../repositories/institute.repository';
 import { CreateInstituteDto } from '../domain/dtos/create-institute.dto';
 import { UpdateInstituteDto } from '../domain/dtos/update-institute.dto';
@@ -8,7 +9,10 @@ import { Institute } from '../domain/entities/institute.entity';
 
 @Injectable()
 export class InstituteService {
-  constructor(private readonly instituteRepository: InstituteRepository) {}
+  constructor(
+    private readonly instituteRepository: InstituteRepository,
+    private readonly configService: ConfigService,
+  ) {}
 
   async createInstitute(createInstituteDto: CreateInstituteDto): Promise<InstituteResponseDto> {
     // Check if institute with same name already exists
@@ -35,7 +39,12 @@ export class InstituteService {
   }
 
   async findAllInstitutes(query: GetInstitutesQueryDto): Promise<InstituteResponseDto[]> {
-    const institutes = await this.instituteRepository.findAll(query.country);
+    const similarityThreshold = this.configService.get<number>('FUZZY_SEARCH_SIMILARITY_THRESHOLD', 0.3);
+    const institutes = await this.instituteRepository.findAllWithEnhancedFuzzy(
+      query.country, 
+      query.name, 
+      similarityThreshold
+    );
     return institutes.map(institute => this.mapToResponseType(institute));
   }
 
