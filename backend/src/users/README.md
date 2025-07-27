@@ -31,8 +31,8 @@ users/
 - **Required fields**: name, username, password, role
 - **Optional fields**: email, phoneNumber
 - **Unique constraints**: username, email
-- **Role-based access**: user, admin, moderator
-- **Audit fields**: createdAt, updatedAt
+- **Role-based access**: viewer, editor, admin
+- **Audit fields**: Managed automatically by database
 - **ID**: Auto-incrementing integer (1, 2, 3, ...)
 
 ### API Endpoints

@@ -35,9 +35,7 @@ Register a new user account.
     "email": "john.doe@example.com",
     "phoneNumber": "+1234567890",
     "username": "johndoe",
-    "role": "USER",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
+    "role": "viewer"
   }
 }
 ```
@@ -63,9 +61,7 @@ Login with email/username and password.
     "email": "john.doe@example.com",
     "phoneNumber": "+1234567890",
     "username": "johndoe",
-    "role": "USER",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
+    "role": "viewer"
   }
 }
 ```

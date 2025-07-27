@@ -7,6 +7,4 @@ export type UserResponseType = {
   phoneNumber?: string;
   username: string;
   role: Role;
-  createdAt: Date;
-  updatedAt: Date;
 }; 

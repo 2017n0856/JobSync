@@ -95,9 +95,7 @@ Update institute by ID.
 {
   "id": 1,
   "name": "Harvard University Updated",
-  "country": "United States",
-  "createdAt": "2024-01-01T00:00:00.000Z",
-  "updatedAt": "2024-01-01T12:00:00.000Z"
+  "country": "United States"
 }
 ```
 

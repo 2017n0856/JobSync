@@ -15,9 +15,7 @@ export class SignupResponseDto {
       email: 'john.doe@example.com',
       phoneNumber: '+1234567890',
       username: 'johndoe',
-      role: 'USER',
-      createdAt: '2024-01-01T00:00:00.000Z',
-      updatedAt: '2024-01-01T00:00:00.000Z'
+      role: 'viewer'
     }
   })
   user: {
@@ -27,8 +25,6 @@ export class SignupResponseDto {
     phoneNumber?: string;
     username: string;
     role: string;
-    createdAt: Date;
-    updatedAt: Date;
   };
 
   static example(): SignupResponseDto {
@@ -40,9 +36,7 @@ export class SignupResponseDto {
         email: 'john.doe@example.com',
         phoneNumber: '+1234567890',
         username: 'johndoe',
-        role: 'USER',
-        createdAt: new Date('2024-01-01T00:00:00.000Z'),
-        updatedAt: new Date('2024-01-01T00:00:00.000Z')
+        role: 'viewer'
       }
     };
   }

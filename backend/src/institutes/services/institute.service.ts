@@ -68,8 +68,6 @@ export class InstituteService {
       id: institute.id,
       name: institute.name,
       country: institute.country,
-      createdAt: institute.createdAt,
-      updatedAt: institute.updatedAt,
     };
   }
 } 

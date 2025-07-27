@@ -122,8 +122,6 @@ export class AuthService {
       phoneNumber: user.phoneNumber,
       username: user.username,
       role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     };
   }
 } 
