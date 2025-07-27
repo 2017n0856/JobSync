@@ -4,7 +4,9 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['log', 'error', 'warn'], // This preserves colors while filtering debug/verbose
+  });
 
   // Enable CORS
   app.enableCors();
@@ -68,6 +70,7 @@ async function bootstrap() {
   console.log('='.repeat(60));
   console.log(`${colors.fg.green}${colors.bright}📍 Application URL:${colors.reset} ${colors.fg.yellow}http://localhost:${port}${colors.reset}`);
   console.log(`${colors.fg.green}${colors.bright}📚 Swagger Docs:${colors.reset}    ${colors.fg.yellow}http://localhost:${port}/docs${colors.reset}`);
+  console.log(`${colors.fg.green}${colors.bright}🔧 Modules Loaded:${colors.reset}    ${colors.fg.yellow}Auth, Users, Institutes${colors.reset}`);
   console.log('='.repeat(60) + '\n');
 }
 

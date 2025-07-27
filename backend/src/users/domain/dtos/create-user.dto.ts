@@ -34,8 +34,4 @@ export class CreateUserDto {
   @MaxLength(255)
   password: string;
 
-  @ApiPropertyOptional({ description: 'User role', enum: Role, default: Role.USER })
-  @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
 } 

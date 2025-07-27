@@ -22,9 +22,9 @@ export class User {
   password: string;
 
   @Column({ 
-    type: 'enum', 
-    enum: Role, 
-    default: Role.USER,
+    type: 'varchar', 
+    length: 20, 
+    default: Role.VIEWER,
     nullable: false 
   })
   role: Role;
