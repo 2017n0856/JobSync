@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { IsOptional, IsString, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsJSON } from 'class-validator';
 import { TaskType } from '../../../common/enums/task-type.enum';
 import { Client } from '../../../client/domain/entities/client.entity';
 
@@ -51,6 +51,11 @@ export class Task {
   @Column({ type: 'enum', enum: TaskType })
   @IsEnum(TaskType)
   taskType: TaskType;
+
+  @Column({ type: 'json', nullable: true })
+  @IsJSON()
+  @IsOptional()
+  metadata?: Record<string, any>;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsJSON } from 'class-validator';
 import { TaskType } from '../../../common/enums/task-type.enum';
 
 export class CreateTaskDto {
@@ -34,4 +34,8 @@ export class CreateTaskDto {
 
   @IsEnum(TaskType)
   taskType: TaskType;
+
+  @IsJSON()
+  @IsOptional()
+  metadata?: Record<string, any>;
 } 

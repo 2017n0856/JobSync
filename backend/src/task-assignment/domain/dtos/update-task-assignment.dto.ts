@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsJSON } from 'class-validator';
 
 export class UpdateTaskAssignmentDto {
   @IsNumber()
@@ -16,4 +16,8 @@ export class UpdateTaskAssignmentDto {
   @IsNumber()
   @IsOptional()
   paymentMade?: number;
+
+  @IsJSON()
+  @IsOptional()
+  metadata?: Record<string, any>;
 } 

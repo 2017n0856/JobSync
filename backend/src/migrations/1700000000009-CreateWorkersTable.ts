@@ -67,7 +67,7 @@ export class CreateWorkersTable1700000000009 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['institute_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'institutes',
+        referencedTableName: 'institute',
         onDelete: 'SET NULL',
       }),
     );

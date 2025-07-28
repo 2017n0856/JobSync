@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional, IsJSON } from 'class-validator';
 import { Task } from '../../../task/domain/entities/task.entity';
 import { Worker } from '../../../worker/domain/entities/worker.entity';
 
@@ -31,6 +31,11 @@ export class TaskAssignment {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   paymentMade: number;
+
+  @Column({ type: 'json', nullable: true })
+  @IsJSON()
+  @IsOptional()
+  metadata?: Record<string, any>;
 
   @CreateDateColumn()
   createdAt: Date;

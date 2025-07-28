@@ -83,6 +83,7 @@ export class TaskController {
         name: task.client.name,
       } : undefined,
       taskType: task.taskType,
+      metadata: task.metadata,
     };
   }
 } 

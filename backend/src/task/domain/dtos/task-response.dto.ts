@@ -15,4 +15,5 @@ export class TaskResponseDto {
     name: string;
   };
   taskType: TaskType;
+  metadata?: Record<string, any>;
 } 

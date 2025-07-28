@@ -93,6 +93,7 @@ export class UserService {
       phoneNumber: user.phoneNumber,
       username: user.username,
       role: user.role,
+      metadata: user.metadata,
     };
   }
 } 

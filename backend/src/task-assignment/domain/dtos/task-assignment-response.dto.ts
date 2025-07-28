@@ -12,4 +12,5 @@ export class TaskAssignmentResponseDto {
   };
   paymentDecided: number;
   paymentMade: number;
+  metadata?: Record<string, any>;
 } 

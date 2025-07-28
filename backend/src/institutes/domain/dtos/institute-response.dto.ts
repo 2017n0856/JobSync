@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class InstituteResponseDto {
   @ApiProperty({
@@ -19,11 +19,18 @@ export class InstituteResponseDto {
   })
   country: string;
 
+  @ApiPropertyOptional({
+    description: 'Additional metadata as JSON',
+    example: { founded: 1636, type: 'University', accreditation: 'Regional' }
+  })
+  metadata?: Record<string, any>;
+
   static example(): InstituteResponseDto {
     return {
       id: 1,
       name: 'Harvard University',
-      country: 'United States'
+      country: 'United States',
+      metadata: { founded: 1636, type: 'University', accreditation: 'Regional' }
     };
   }
 } 

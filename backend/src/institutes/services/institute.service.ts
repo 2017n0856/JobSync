@@ -25,6 +25,7 @@ export class InstituteService {
     const institute = await this.instituteRepository.create({
       name: createInstituteDto.name,
       country: createInstituteDto.country,
+      metadata: createInstituteDto.metadata,
     });
 
     return this.mapToResponseType(institute);
@@ -77,6 +78,7 @@ export class InstituteService {
       id: institute.id,
       name: institute.name,
       country: institute.country,
+      metadata: institute.metadata,
     };
   }
 } 

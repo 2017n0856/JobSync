@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { IsOptional, IsJSON } from 'class-validator';
 
 @Entity('institute')
 export class Institute {
@@ -9,8 +10,13 @@ export class Institute {
   @Index()
   name: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  country: string;
+  @Column({ type: 'varchar', length: 30, nullable: true })
+  country?: string;
+
+  @Column({ type: 'json', nullable: true })
+  @IsJSON()
+  @IsOptional()
+  metadata?: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

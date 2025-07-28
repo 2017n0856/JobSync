@@ -7,4 +7,5 @@ export type UserResponseType = {
   phoneNumber?: string;
   username: string;
   role: Role;
+  metadata?: Record<string, any>;
 }; 

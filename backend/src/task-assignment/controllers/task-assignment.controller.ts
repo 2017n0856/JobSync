@@ -74,6 +74,7 @@ export class TaskAssignmentController {
       } : undefined,
       paymentDecided: taskAssignment.paymentDecided,
       paymentMade: taskAssignment.paymentMade,
+      metadata: taskAssignment.metadata,
     };
   }
 } 

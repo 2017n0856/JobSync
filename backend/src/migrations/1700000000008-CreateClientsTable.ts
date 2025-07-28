@@ -67,7 +67,7 @@ export class CreateClientsTable1700000000008 implements MigrationInterface {
       new TableForeignKey({
         columnNames: ['institute_id'],
         referencedColumnNames: ['id'],
-        referencedTableName: 'institutes',
+        referencedTableName: 'institute',
         onDelete: 'SET NULL',
       }),
     );

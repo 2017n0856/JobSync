@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { IsOptional, IsJSON } from 'class-validator';
 import { Role } from '../enums/role.enum';
 
 @Entity('user')
@@ -28,6 +29,11 @@ export class User {
     nullable: false 
   })
   role: Role;
+
+  @Column({ type: 'json', nullable: true })
+  @IsJSON()
+  @IsOptional()
+  metadata?: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;

@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsOptional, IsEnum, MinLength, MaxLength, Matches } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsEnum, MinLength, MaxLength, Matches, IsJSON } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Role } from '../enums/role.enum';
 
@@ -34,4 +34,8 @@ export class CreateUserDto {
   @MaxLength(255)
   password: string;
 
+  @ApiPropertyOptional({ description: 'Additional metadata as JSON', example: { department: 'Engineering', location: 'New York' } })
+  @IsOptional()
+  @IsJSON()
+  metadata?: Record<string, any>;
 } 

@@ -1,5 +1,5 @@
-import { IsString, IsOptional, MinLength, MaxLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsOptional, MinLength, MaxLength, IsJSON } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateInstituteDto {
   @ApiProperty({
@@ -27,4 +27,12 @@ export class UpdateInstituteDto {
   @MinLength(2)
   @MaxLength(100)
   country?: string;
+
+  @ApiPropertyOptional({
+    description: 'Additional metadata as JSON',
+    example: { founded: 1636, type: 'University', accreditation: 'Regional' }
+  })
+  @IsOptional()
+  @IsJSON()
+  metadata?: Record<string, any>;
 } 
