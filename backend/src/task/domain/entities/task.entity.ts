@@ -3,7 +3,7 @@ import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsJSON } from 'cl
 import { TaskType } from '../../../common/enums/task-type.enum';
 import { Client } from '../../../client/domain/entities/client.entity';
 
-@Entity('tasks')
+@Entity('task')
 export class Task {
   @PrimaryGeneratedColumn()
   id: number;
@@ -17,38 +17,38 @@ export class Task {
   @IsOptional()
   description?: string;
 
-  @Column({ type: 'time', nullable: true })
+  @Column({ name: 'deadline_time', type: 'time', nullable: true })
   @IsDateString()
   @IsOptional()
   deadlineTime?: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ name: 'deadline_date', type: 'date', nullable: true })
   @IsDateString()
   @IsOptional()
   deadlineDate?: string;
 
-  @Column({ type: 'date', nullable: true })
+  @Column({ name: 'submitted_on_date', type: 'date', nullable: true })
   @IsDateString()
   @IsOptional()
   submittedOnDate?: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'payment_decided', type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   paymentDecided: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'payment_made', type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   paymentMade: number;
 
-  @Column({ type: 'int' })
+  @Column({ name: 'client_id', type: 'int' })
   @IsNumber()
   clientId: number;
 
   @ManyToOne(() => Client)
-  @JoinColumn({ name: 'clientId' })
+  @JoinColumn({ name: 'client_id' })
   client: Client;
 
-  @Column({ type: 'enum', enum: TaskType })
+  @Column({ name: 'task_type', type: 'enum', enum: TaskType })
   @IsEnum(TaskType)
   taskType: TaskType;
 
@@ -57,9 +57,9 @@ export class Task {
   @IsOptional()
   metadata?: Record<string, any>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 } 

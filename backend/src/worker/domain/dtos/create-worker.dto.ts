@@ -1,5 +1,6 @@
 import { IsEmail, IsOptional, IsString, IsEnum, IsJSON, IsNumber, IsArray } from 'class-validator';
 import { Country } from '../../../common/enums/country.enum';
+import { Currency } from '../../../common/enums/currency.enum';
 import { Specialty } from '../../../common/enums/specialty.enum';
 import { IsPhoneNumber } from '../../../common/validators/phone.validator';
 
@@ -11,11 +12,16 @@ export class CreateWorkerDto {
   country: Country;
 
   @IsPhoneNumber()
-  phoneNumber: string;
+  @IsOptional()
+  phoneNumber?: string;
 
   @IsEmail()
   @IsOptional()
   email?: string;
+
+  @IsEnum(Currency)
+  @IsOptional()
+  currency?: Currency;
 
   @IsNumber()
   @IsOptional()

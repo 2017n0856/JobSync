@@ -22,9 +22,9 @@ export class AddMetadataToAllEntities1700000000013 implements MigrationInterface
       }),
     );
 
-    // Add metadata to tasks table
+    // Add metadata to task table
     await queryRunner.addColumn(
-      'tasks',
+      'task',
       new TableColumn({
         name: 'metadata',
         type: 'json',
@@ -32,9 +32,9 @@ export class AddMetadataToAllEntities1700000000013 implements MigrationInterface
       }),
     );
 
-    // Add metadata to task_assignments table
+    // Add metadata to task_assignment table
     await queryRunner.addColumn(
-      'task_assignments',
+      'task_assignment',
       new TableColumn({
         name: 'metadata',
         type: 'json',
@@ -44,11 +44,11 @@ export class AddMetadataToAllEntities1700000000013 implements MigrationInterface
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Remove metadata from task_assignments table
-    await queryRunner.dropColumn('task_assignments', 'metadata');
+    // Remove metadata from task_assignment table
+    await queryRunner.dropColumn('task_assignment', 'metadata');
 
-    // Remove metadata from tasks table
-    await queryRunner.dropColumn('tasks', 'metadata');
+    // Remove metadata from task table
+    await queryRunner.dropColumn('task', 'metadata');
 
     // Remove metadata from institute table
     await queryRunner.dropColumn('institute', 'metadata');

@@ -3,32 +3,32 @@ import { IsNumber, IsOptional, IsJSON } from 'class-validator';
 import { Task } from '../../../task/domain/entities/task.entity';
 import { Worker } from '../../../worker/domain/entities/worker.entity';
 
-@Entity('task_assignments')
+@Entity('task_assignment')
 export class TaskAssignment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ name: 'task_id', type: 'int' })
   @IsNumber()
   taskId: number;
 
   @ManyToOne(() => Task)
-  @JoinColumn({ name: 'taskId' })
+  @JoinColumn({ name: 'task_id' })
   task: Task;
 
-  @Column({ type: 'int' })
+  @Column({ name: 'worker_id', type: 'int' })
   @IsNumber()
   workerId: number;
 
   @ManyToOne(() => Worker)
-  @JoinColumn({ name: 'workerId' })
+  @JoinColumn({ name: 'worker_id' })
   worker: Worker;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'payment_decided', type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   paymentDecided: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ name: 'payment_made', type: 'decimal', precision: 10, scale: 2, default: 0 })
   @IsNumber()
   paymentMade: number;
 
@@ -37,9 +37,9 @@ export class TaskAssignment {
   @IsOptional()
   metadata?: Record<string, any>;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 } 

@@ -4,7 +4,7 @@ export class CreateTasksTable1700000000010 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'tasks',
+        name: 'task',
         columns: [
           {
             name: 'id',
@@ -77,19 +77,27 @@ export class CreateTasksTable1700000000010 implements MigrationInterface {
       true,
     );
 
-    // Create foreign key for client
-    await queryRunner.createForeignKey(
-      'tasks',
-      new TableForeignKey({
-        columnNames: ['client_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'clients',
-        onDelete: 'CASCADE',
-      }),
+    // Check if foreign key already exists before creating it
+    const foreignKeys = await queryRunner.getTable('task');
+    const hasForeignKey = foreignKeys?.foreignKeys?.some(fk => 
+      fk.columnNames.includes('client_id') && fk.referencedTableName === 'client'
     );
+
+    if (!hasForeignKey) {
+      // Create foreign key for client
+      await queryRunner.createForeignKey(
+        'task',
+        new TableForeignKey({
+          columnNames: ['client_id'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'client',
+          onDelete: 'CASCADE',
+        }),
+      );
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('tasks');
+    await queryRunner.dropTable('task');
   }
 } 

@@ -34,13 +34,13 @@ export class AddMetadataToExistingTables1700000000014 implements MigrationInterf
       }
     }
 
-    // Check if metadata column already exists in tasks table
-    const tasksTableExists = await queryRunner.hasTable('tasks');
-    if (tasksTableExists) {
-      const tasksMetadataExists = await queryRunner.hasColumn('tasks', 'metadata');
-      if (!tasksMetadataExists) {
+    // Check if metadata column already exists in task table
+    const taskTableExists = await queryRunner.hasTable('task');
+    if (taskTableExists) {
+      const taskMetadataExists = await queryRunner.hasColumn('task', 'metadata');
+      if (!taskMetadataExists) {
         await queryRunner.addColumn(
-          'tasks',
+          'task',
           new TableColumn({
             name: 'metadata',
             type: 'json',
@@ -50,13 +50,13 @@ export class AddMetadataToExistingTables1700000000014 implements MigrationInterf
       }
     }
 
-    // Check if metadata column already exists in task_assignments table
-    const taskAssignmentsTableExists = await queryRunner.hasTable('task_assignments');
-    if (taskAssignmentsTableExists) {
-      const taskAssignmentsMetadataExists = await queryRunner.hasColumn('task_assignments', 'metadata');
-      if (!taskAssignmentsMetadataExists) {
+    // Check if metadata column already exists in task_assignment table
+    const taskAssignmentTableExists = await queryRunner.hasTable('task_assignment');
+    if (taskAssignmentTableExists) {
+      const taskAssignmentMetadataExists = await queryRunner.hasColumn('task_assignment', 'metadata');
+      if (!taskAssignmentMetadataExists) {
         await queryRunner.addColumn(
-          'task_assignments',
+          'task_assignment',
           new TableColumn({
             name: 'metadata',
             type: 'json',
@@ -68,21 +68,21 @@ export class AddMetadataToExistingTables1700000000014 implements MigrationInterf
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Remove metadata from task_assignments table
-    const taskAssignmentsTableExists = await queryRunner.hasTable('task_assignments');
-    if (taskAssignmentsTableExists) {
-      const taskAssignmentsMetadataExists = await queryRunner.hasColumn('task_assignments', 'metadata');
-      if (taskAssignmentsMetadataExists) {
-        await queryRunner.dropColumn('task_assignments', 'metadata');
+    // Remove metadata from task_assignment table
+    const taskAssignmentTableExists = await queryRunner.hasTable('task_assignment');
+    if (taskAssignmentTableExists) {
+      const taskAssignmentMetadataExists = await queryRunner.hasColumn('task_assignment', 'metadata');
+      if (taskAssignmentMetadataExists) {
+        await queryRunner.dropColumn('task_assignment', 'metadata');
       }
     }
 
-    // Remove metadata from tasks table
-    const tasksTableExists = await queryRunner.hasTable('tasks');
-    if (tasksTableExists) {
-      const tasksMetadataExists = await queryRunner.hasColumn('tasks', 'metadata');
-      if (tasksMetadataExists) {
-        await queryRunner.dropColumn('tasks', 'metadata');
+    // Remove metadata from task table
+    const taskTableExists = await queryRunner.hasTable('task');
+    if (taskTableExists) {
+      const taskMetadataExists = await queryRunner.hasColumn('task', 'metadata');
+      if (taskMetadataExists) {
+        await queryRunner.dropColumn('task', 'metadata');
       }
     }
 

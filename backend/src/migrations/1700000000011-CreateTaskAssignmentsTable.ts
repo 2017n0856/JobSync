@@ -4,7 +4,7 @@ export class CreateTaskAssignmentsTable1700000000011 implements MigrationInterfa
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'task_assignments',
+        name: 'task_assignment',
         columns: [
           {
             name: 'id',
@@ -51,30 +51,43 @@ export class CreateTaskAssignmentsTable1700000000011 implements MigrationInterfa
       true,
     );
 
-    // Create foreign key for task
-    await queryRunner.createForeignKey(
-      'task_assignments',
-      new TableForeignKey({
-        columnNames: ['task_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'tasks',
-        onDelete: 'CASCADE',
-      }),
+    // Check if foreign keys already exist before creating them
+    const foreignKeys = await queryRunner.getTable('task_assignment');
+    const hasTaskForeignKey = foreignKeys?.foreignKeys?.some(fk => 
+      fk.columnNames.includes('task_id') && fk.referencedTableName === 'task'
+    );
+    const hasWorkerForeignKey = foreignKeys?.foreignKeys?.some(fk => 
+      fk.columnNames.includes('worker_id') && fk.referencedTableName === 'worker'
     );
 
-    // Create foreign key for worker
-    await queryRunner.createForeignKey(
-      'task_assignments',
-      new TableForeignKey({
-        columnNames: ['worker_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'workers',
-        onDelete: 'CASCADE',
-      }),
-    );
+    if (!hasTaskForeignKey) {
+      // Create foreign key for task
+      await queryRunner.createForeignKey(
+        'task_assignment',
+        new TableForeignKey({
+          columnNames: ['task_id'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'task',
+          onDelete: 'CASCADE',
+        }),
+      );
+    }
+
+    if (!hasWorkerForeignKey) {
+      // Create foreign key for worker
+      await queryRunner.createForeignKey(
+        'task_assignment',
+        new TableForeignKey({
+          columnNames: ['worker_id'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'worker',
+          onDelete: 'CASCADE',
+        }),
+      );
+    }
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('task_assignments');
+    await queryRunner.dropTable('task_assignment');
   }
 } 
