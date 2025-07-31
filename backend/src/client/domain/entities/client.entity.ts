@@ -15,9 +15,10 @@ export class Client {
   @IsString()
   name: string;
 
-  @Column({ type: 'enum', enum: Country })
+  @Column({ type: 'enum', enum: Country, nullable: true, default: Country.AUSTRALIA })
   @IsEnum(Country)
-  country: Country;
+  @IsOptional()
+  country?: Country;
 
   @Column({ name: 'phone_number', type: 'varchar', length: 20, nullable: true })
   @IsPhoneNumber()

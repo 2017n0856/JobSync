@@ -17,7 +17,7 @@ export class Task {
   @IsOptional()
   description?: string;
 
-  @Column({ name: 'deadline_time', type: 'time', nullable: true })
+  @Column({ name: 'deadline_time', type: 'time', nullable: true, default: '11:59:59' })
   @IsDateString()
   @IsOptional()
   deadlineTime?: string;
@@ -40,15 +40,17 @@ export class Task {
   @IsNumber()
   paymentMade: number;
 
-  @Column({ name: 'client_id', type: 'int' })
+  @Column({ name: 'client_id', type: 'int', nullable: true })
   @IsNumber()
-  clientId: number;
+  @IsOptional()
+  clientId?: number;
 
-  @ManyToOne(() => Client)
+  @ManyToOne(() => Client, { nullable: true })
   @JoinColumn({ name: 'client_id' })
-  client: Client;
+  @IsOptional()
+  client?: Client;
 
-  @Column({ name: 'task_type', type: 'enum', enum: TaskType })
+  @Column({ name: 'task_type', type: 'enum', enum: TaskType, default: TaskType.ASSIGNMENT })
   @IsEnum(TaskType)
   taskType: TaskType;
 

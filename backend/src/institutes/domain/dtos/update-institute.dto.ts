@@ -15,17 +15,16 @@ export class UpdateInstituteDto {
   @MaxLength(255)
   name?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Country where the institute is located',
     example: 'United States',
     minLength: 2,
-    maxLength: 100,
-    required: false
+    maxLength: 30
   })
   @IsOptional()
   @IsString()
   @MinLength(2)
-  @MaxLength(100)
+  @MaxLength(30)
   country?: string;
 
   @ApiPropertyOptional({

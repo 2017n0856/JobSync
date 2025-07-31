@@ -11,10 +11,10 @@ export class Institute {
   name: string;
 
   @Column({ type: 'varchar', length: 30, nullable: true })
+  @IsOptional()
   country?: string;
 
   @Column({ type: 'json', nullable: true })
-  @IsJSON()
   @IsOptional()
   metadata?: Record<string, any>;
 

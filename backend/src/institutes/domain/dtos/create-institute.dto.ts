@@ -14,23 +14,22 @@ export class CreateInstituteDto {
   @MaxLength(255)
   name: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Country where the institute is located',
     example: 'United States',
     minLength: 2,
-    maxLength: 100
+    maxLength: 30
   })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @MinLength(2)
-  @MaxLength(100)
-  country: string;
+  @MaxLength(30)
+  country?: string;
 
   @ApiPropertyOptional({
     description: 'Additional metadata as JSON',
     example: { founded: 1636, type: 'University', accreditation: 'Regional' }
   })
   @IsOptional()
-  @IsJSON()
   metadata?: Record<string, any>;
 } 

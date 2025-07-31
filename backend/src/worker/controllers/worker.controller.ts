@@ -14,21 +14,46 @@ export class WorkerController {
   constructor(private readonly workerService: WorkerService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new worker' })
-  @ApiResponse({ status: 201, description: 'Worker created successfully', type: WorkerResponseDto })
+  @ApiOperation({ 
+    summary: 'Create a new worker',
+    description: 'Creates a new worker with the provided information. Worker names must be unique.'
+  })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Worker created successfully', 
+    type: WorkerResponseDto,
+    content: {
+      'application/json': {
+        example: WorkerResponseDto.example()
+      }
+    }
+  })
   @ApiResponse({ status: 409, description: 'Worker with this name already exists' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
   async create(@Body() createWorkerDto: CreateWorkerDto): Promise<WorkerResponseDto> {
     const worker = await this.workerService.create(createWorkerDto);
     return this.mapToResponseDto(worker);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all worker with optional filters' })
-  @ApiQuery({ name: 'name', required: false, description: 'Filter by worker name' })
-  @ApiQuery({ name: 'country', required: false, description: 'Filter by country' })
-  @ApiQuery({ name: 'instituteName', required: false, description: 'Filter by institute name' })
-  @ApiQuery({ name: 'specialties', required: false, description: 'Filter by specialties (comma-separated)' })
-  @ApiResponse({ status: 200, description: 'List of worker', type: [WorkerResponseDto] })
+  @ApiOperation({ 
+    summary: 'Get all workers with optional filters',
+    description: 'Retrieves a list of all workers. Supports filtering by name, country, institute name, and specialties.'
+  })
+  @ApiQuery({ name: 'name', required: false, description: 'Filter by worker name', example: 'Jane' })
+  @ApiQuery({ name: 'country', required: false, description: 'Filter by country', enum: ['AUSTRALIA', 'UNITED_STATES', 'UNITED_KINGDOM'] })
+  @ApiQuery({ name: 'instituteName', required: false, description: 'Filter by institute name', example: 'University' })
+  @ApiQuery({ name: 'specialties', required: false, description: 'Filter by specialties (comma-separated)', example: 'FINANCE,ANALYSIS' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'List of workers retrieved successfully', 
+    type: [WorkerResponseDto],
+    content: {
+      'application/json': {
+        example: [WorkerResponseDto.example()]
+      }
+    }
+  })
   async findAll(@Query() filters: GetWorkerQueryDto): Promise<WorkerResponseDto[]> {
     const workers = await this.workerService.findAll(filters);
     return workers.map(worker => this.mapToResponseDto(worker));
@@ -37,9 +62,21 @@ export class WorkerController {
 
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get a worker by ID' })
-  @ApiParam({ name: 'id', description: 'Worker ID' })
-  @ApiResponse({ status: 200, description: 'Worker found', type: WorkerResponseDto })
+  @ApiOperation({ 
+    summary: 'Get a worker by ID',
+    description: 'Retrieves a specific worker by their unique identifier.'
+  })
+  @ApiParam({ name: 'id', description: 'Worker ID', example: 1 })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Worker found successfully', 
+    type: WorkerResponseDto,
+    content: {
+      'application/json': {
+        example: WorkerResponseDto.example()
+      }
+    }
+  })
   @ApiResponse({ status: 404, description: 'Worker not found' })
   async findById(@Param('id', ParseIntPipe) id: number): Promise<WorkerResponseDto> {
     const worker = await this.workerService.findById(id);
@@ -47,11 +84,24 @@ export class WorkerController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update a worker by ID' })
-  @ApiParam({ name: 'id', description: 'Worker ID' })
-  @ApiResponse({ status: 200, description: 'Worker updated successfully', type: WorkerResponseDto })
+  @ApiOperation({ 
+    summary: 'Update a worker by ID',
+    description: 'Updates an existing worker with the provided information. Worker names must remain unique.'
+  })
+  @ApiParam({ name: 'id', description: 'Worker ID', example: 1 })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Worker updated successfully', 
+    type: WorkerResponseDto,
+    content: {
+      'application/json': {
+        example: WorkerResponseDto.example()
+      }
+    }
+  })
   @ApiResponse({ status: 404, description: 'Worker not found' })
   @ApiResponse({ status: 409, description: 'Worker with this name already exists' })
+  @ApiResponse({ status: 400, description: 'Invalid input data' })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateWorkerDto: UpdateWorkerDto,
@@ -61,8 +111,11 @@ export class WorkerController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a worker by ID' })
-  @ApiParam({ name: 'id', description: 'Worker ID' })
+  @ApiOperation({ 
+    summary: 'Delete a worker by ID',
+    description: 'Permanently deletes a worker and all associated data.'
+  })
+  @ApiParam({ name: 'id', description: 'Worker ID', example: 1 })
   @ApiResponse({ status: 200, description: 'Worker deleted successfully' })
   @ApiResponse({ status: 404, description: 'Worker not found' })
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
@@ -76,6 +129,7 @@ export class WorkerController {
       country: worker.country,
       phoneNumber: worker.phoneNumber,
       email: worker.email,
+      currency: worker.currency,
       instituteId: worker.instituteId,
       institute: worker.institute ? {
         id: worker.institute.id,

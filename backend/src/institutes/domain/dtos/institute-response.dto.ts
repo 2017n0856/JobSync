@@ -13,11 +13,11 @@ export class InstituteResponseDto {
   })
   name: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Country where the institute is located',
     example: 'United States'
   })
-  country: string;
+  country?: string;
 
   @ApiPropertyOptional({
     description: 'Additional metadata as JSON',

@@ -16,9 +16,10 @@ export class Worker {
   @IsString()
   name: string;
 
-  @Column({ type: 'enum', enum: Country })
+  @Column({ type: 'enum', enum: Country, nullable: true })
   @IsEnum(Country)
-  country: Country;
+  @IsOptional()
+  country?: Country;
 
   @Column({ name: 'phone_number', type: 'varchar', length: 20, nullable: true })
   @IsPhoneNumber()
@@ -30,7 +31,7 @@ export class Worker {
   @IsOptional()
   email?: string;
 
-  @Column({ type: 'enum', enum: Currency, default: Currency.AUD, nullable: true })
+  @Column({ type: 'enum', enum: Currency, default: Currency.PKR, nullable: true })
   @IsEnum(Currency)
   @IsOptional()
   currency?: Currency;
