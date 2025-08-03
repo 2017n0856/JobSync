@@ -11,4 +11,4 @@ import { Client } from './domain/entities/client.entity';
   providers: [ClientService, ClientRepository],
   exports: [ClientService, ClientRepository],
 })
-export class ClientModule {} 
+export class ClientModule {}

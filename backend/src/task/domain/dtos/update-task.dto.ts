@@ -1,13 +1,22 @@
-import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsJSON, MinLength, MaxLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsJSON,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { TaskType } from '../../../common/enums/task-type.enum';
 
 export class UpdateTaskDto {
-  @ApiPropertyOptional({ 
-    description: 'Task name', 
+  @ApiPropertyOptional({
+    description: 'Task name',
     example: 'Financial Report Analysis',
     minLength: 2,
-    maxLength: 255
+    maxLength: 255,
   })
   @IsString()
   @IsOptional()
@@ -15,100 +24,101 @@ export class UpdateTaskDto {
   @MaxLength(255)
   name?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Detailed task description', 
-    example: 'Analyze quarterly financial reports and provide insights on revenue trends'
+  @ApiPropertyOptional({
+    description: 'Detailed task description',
+    example:
+      'Analyze quarterly financial reports and provide insights on revenue trends',
   })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Task deadline time (HH:MM:SS format)', 
-    example: '17:00:00'
+  @ApiPropertyOptional({
+    description: 'Task deadline time (HH:MM:SS format)',
+    example: '17:00:00',
   })
   @IsDateString()
   @IsOptional()
   deadlineTime?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Task deadline date (YYYY-MM-DD format)', 
-    example: '2024-12-31'
+  @ApiPropertyOptional({
+    description: 'Task deadline date (YYYY-MM-DD format)',
+    example: '2024-12-31',
   })
   @IsDateString()
   @IsOptional()
   deadlineDate?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Date when task was submitted (YYYY-MM-DD format)', 
-    example: '2024-12-25'
+  @ApiPropertyOptional({
+    description: 'Date when task was submitted (YYYY-MM-DD format)',
+    example: '2024-12-25',
   })
   @IsDateString()
   @IsOptional()
   submittedOnDate?: string;
 
-  @ApiPropertyOptional({ 
-    description: 'Agreed payment amount from client', 
-    example: 500.00
+  @ApiPropertyOptional({
+    description: 'Agreed payment amount from client',
+    example: 500.0,
   })
   @IsNumber()
   @IsOptional()
   clientPaymentDecided?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Actual payment made by client', 
-    example: 500.00
+  @ApiPropertyOptional({
+    description: 'Actual payment made by client',
+    example: 500.0,
   })
   @IsNumber()
   @IsOptional()
   clientPaymentMade?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Agreed payment amount to worker', 
-    example: 400.00
+  @ApiPropertyOptional({
+    description: 'Agreed payment amount to worker',
+    example: 400.0,
   })
   @IsNumber()
   @IsOptional()
   workerPaymentDecided?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Actual payment made to worker', 
-    example: 400.00
+  @ApiPropertyOptional({
+    description: 'Actual payment made to worker',
+    example: 400.0,
   })
   @IsNumber()
   @IsOptional()
   workerPaymentMade?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'ID of the client this task belongs to', 
-    example: 1
+  @ApiPropertyOptional({
+    description: 'ID of the client this task belongs to',
+    example: 1,
   })
   @IsNumber()
   @IsOptional()
   clientId?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'ID of the worker assigned to this task', 
-    example: 1
+  @ApiPropertyOptional({
+    description: 'ID of the worker assigned to this task',
+    example: 1,
   })
   @IsNumber()
   @IsOptional()
   workerId?: number;
 
-  @ApiPropertyOptional({ 
-    description: 'Type of task', 
+  @ApiPropertyOptional({
+    description: 'Type of task',
     enum: TaskType,
-    example: TaskType.ASSIGNMENT
+    example: TaskType.ASSIGNMENT,
   })
   @IsEnum(TaskType)
   @IsOptional()
   taskType?: TaskType;
 
-  @ApiPropertyOptional({ 
-    description: 'Additional metadata as JSON', 
-    example: { priority: 'High', complexity: 'Medium', estimatedHours: 8 }
+  @ApiPropertyOptional({
+    description: 'Additional metadata as JSON',
+    example: { priority: 'High', complexity: 'Medium', estimatedHours: 8 },
   })
   @IsJSON()
   @IsOptional()
   metadata?: Record<string, any>;
-} 
+}

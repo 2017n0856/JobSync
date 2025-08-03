@@ -1,8 +1,12 @@
-import { registerDecorator, ValidationOptions, ValidationArguments } from 'class-validator';
+import {
+  registerDecorator,
+  ValidationArguments,
+  ValidationOptions,
+} from 'class-validator';
 import { Country } from '../enums/country.enum';
 
 export function IsPhoneNumber(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isPhoneNumber',
       target: object.constructor,
@@ -11,7 +15,7 @@ export function IsPhoneNumber(validationOptions?: ValidationOptions) {
       validator: {
         validate(value: any, args: ValidationArguments) {
           if (!value) return false;
-          
+
           const country = (args.object as any).country;
           if (!country) return false;
 
@@ -40,4 +44,4 @@ export function IsPhoneNumber(validationOptions?: ValidationOptions) {
       },
     });
   };
-} 
+}

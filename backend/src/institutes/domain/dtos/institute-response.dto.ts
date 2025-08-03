@@ -3,25 +3,25 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 export class InstituteResponseDto {
   @ApiProperty({
     description: 'Institute ID',
-    example: 1
+    example: 1,
   })
   id: number;
 
   @ApiProperty({
     description: 'Institute name',
-    example: 'Harvard University'
+    example: 'Harvard University',
   })
   name: string;
 
   @ApiPropertyOptional({
     description: 'Country where the institute is located',
-    example: 'United States'
+    example: 'United States',
   })
   country?: string;
 
   @ApiPropertyOptional({
     description: 'Additional metadata as JSON',
-    example: { founded: 1636, type: 'University', accreditation: 'Regional' }
+    example: { founded: 1636, type: 'University', accreditation: 'Regional' },
   })
   metadata?: Record<string, any>;
 
@@ -30,7 +30,11 @@ export class InstituteResponseDto {
       id: 1,
       name: 'Harvard University',
       country: 'United States',
-      metadata: { founded: 1636, type: 'University', accreditation: 'Regional' }
+      metadata: {
+        founded: 1636,
+        type: 'University',
+        accreditation: 'Regional',
+      },
     };
   }
-} 
+}

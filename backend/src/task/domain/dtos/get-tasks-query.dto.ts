@@ -1,4 +1,12 @@
-import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, Min, Max } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  Min,
+  Max,
+} from 'class-validator';
 import { TaskType } from '../../../common/enums/task-type.enum';
 
 export class GetTaskQueryDto {
@@ -40,4 +48,4 @@ export class GetTaskQueryDto {
   @Min(1)
   @Max(100)
   limit?: number = 10;
-} 
+}

@@ -11,4 +11,4 @@ export enum Country {
   UNITED_ARAB_EMIRATES = 'United Arab Emirates',
   KENYA = 'Kenya',
   QATAR = 'Qatar',
-} 
+}

@@ -16,4 +16,4 @@ export enum Specialty {
   ENGINEERING = 'ENGINEERING',
   EDUCATION = 'EDUCATION',
   OTHER = 'OTHER',
-} 
+}

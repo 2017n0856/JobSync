@@ -9,33 +9,50 @@ export class ClientResponseDto {
   @ApiProperty({ description: 'Client name', example: 'Acme Corporation' })
   name: string;
 
-  @ApiPropertyOptional({ description: 'Country where the client is located', enum: Country, example: Country.AUSTRALIA })
+  @ApiPropertyOptional({
+    description: 'Country where the client is located',
+    enum: Country,
+    example: Country.AUSTRALIA,
+  })
   country?: Country;
 
-  @ApiPropertyOptional({ description: 'Client phone number', example: '+61412345678' })
+  @ApiPropertyOptional({
+    description: 'Client phone number',
+    example: '+61412345678',
+  })
   phoneNumber?: string;
 
-  @ApiPropertyOptional({ description: 'Client email address', example: 'contact@acme.com' })
+  @ApiPropertyOptional({
+    description: 'Client email address',
+    example: 'contact@acme.com',
+  })
   email?: string;
 
-  @ApiPropertyOptional({ description: 'Preferred currency for payments', enum: Currency, example: Currency.AUD })
+  @ApiPropertyOptional({
+    description: 'Preferred currency for payments',
+    enum: Currency,
+    example: Currency.AUD,
+  })
   currency?: Currency;
 
-  @ApiPropertyOptional({ description: 'ID of the associated institute', example: 1 })
+  @ApiPropertyOptional({
+    description: 'ID of the associated institute',
+    example: 1,
+  })
   instituteId?: number;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: 'Associated institute details',
-    example: { id: 1, name: 'University of Melbourne' }
+    example: { id: 1, name: 'University of Melbourne' },
   })
   institute?: {
     id: number;
     name: string;
   };
 
-  @ApiPropertyOptional({ 
-    description: 'Additional metadata as JSON', 
-    example: { industry: 'Technology', founded: 1990, employees: 500 }
+  @ApiPropertyOptional({
+    description: 'Additional metadata as JSON',
+    example: { industry: 'Technology', founded: 1990, employees: 500 },
   })
   metadata?: Record<string, any>;
 
@@ -50,9 +67,9 @@ export class ClientResponseDto {
       instituteId: 1,
       institute: {
         id: 1,
-        name: 'University of Melbourne'
+        name: 'University of Melbourne',
       },
-      metadata: { industry: 'Technology', founded: 1990, employees: 500 }
+      metadata: { industry: 'Technology', founded: 1990, employees: 500 },
     };
   }
-} 
+}

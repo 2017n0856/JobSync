@@ -7,7 +7,7 @@ export class GetInstitutesQueryDto {
     example: 'United States',
     required: false,
     minLength: 2,
-    maxLength: 100
+    maxLength: 100,
   })
   @IsOptional()
   @IsString()
@@ -16,15 +16,16 @@ export class GetInstitutesQueryDto {
   country?: string;
 
   @ApiProperty({
-    description: 'Fuzzy search institutes by name (handles spelling errors and partial matches)',
+    description:
+      'Fuzzy search institutes by name (handles spelling errors and partial matches)',
     example: 'Harvard',
     required: false,
     minLength: 2,
-    maxLength: 100
+    maxLength: 100,
   })
   @IsOptional()
   @IsString()
   @MinLength(2)
   @MaxLength(100)
   name?: string;
-} 
+}

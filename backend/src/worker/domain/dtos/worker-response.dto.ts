@@ -10,41 +10,58 @@ export class WorkerResponseDto {
   @ApiProperty({ description: 'Worker name', example: 'Jane Smith' })
   name: string;
 
-  @ApiPropertyOptional({ description: 'Country where the worker is located', enum: Country, example: Country.AUSTRALIA })
+  @ApiPropertyOptional({
+    description: 'Country where the worker is located',
+    enum: Country,
+    example: Country.AUSTRALIA,
+  })
   country?: Country;
 
-  @ApiPropertyOptional({ description: 'Worker phone number', example: '+61412345678' })
+  @ApiPropertyOptional({
+    description: 'Worker phone number',
+    example: '+61412345678',
+  })
   phoneNumber?: string;
 
-  @ApiPropertyOptional({ description: 'Worker email address', example: 'jane.smith@example.com' })
+  @ApiPropertyOptional({
+    description: 'Worker email address',
+    example: 'jane.smith@example.com',
+  })
   email?: string;
 
-  @ApiPropertyOptional({ description: 'Preferred currency for payments', enum: Currency, example: Currency.PKR })
+  @ApiPropertyOptional({
+    description: 'Preferred currency for payments',
+    enum: Currency,
+    example: Currency.PKR,
+  })
   currency?: Currency;
 
-  @ApiPropertyOptional({ description: 'ID of the associated institute', example: 1 })
+  @ApiPropertyOptional({
+    description: 'ID of the associated institute',
+    example: 1,
+  })
   instituteId?: number;
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
     description: 'Associated institute details',
-    example: { id: 1, name: 'University of Melbourne' }
+    example: { id: 1, name: 'University of Melbourne' },
   })
   institute?: {
     id: number;
     name: string;
   };
 
-  @ApiPropertyOptional({ 
-    description: 'Additional metadata as JSON', 
-    example: { experience: '5 years', education: 'Masters Degree' }
+  @ApiPropertyOptional({
+    description: 'Additional metadata as JSON',
+    example: { experience: '5 years', education: 'Masters Degree' },
   })
   metadata?: Record<string, any>;
 
-  @ApiPropertyOptional({ 
-    description: 'Worker specialties/skills', 
+  @ApiPropertyOptional({
+    description: 'Worker specialties/skills',
     enum: Specialty,
     isArray: true,
-    example: [Specialty.FINANCE, Specialty.ANALYSIS]
+    example: [Specialty.FINANCE, Specialty.ANALYSIS],
   })
   specialties?: Specialty[];
 
@@ -59,10 +76,10 @@ export class WorkerResponseDto {
       instituteId: 1,
       institute: {
         id: 1,
-        name: 'University of Melbourne'
+        name: 'University of Melbourne',
       },
       metadata: { experience: '5 years', education: 'Masters Degree' },
-      specialties: [Specialty.FINANCE, Specialty.ANALYSIS]
+      specialties: [Specialty.FINANCE, Specialty.ANALYSIS],
     };
   }
-} 
+}

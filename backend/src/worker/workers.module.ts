@@ -11,4 +11,4 @@ import { Worker } from './domain/entities/worker.entity';
   providers: [WorkerService, WorkerRepository],
   exports: [WorkerService, WorkerRepository],
 })
-export class WorkersModule {} 
+export class WorkersModule {}

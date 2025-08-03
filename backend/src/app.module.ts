@@ -10,7 +10,6 @@ import { ClientModule } from './client/client.module';
 import { WorkerModule } from './worker/worker.module';
 import { TaskModule } from './task/task.module';
 
-
 @Module({
   imports: [
     // Configuration module
@@ -59,4 +58,4 @@ import { TaskModule } from './task/task.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {} 
+export class AppModule {}

@@ -14,8 +14,8 @@ import { User } from '../users/domain/entities/user.entity';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET', 'your-secret-key'),
-        signOptions: { 
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '24h') 
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '24h'),
         },
       }),
       inject: [ConfigService],
@@ -25,4 +25,4 @@ import { User } from '../users/domain/entities/user.entity';
   providers: [AuthService, UserRepository],
   exports: [AuthService],
 })
-export class AuthModule {} 
+export class AuthModule {}

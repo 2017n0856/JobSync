@@ -1,5 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { IsEmail, IsOptional, IsString, IsEnum, IsJSON, IsArray } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsJSON,
+  IsArray,
+} from 'class-validator';
 import { Country } from '../../../common/enums/country.enum';
 import { Currency } from '../../../common/enums/currency.enum';
 import { Specialty } from '../../../common/enums/specialty.enum';
@@ -31,7 +47,12 @@ export class Worker {
   @IsOptional()
   email?: string;
 
-  @Column({ type: 'enum', enum: Currency, default: Currency.PKR, nullable: true })
+  @Column({
+    type: 'enum',
+    enum: Currency,
+    default: Currency.PKR,
+    nullable: true,
+  })
   @IsEnum(Currency)
   @IsOptional()
   currency?: Currency;
@@ -59,4 +80,4 @@ export class Worker {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-} 
+}

@@ -11,4 +11,4 @@ import { Task } from './domain/entities/task.entity';
   providers: [TaskService, TaskRepository],
   exports: [TaskService, TaskRepository],
 })
-export class TaskModule {} 
+export class TaskModule {}

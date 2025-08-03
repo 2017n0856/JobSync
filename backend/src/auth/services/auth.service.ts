@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { LoginDto } from '../domain/dtos/login.dto';
@@ -19,14 +23,18 @@ export class AuthService {
   async signup(signupDto: SignupDto): Promise<SignupResponseDto> {
     // Check if user with email already exists
     if (signupDto.email) {
-      const existingUserByEmail = await this.userRepository.findByEmail(signupDto.email);
+      const existingUserByEmail = await this.userRepository.findByEmail(
+        signupDto.email,
+      );
       if (existingUserByEmail) {
         throw new ConflictException('User with this email already exists');
       }
     }
 
     // Check if user with username already exists
-    const existingUserByUsername = await this.userRepository.findByUsername(signupDto.username);
+    const existingUserByUsername = await this.userRepository.findByUsername(
+      signupDto.username,
+    );
     if (existingUserByUsername) {
       throw new ConflictException('User with this username already exists');
     }
@@ -56,12 +64,12 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     // Find user by email or username
     let user: User | null = null;
-    
+
     // Try to find by email first
     if (loginDto.emailOrUsername.includes('@')) {
       user = await this.userRepository.findByEmail(loginDto.emailOrUsername);
     }
-    
+
     // If not found by email, try by username
     if (!user) {
       user = await this.userRepository.findByUsername(loginDto.emailOrUsername);
@@ -72,7 +80,10 @@ export class AuthService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -87,15 +98,18 @@ export class AuthService {
     };
   }
 
-  async validateUser(emailOrUsername: string, password: string): Promise<User | null> {
+  async validateUser(
+    emailOrUsername: string,
+    password: string,
+  ): Promise<User | null> {
     // Find user by email or username
     let user: User | null = null;
-    
+
     // Try to find by email first
     if (emailOrUsername.includes('@')) {
       user = await this.userRepository.findByEmail(emailOrUsername);
     }
-    
+
     // If not found by email, try by username
     if (!user) {
       user = await this.userRepository.findByUsername(emailOrUsername);
@@ -124,4 +138,4 @@ export class AuthService {
       role: user.role,
     };
   }
-} 
+}

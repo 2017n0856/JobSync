@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ClientRepository } from '../repositories/client.repository';
 import { CreateClientDto } from '../domain/dtos/create-client.dto';
 import { UpdateClientDto } from '../domain/dtos/update-client.dto';
@@ -11,9 +15,13 @@ export class ClientService {
 
   async create(createClientDto: CreateClientDto): Promise<Client> {
     // Check if client with same name already exists
-    const existingClient = await this.clientRepository.findByName(createClientDto.name);
+    const existingClient = await this.clientRepository.findByName(
+      createClientDto.name,
+    );
     if (existingClient) {
-      throw new ConflictException(`Client with name '${createClientDto.name}' already exists`);
+      throw new ConflictException(
+        `Client with name '${createClientDto.name}' already exists`,
+      );
     }
 
     return await this.clientRepository.create(createClientDto);
@@ -40,13 +48,20 @@ export class ClientService {
 
     // If name is being updated, check for conflicts
     if (updateClientDto.name && updateClientDto.name !== existingClient.name) {
-      const clientWithSameName = await this.clientRepository.findByName(updateClientDto.name);
+      const clientWithSameName = await this.clientRepository.findByName(
+        updateClientDto.name,
+      );
       if (clientWithSameName) {
-        throw new ConflictException(`Client with name '${updateClientDto.name}' already exists`);
+        throw new ConflictException(
+          `Client with name '${updateClientDto.name}' already exists`,
+        );
       }
     }
 
-    const updatedClient = await this.clientRepository.update(id, updateClientDto);
+    const updatedClient = await this.clientRepository.update(
+      id,
+      updateClientDto,
+    );
     if (!updatedClient) {
       throw new NotFoundException(`Client with ID ${id} not found`);
     }
@@ -59,4 +74,4 @@ export class ClientService {
       throw new NotFoundException(`Client with ID ${id} not found`);
     }
   }
-} 
+}

@@ -50,4 +50,4 @@ export class UserRepository {
     const count = await this.userRepository.count({ where: { email } });
     return count > 0;
   }
-} 
+}

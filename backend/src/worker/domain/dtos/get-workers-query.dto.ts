@@ -19,4 +19,4 @@ export class GetWorkerQueryDto {
   @IsEnum(Specialty, { each: true })
   @IsOptional()
   specialties?: Specialty[];
-} 
+}

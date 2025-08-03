@@ -11,4 +11,4 @@ import { User } from './domain/entities/user.entity';
   providers: [UserService, UserRepository],
   exports: [UserService, UserRepository],
 })
-export class UsersModule {} 
+export class UsersModule {}

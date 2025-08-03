@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InstituteRepository } from '../repositories/institute.repository';
 import { CreateInstituteDto } from '../domain/dtos/create-institute.dto';
@@ -14,9 +18,13 @@ export class InstituteService {
     private readonly configService: ConfigService,
   ) {}
 
-  async createInstitute(createInstituteDto: CreateInstituteDto): Promise<InstituteResponseDto> {
+  async createInstitute(
+    createInstituteDto: CreateInstituteDto,
+  ): Promise<InstituteResponseDto> {
     // Check if institute with same name already exists
-    const existingInstitute = await this.instituteRepository.findByName(createInstituteDto.name);
+    const existingInstitute = await this.instituteRepository.findByName(
+      createInstituteDto.name,
+    );
     if (existingInstitute) {
       throw new ConflictException('Institute with this name already exists');
     }
@@ -39,17 +47,25 @@ export class InstituteService {
     return this.mapToResponseType(institute);
   }
 
-  async findAllInstitutes(query: GetInstitutesQueryDto): Promise<InstituteResponseDto[]> {
-    const similarityThreshold = this.configService.get<number>('FUZZY_SEARCH_SIMILARITY_THRESHOLD', 0.3);
-    const institutes = await this.instituteRepository.findAllWithEnhancedFuzzy(
-      query.country, 
-      query.name, 
-      similarityThreshold
+  async findAllInstitutes(
+    query: GetInstitutesQueryDto,
+  ): Promise<InstituteResponseDto[]> {
+    const similarityThreshold = this.configService.get<number>(
+      'FUZZY_SEARCH_SIMILARITY_THRESHOLD',
+      0.3,
     );
-    return institutes.map(institute => this.mapToResponseType(institute));
+    const institutes = await this.instituteRepository.findAllWithEnhancedFuzzy(
+      query.country,
+      query.name,
+      similarityThreshold,
+    );
+    return institutes.map((institute) => this.mapToResponseType(institute));
   }
 
-  async updateInstitute(id: number, updateInstituteDto: UpdateInstituteDto): Promise<InstituteResponseDto> {
+  async updateInstitute(
+    id: number,
+    updateInstituteDto: UpdateInstituteDto,
+  ): Promise<InstituteResponseDto> {
     // Check if institute exists
     const existingInstitute = await this.instituteRepository.findById(id);
     if (!existingInstitute) {
@@ -57,15 +73,23 @@ export class InstituteService {
     }
 
     // If name is being updated, check for uniqueness
-    if (updateInstituteDto.name && updateInstituteDto.name !== existingInstitute.name) {
-      const instituteWithSameName = await this.instituteRepository.findByName(updateInstituteDto.name);
+    if (
+      updateInstituteDto.name &&
+      updateInstituteDto.name !== existingInstitute.name
+    ) {
+      const instituteWithSameName = await this.instituteRepository.findByName(
+        updateInstituteDto.name,
+      );
       if (instituteWithSameName) {
         throw new ConflictException('Institute with this name already exists');
       }
     }
 
     // Update institute
-    const updatedInstitute = await this.instituteRepository.update(id, updateInstituteDto);
+    const updatedInstitute = await this.instituteRepository.update(
+      id,
+      updateInstituteDto,
+    );
     if (!updatedInstitute) {
       throw new NotFoundException('Failed to update institute');
     }
@@ -81,4 +105,4 @@ export class InstituteService {
       metadata: institute.metadata,
     };
   }
-} 
+}

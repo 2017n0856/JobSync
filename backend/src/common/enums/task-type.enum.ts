@@ -23,4 +23,4 @@ export enum TaskType {
   DESIGN = 'Design',
   EXAM = 'Exam',
   OTHER = 'Other',
-} 
+}

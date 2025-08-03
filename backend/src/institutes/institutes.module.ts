@@ -11,4 +11,4 @@ import { Institute } from './domain/entities/institute.entity';
   providers: [InstituteService, InstituteRepository],
   exports: [InstituteService, InstituteRepository],
 })
-export class InstitutesModule {} 
+export class InstitutesModule {}

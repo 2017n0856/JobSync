@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Client } from '../domain/entities/client.entity';
-import { GetClientQueryDto } from '../domain/dtos/get-clients-query.dto';
 import { LogQuery } from '../../common/decorators/log-query.decorator';
+import { GetClientQueryDto } from '../domain/dtos/get-clients-query.dto';
+import { Client } from '../domain/entities/client.entity';
 
 @Injectable()
 export class ClientRepository {
@@ -20,9 +20,9 @@ export class ClientRepository {
 
   @LogQuery()
   async findById(id: number): Promise<Client | null> {
-    return await this.clientRepository.findOne({ 
+    return await this.clientRepository.findOne({
       where: { id },
-      relations: ['institute']
+      relations: ['institute'],
     });
   }
 
@@ -32,34 +32,44 @@ export class ClientRepository {
 
   @LogQuery()
   async findAll(filters?: GetClientQueryDto): Promise<Client[]> {
-    const queryBuilder = this.clientRepository.createQueryBuilder('client')
+    const queryBuilder = this.clientRepository
+      .createQueryBuilder('client')
       .leftJoinAndSelect('client.institute', 'institute');
-    
+
     if (filters?.name) {
-      queryBuilder.where('LOWER(client.name) LIKE LOWER(:name)', { 
-        name: `%${filters.name}%` 
+      queryBuilder.where('LOWER(client.name) LIKE LOWER(:name)', {
+        name: `%${filters.name}%`,
       });
     }
-    
+
     if (filters?.country) {
       if (filters.name) {
-        queryBuilder.andWhere('client.country = :country', { country: filters.country });
+        queryBuilder.andWhere('client.country = :country', {
+          country: filters.country,
+        });
       } else {
-        queryBuilder.where('client.country = :country', { country: filters.country });
+        queryBuilder.where('client.country = :country', {
+          country: filters.country,
+        });
       }
     }
-    
+
     if (filters?.instituteName) {
-      const whereClause = filters.name || filters.country ? 'AND' : 'WHERE';
-      queryBuilder.andWhere('LOWER(institute.name) LIKE LOWER(:instituteName)', { 
-        instituteName: `%${filters.instituteName}%` 
-      });
+      queryBuilder.andWhere(
+        'LOWER(institute.name) LIKE LOWER(:instituteName)',
+        {
+          instituteName: `%${filters.instituteName}%`,
+        },
+      );
     }
-    
+
     return await queryBuilder.orderBy('client.name', 'ASC').getMany();
   }
 
-  async update(id: number, updateData: Partial<Client>): Promise<Client | null> {
+  async update(
+    id: number,
+    updateData: Partial<Client>,
+  ): Promise<Client | null> {
     await this.clientRepository.update(id, updateData);
     return await this.findById(id);
   }
@@ -73,4 +83,4 @@ export class ClientRepository {
     const count = await this.clientRepository.count({ where: { name } });
     return count > 0;
   }
-} 
+}

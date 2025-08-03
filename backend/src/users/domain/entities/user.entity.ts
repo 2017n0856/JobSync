@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsOptional, IsJSON } from 'class-validator';
 import { Role } from '../enums/role.enum';
 
@@ -22,11 +28,11 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: false })
   password: string;
 
-  @Column({ 
-    type: 'varchar', 
-    length: 20, 
+  @Column({
+    type: 'varchar',
+    length: 20,
     default: Role.VIEWER,
-    nullable: false 
+    nullable: false,
   })
   role: Role;
 
@@ -40,4 +46,4 @@ export class User {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-} 
+}

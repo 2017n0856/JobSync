@@ -33,7 +33,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  
+
   // Color codes for beautiful console output
   const colors = {
     reset: '\x1b[0m',
@@ -51,7 +51,7 @@ async function bootstrap() {
       blue: '\x1b[34m',
       magenta: '\x1b[35m',
       cyan: '\x1b[36m',
-      white: '\x1b[37m'
+      white: '\x1b[37m',
     },
     bg: {
       black: '\x1b[40m',
@@ -61,17 +61,25 @@ async function bootstrap() {
       blue: '\x1b[44m',
       magenta: '\x1b[45m',
       cyan: '\x1b[46m',
-      white: '\x1b[47m'
-    }
+      white: '\x1b[47m',
+    },
   };
 
   console.log('\n' + '='.repeat(60));
-  console.log(`${colors.fg.cyan}${colors.bright}🚀 JobSync API Server Started Successfully!${colors.reset}`);
+  console.log(
+    `${colors.fg.cyan}${colors.bright}🚀 JobSync API Server Started Successfully!${colors.reset}`,
+  );
   console.log('='.repeat(60));
-  console.log(`${colors.fg.green}${colors.bright}📍 Application URL:${colors.reset} ${colors.fg.yellow}http://localhost:${port}${colors.reset}`);
-  console.log(`${colors.fg.green}${colors.bright}📚 Swagger Docs:${colors.reset}    ${colors.fg.yellow}http://localhost:${port}/docs${colors.reset}`);
-  console.log(`${colors.fg.green}${colors.bright}🔧 Modules Loaded:${colors.reset}    ${colors.fg.yellow}Auth, Users, Institutes${colors.reset}`);
+  console.log(
+    `${colors.fg.green}${colors.bright}📍 Application URL:${colors.reset} ${colors.fg.yellow}http://localhost:${port}${colors.reset}`,
+  );
+  console.log(
+    `${colors.fg.green}${colors.bright}📚 Swagger Docs:${colors.reset}    ${colors.fg.yellow}http://localhost:${port}/docs${colors.reset}`,
+  );
+  console.log(
+    `${colors.fg.green}${colors.bright}🔧 Modules Loaded:${colors.reset}    ${colors.fg.yellow}Auth, Users, Institutes${colors.reset}`,
+  );
   console.log('='.repeat(60) + '\n');
 }
 
-bootstrap(); 
+bootstrap();

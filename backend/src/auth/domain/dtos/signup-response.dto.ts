@@ -3,7 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 export class SignupResponseDto {
   @ApiProperty({
     description: 'JWT access token',
-    example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiam9obmRvZSIsImlhdCI6MTYzNTY4OTYwMCwiZXhwIjoxNjM1Nzc2MDAwfQ.example_signature'
+    example:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiam9obmRvZSIsImlhdCI6MTYzNTY4OTYwMCwiZXhwIjoxNjM1Nzc2MDAwfQ.example_signature',
   })
   accessToken: string;
 
@@ -15,8 +16,8 @@ export class SignupResponseDto {
       email: 'john.doe@example.com',
       phoneNumber: '+1234567890',
       username: 'johndoe',
-      role: 'viewer'
-    }
+      role: 'viewer',
+    },
   })
   user: {
     id: number;
@@ -29,15 +30,16 @@ export class SignupResponseDto {
 
   static example(): SignupResponseDto {
     return {
-      accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiam9obmRvZSIsImlhdCI6MTYzNTY4OTYwMCwiZXhwIjoxNjM1Nzc2MDAwfQ.example_signature',
+      accessToken:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoiam9obmRvZSIsImlhdCI6MTYzNTY4OTYwMCwiZXhwIjoxNjM1Nzc2MDAwfQ.example_signature',
       user: {
         id: 1,
         name: 'John Doe',
         email: 'john.doe@example.com',
         phoneNumber: '+1234567890',
         username: 'johndoe',
-        role: 'viewer'
-      }
+        role: 'viewer',
+      },
     };
   }
-} 
+}

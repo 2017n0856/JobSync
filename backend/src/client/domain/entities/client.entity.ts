@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
 import { IsEmail, IsOptional, IsString, IsEnum, IsJSON } from 'class-validator';
 import { Country } from '../../../common/enums/country.enum';
 import { Currency } from '../../../common/enums/currency.enum';
@@ -15,7 +24,12 @@ export class Client {
   @IsString()
   name: string;
 
-  @Column({ type: 'enum', enum: Country, nullable: true, default: Country.AUSTRALIA })
+  @Column({
+    type: 'enum',
+    enum: Country,
+    nullable: true,
+    default: Country.AUSTRALIA,
+  })
   @IsEnum(Country)
   @IsOptional()
   country?: Country;
@@ -30,7 +44,12 @@ export class Client {
   @IsOptional()
   email?: string;
 
-  @Column({ type: 'enum', enum: Currency, default: Currency.AUD, nullable: true })
+  @Column({
+    type: 'enum',
+    enum: Currency,
+    default: Currency.AUD,
+    nullable: true,
+  })
   @IsEnum(Currency)
   @IsOptional()
   currency?: Currency;
@@ -52,4 +71,4 @@ export class Client {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-} 
+}

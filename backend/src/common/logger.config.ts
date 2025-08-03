@@ -34,11 +34,11 @@ export class CustomLogger implements LoggerService {
     process.stdout.write(message + '\n');
   }
 
-  debug(message: string) {
+  debug() {
     // Suppress debug messages
   }
 
-  verbose(message: string) {
+  verbose() {
     // Suppress verbose messages
   }
-} 
+}

@@ -189,7 +189,17 @@ export class CreateAllTablesWithSampleData1700000000000
           {
             name: 'currency',
             type: 'enum',
-            enum: ['USD', 'PKR', 'INR', 'AUD', 'CAD', 'GBP', 'EUR', 'KWD', 'AED'],
+            enum: [
+              'USD',
+              'PKR',
+              'INR',
+              'AUD',
+              'CAD',
+              'GBP',
+              'EUR',
+              'KWD',
+              'AED',
+            ],
             default: "'AUD'",
             isNullable: true,
           },
@@ -240,7 +250,20 @@ export class CreateAllTablesWithSampleData1700000000000
           {
             name: 'country',
             type: 'enum',
-            enum: ['United States', 'Pakistan', 'India', 'Australia', 'Canada', 'United Kingdom', 'Poland', 'Kuwait', 'Saudi Arabia', 'United Arab Emirates', 'Kenya', 'Qatar'],
+            enum: [
+              'United States',
+              'Pakistan',
+              'India',
+              'Australia',
+              'Canada',
+              'United Kingdom',
+              'Poland',
+              'Kuwait',
+              'Saudi Arabia',
+              'United Arab Emirates',
+              'Kenya',
+              'Qatar',
+            ],
             isNullable: true,
           },
           {
@@ -258,7 +281,17 @@ export class CreateAllTablesWithSampleData1700000000000
           {
             name: 'currency',
             type: 'enum',
-            enum: ['USD', 'PKR', 'INR', 'AUD', 'CAD', 'GBP', 'EUR', 'KWD', 'AED'],
+            enum: [
+              'USD',
+              'PKR',
+              'INR',
+              'AUD',
+              'CAD',
+              'GBP',
+              'EUR',
+              'KWD',
+              'AED',
+            ],
             default: "'PKR'",
             isNullable: true,
           },
@@ -376,7 +409,32 @@ export class CreateAllTablesWithSampleData1700000000000
           {
             name: 'task_type',
             type: 'enum',
-            enum: ['Online Test', 'Quiz', 'Midterm Exam', 'Final Exam', 'Assignment', 'Individual Assignment', 'Group Assignment', 'Project', 'Slides', 'Assessment', 'Final Assignment', 'Tutorial', 'Practice', 'Homework', 'Test', 'Presentation', 'Script', 'Tutorial Assignment', 'Summary', 'Drawing', 'Coding', 'Design', 'Exam', 'Other'],
+            enum: [
+              'Online Test',
+              'Quiz',
+              'Midterm Exam',
+              'Final Exam',
+              'Assignment',
+              'Individual Assignment',
+              'Group Assignment',
+              'Project',
+              'Slides',
+              'Assessment',
+              'Final Assignment',
+              'Tutorial',
+              'Practice',
+              'Homework',
+              'Test',
+              'Presentation',
+              'Script',
+              'Tutorial Assignment',
+              'Summary',
+              'Drawing',
+              'Coding',
+              'Design',
+              'Exam',
+              'Other',
+            ],
             default: "'Assignment'",
           },
           {
@@ -442,20 +500,29 @@ export class CreateAllTablesWithSampleData1700000000000
     );
 
     // Create indexes
-    await queryRunner.createIndex('institute', new TableIndex({
-      name: 'idx_institute_name',
-      columnNames: ['name'],
-    }));
+    await queryRunner.createIndex(
+      'institute',
+      new TableIndex({
+        name: 'idx_institute_name',
+        columnNames: ['name'],
+      }),
+    );
 
-    await queryRunner.createIndex('client', new TableIndex({
-      name: 'idx_client_name',
-      columnNames: ['name'],
-    }));
+    await queryRunner.createIndex(
+      'client',
+      new TableIndex({
+        name: 'idx_client_name',
+        columnNames: ['name'],
+      }),
+    );
 
-    await queryRunner.createIndex('worker', new TableIndex({
-      name: 'idx_worker_name',
-      columnNames: ['name'],
-    }));
+    await queryRunner.createIndex(
+      'worker',
+      new TableIndex({
+        name: 'idx_worker_name',
+        columnNames: ['name'],
+      }),
+    );
 
     // Insert sample data for institutes
     await queryRunner.query(`
@@ -502,4 +569,4 @@ export class CreateAllTablesWithSampleData1700000000000
     await queryRunner.dropTable('institute', true);
     await queryRunner.dropTable('user', true);
   }
-} 
+}

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { UpdatePasswordDto } from '../domain/dtos/update-password.dto';
 import { User } from '../domain/entities/user.entity';
@@ -11,7 +15,7 @@ export class UserService {
 
   async findAllUsers(): Promise<UserResponseType[]> {
     const users = await this.userRepository.findAll();
-    return users.map(user => this.mapToResponseType(user));
+    return users.map((user) => this.mapToResponseType(user));
   }
 
   async findUserById(id: number): Promise<UserResponseType> {
@@ -30,26 +34,40 @@ export class UserService {
     return this.mapToResponseType(user);
   }
 
-  async updatePassword(userId: number, updatePasswordDto: UpdatePasswordDto): Promise<{ message: string }> {
+  async updatePassword(
+    userId: number,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<{ message: string }> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     // Verify current password
-    const isCurrentPasswordValid = await bcrypt.compare(updatePasswordDto.currentPassword, user.password);
+    const isCurrentPasswordValid = await bcrypt.compare(
+      updatePasswordDto.currentPassword,
+      user.password,
+    );
     if (!isCurrentPasswordValid) {
       throw new BadRequestException('Current password is incorrect');
     }
 
     // Check if new password is different from current password
-    const isNewPasswordSame = await bcrypt.compare(updatePasswordDto.newPassword, user.password);
+    const isNewPasswordSame = await bcrypt.compare(
+      updatePasswordDto.newPassword,
+      user.password,
+    );
     if (isNewPasswordSame) {
-      throw new BadRequestException('New password must be different from current password');
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
     }
 
     // Hash new password
-    const hashedNewPassword = await bcrypt.hash(updatePasswordDto.newPassword, 10);
+    const hashedNewPassword = await bcrypt.hash(
+      updatePasswordDto.newPassword,
+      10,
+    );
 
     // Update password
     await this.userRepository.update(userId, { password: hashedNewPassword });
@@ -96,4 +114,4 @@ export class UserService {
       metadata: user.metadata,
     };
   }
-} 
+}
