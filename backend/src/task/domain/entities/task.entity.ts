@@ -1,7 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { IsOptional, IsString, IsEnum, IsNumber, IsDateString, IsJSON } from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsJSON,
+} from 'class-validator';
 import { TaskType } from '../../../common/enums/task-type.enum';
 import { Client } from '../../../client/domain/entities/client.entity';
+import { Worker } from '../../../worker/domain/entities/worker.entity';
 
 @Entity('task')
 export class Task {
@@ -17,7 +33,12 @@ export class Task {
   @IsOptional()
   description?: string;
 
-  @Column({ name: 'deadline_time', type: 'time', nullable: true, default: '11:59:59' })
+  @Column({
+    name: 'deadline_time',
+    type: 'time',
+    nullable: true,
+    default: '11:59:59',
+  })
   @IsDateString()
   @IsOptional()
   deadlineTime?: string;
@@ -32,13 +53,53 @@ export class Task {
   @IsOptional()
   submittedOnDate?: string;
 
-  @Column({ name: 'payment_decided', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    name: 'client_payment_decided',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    nullable: true,
+  })
   @IsNumber()
-  paymentDecided: number;
+  @IsOptional()
+  clientPaymentDecided?: number;
 
-  @Column({ name: 'payment_made', type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({
+    name: 'client_payment_made',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    nullable: true,
+  })
   @IsNumber()
-  paymentMade: number;
+  @IsOptional()
+  clientPaymentMade?: number;
+
+  @Column({
+    name: 'worker_payment_decided',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    nullable: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  workerPaymentDecided?: number;
+
+  @Column({
+    name: 'worker_payment_made',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    nullable: true,
+  })
+  @IsNumber()
+  @IsOptional()
+  workerPaymentMade?: number;
 
   @Column({ name: 'client_id', type: 'int', nullable: true })
   @IsNumber()
@@ -50,7 +111,22 @@ export class Task {
   @IsOptional()
   client?: Client;
 
-  @Column({ name: 'task_type', type: 'enum', enum: TaskType, default: TaskType.ASSIGNMENT })
+  @Column({ name: 'worker_id', type: 'int', nullable: true })
+  @IsNumber()
+  @IsOptional()
+  workerId?: number;
+
+  @ManyToOne(() => Worker, { nullable: true })
+  @JoinColumn({ name: 'worker_id' })
+  @IsOptional()
+  worker?: Worker;
+
+  @Column({
+    name: 'task_type',
+    type: 'enum',
+    enum: TaskType,
+    default: TaskType.ASSIGNMENT,
+  })
   @IsEnum(TaskType)
   taskType: TaskType;
 
@@ -64,4 +140,4 @@ export class Task {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
-} 
+}

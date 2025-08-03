@@ -21,7 +21,7 @@ export class TaskController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all task with optional filters' })
+  @ApiOperation({ summary: 'Get all tasks with optional filters and pagination' })
   @ApiQuery({ name: 'name', required: false, description: 'Filter by task name' })
   @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
   @ApiQuery({ name: 'deadlineDateFrom', required: false, description: 'Filter by deadline date from' })
@@ -29,10 +29,17 @@ export class TaskController {
   @ApiQuery({ name: 'clientId', required: false, description: 'Filter by client ID' })
   @ApiQuery({ name: 'workerId', required: false, description: 'Filter by worker ID' })
   @ApiQuery({ name: 'taskType', required: false, description: 'Filter by task type' })
-  @ApiResponse({ status: 200, description: 'List of task', type: [TaskResponseDto] })
-  async findAll(@Query() filters: GetTaskQueryDto): Promise<TaskResponseDto[]> {
-    const tasks = await this.taskService.findAll(filters);
-    return tasks.map(task => this.mapToResponseDto(task));
+  @ApiQuery({ name: 'page', required: false, description: 'Page number (default: 1)', type: Number })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page (default: 10, max: 100)', type: Number })
+  @ApiResponse({ status: 200, description: 'List of tasks', type: [TaskResponseDto] })
+  async findAll(@Query() filters: GetTaskQueryDto): Promise<{ tasks: TaskResponseDto[]; total: number; page: number; limit: number }> {
+    const result = await this.taskService.findAll(filters);
+    return {
+      tasks: result.tasks.map(task => this.mapToResponseDto(task)),
+      total: result.total,
+      page: result.page,
+      limit: result.limit
+    };
   }
 
   @Get(':id')
@@ -75,12 +82,19 @@ export class TaskController {
       deadlineTime: task.deadlineTime,
       deadlineDate: task.deadlineDate,
       submittedOnDate: task.submittedOnDate,
-      paymentDecided: task.paymentDecided,
-      paymentMade: task.paymentMade,
+      clientPaymentDecided: task.clientPaymentDecided,
+      clientPaymentMade: task.clientPaymentMade,
+      workerPaymentDecided: task.workerPaymentDecided,
+      workerPaymentMade: task.workerPaymentMade,
       clientId: task.clientId,
       client: task.client ? {
         id: task.client.id,
         name: task.client.name,
+      } : undefined,
+      workerId: task.workerId,
+      worker: task.worker ? {
+        id: task.worker.id,
+        name: task.worker.name,
       } : undefined,
       taskType: task.taskType,
       metadata: task.metadata,

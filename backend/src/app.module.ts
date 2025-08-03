@@ -9,7 +9,7 @@ import { InstitutesModule } from './institutes/institutes.module';
 import { ClientModule } from './client/client.module';
 import { WorkerModule } from './worker/worker.module';
 import { TaskModule } from './task/task.module';
-import { TaskAssignmentModule } from './task-assignment/task-assignment.module';
+
 
 @Module({
   imports: [
@@ -55,7 +55,6 @@ import { TaskAssignmentModule } from './task-assignment/task-assignment.module';
     ClientModule,
     WorkerModule,
     TaskModule,
-    TaskAssignmentModule,
   ],
   controllers: [],
   providers: [],

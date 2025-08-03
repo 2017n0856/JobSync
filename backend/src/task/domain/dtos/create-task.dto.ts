@@ -47,20 +47,36 @@ export class CreateTaskDto {
   submittedOnDate?: string;
 
   @ApiPropertyOptional({ 
-    description: 'Agreed payment amount', 
+    description: 'Agreed payment amount from client', 
     example: 500.00
   })
   @IsNumber()
   @IsOptional()
-  paymentDecided?: number;
+  clientPaymentDecided?: number;
 
   @ApiPropertyOptional({ 
-    description: 'Actual payment made', 
+    description: 'Actual payment made by client', 
     example: 500.00
   })
   @IsNumber()
   @IsOptional()
-  paymentMade?: number;
+  clientPaymentMade?: number;
+
+  @ApiPropertyOptional({ 
+    description: 'Agreed payment amount to worker', 
+    example: 400.00
+  })
+  @IsNumber()
+  @IsOptional()
+  workerPaymentDecided?: number;
+
+  @ApiPropertyOptional({ 
+    description: 'Actual payment made to worker', 
+    example: 400.00
+  })
+  @IsNumber()
+  @IsOptional()
+  workerPaymentMade?: number;
 
   @ApiPropertyOptional({ 
     description: 'ID of the client this task belongs to', 
@@ -69,6 +85,14 @@ export class CreateTaskDto {
   @IsNumber()
   @IsOptional()
   clientId?: number;
+
+  @ApiPropertyOptional({ 
+    description: 'ID of the worker assigned to this task', 
+    example: 1
+  })
+  @IsNumber()
+  @IsOptional()
+  workerId?: number;
 
   @ApiProperty({ 
     description: 'Type of task', 

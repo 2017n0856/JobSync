@@ -20,11 +20,17 @@ export class TaskResponseDto {
   @ApiPropertyOptional({ description: 'Date when task was submitted (YYYY-MM-DD format)', example: '2024-12-25' })
   submittedOnDate?: string;
 
-  @ApiProperty({ description: 'Agreed payment amount', example: 500.00 })
-  paymentDecided: number;
+  @ApiProperty({ description: 'Agreed payment amount from client', example: 500.00 })
+  clientPaymentDecided: number;
 
-  @ApiProperty({ description: 'Actual payment made', example: 500.00 })
-  paymentMade: number;
+  @ApiProperty({ description: 'Actual payment made by client', example: 500.00 })
+  clientPaymentMade: number;
+
+  @ApiProperty({ description: 'Agreed payment amount to worker', example: 400.00 })
+  workerPaymentDecided: number;
+
+  @ApiProperty({ description: 'Actual payment made to worker', example: 400.00 })
+  workerPaymentMade: number;
 
   @ApiPropertyOptional({ description: 'ID of the client this task belongs to', example: 1 })
   clientId?: number;
@@ -34,6 +40,18 @@ export class TaskResponseDto {
     example: { id: 1, name: 'Acme Corporation' }
   })
   client?: {
+    id: number;
+    name: string;
+  };
+
+  @ApiPropertyOptional({ description: 'ID of the worker assigned to this task', example: 1 })
+  workerId?: number;
+
+  @ApiPropertyOptional({ 
+    description: 'Associated worker details',
+    example: { id: 1, name: 'John Doe' }
+  })
+  worker?: {
     id: number;
     name: string;
   };
@@ -55,12 +73,19 @@ export class TaskResponseDto {
       deadlineTime: '17:00:00',
       deadlineDate: '2024-12-31',
       submittedOnDate: '2024-12-25',
-      paymentDecided: 500.00,
-      paymentMade: 500.00,
+      clientPaymentDecided: 500.00,
+      clientPaymentMade: 500.00,
+      workerPaymentDecided: 400.00,
+      workerPaymentMade: 400.00,
       clientId: 1,
       client: {
         id: 1,
         name: 'Acme Corporation'
+      },
+      workerId: 1,
+      worker: {
+        id: 1,
+        name: 'John Doe'
       },
       taskType: TaskType.ASSIGNMENT,
       metadata: { priority: 'High', complexity: 'Medium', estimatedHours: 8 }

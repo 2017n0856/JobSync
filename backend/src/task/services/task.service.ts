@@ -13,7 +13,9 @@ export class TaskService {
     return await this.taskRepository.create(createTaskDto);
   }
 
-  async findAll(filters?: GetTaskQueryDto): Promise<Task[]> {
+  async findAll(
+    filters?: GetTaskQueryDto,
+  ): Promise<{ tasks: Task[]; total: number; page: number; limit: number }> {
     return await this.taskRepository.findAll(filters);
   }
 
@@ -45,4 +47,4 @@ export class TaskService {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
   }
-} 
+}
