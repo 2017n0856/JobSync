@@ -10,7 +10,11 @@ export class TaskService {
   constructor(private readonly taskRepository: TaskRepository) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    return await this.taskRepository.create(createTaskDto);
+    const payload: Partial<Task> = { ...createTaskDto };
+    if (!payload.deadlineTime) {
+      payload.deadlineTime = '11:59:00';
+    }
+    return await this.taskRepository.create(payload);
   }
 
   async findAll(
@@ -28,7 +32,6 @@ export class TaskService {
   }
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
-    // Check if task exists
     const existingTask = await this.taskRepository.findById(id);
     if (!existingTask) {
       throw new NotFoundException(`Task with ID ${id} not found`);

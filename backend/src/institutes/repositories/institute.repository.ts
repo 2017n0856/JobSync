@@ -262,4 +262,45 @@ export class InstituteRepository {
     const count = await this.instituteRepository.count({ where: { name } });
     return count > 0;
   }
+
+  async findAllPaginated(
+    country?: string,
+    name?: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ institutes: Institute[]; total: number; page: number; limit: number }> {
+    const queryBuilder = this.instituteRepository.createQueryBuilder('institute');
+
+    if (country) {
+      queryBuilder.where('LOWER(institute.country) LIKE LOWER(:country)', {
+        country: `%${country}%`,
+      });
+    }
+
+    if (name) {
+      if (country) {
+        queryBuilder.andWhere('LOWER(institute.name) LIKE LOWER(:name)', {
+          name: `%${name}%`,
+        });
+      } else {
+        queryBuilder.where('LOWER(institute.name) LIKE LOWER(:name)', {
+          name: `%${name}%`,
+        });
+      }
+    }
+
+    const total = await queryBuilder.getCount();
+
+    const validPage = page && page > 0 ? page : 1;
+    const validLimit = limit && limit > 0 ? Math.min(limit, 100) : 10;
+    const offset = (validPage - 1) * validLimit;
+
+    const institutes = await queryBuilder
+      .orderBy('institute.name', 'ASC')
+      .skip(offset)
+      .take(validLimit)
+      .getMany();
+
+    return { institutes, total, page: validPage, limit: validLimit };
+  }
 }

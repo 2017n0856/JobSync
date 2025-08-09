@@ -31,16 +31,9 @@ export class TaskRepository {
       .leftJoinAndSelect('task.client', 'client')
       .leftJoinAndSelect('task.worker', 'worker');
 
-    // Apply filters
     if (filters?.name) {
       queryBuilder.andWhere('LOWER(task.name) LIKE LOWER(:name)', {
         name: `%${filters.name}%`,
-      });
-    }
-
-    if (filters?.status) {
-      queryBuilder.andWhere('LOWER(task.status) LIKE LOWER(:status)', {
-        status: `%${filters.status}%`,
       });
     }
 
@@ -56,16 +49,42 @@ export class TaskRepository {
       });
     }
 
-    if (filters?.clientId) {
-      queryBuilder.andWhere('task.clientId = :clientId', {
-        clientId: filters.clientId,
+    if (filters?.clientName) {
+      queryBuilder.andWhere('LOWER(client.name) LIKE LOWER(:clientName)', {
+        clientName: `%${filters.clientName}%`,
       });
     }
 
-    if (filters?.workerId) {
-      queryBuilder.andWhere('task.workerId = :workerId', {
-        workerId: filters.workerId,
+    if (filters?.workerName) {
+      queryBuilder.andWhere('LOWER(worker.name) LIKE LOWER(:workerName)', {
+        workerName: `%${filters.workerName}%`,
       });
+    }
+
+    if (filters?.taskStatus) {
+      if (filters.taskStatus === 'assigned') {
+        queryBuilder.andWhere('task.workerId IS NOT NULL AND task.submittedOnDate IS NULL');
+      } else if (filters.taskStatus === 'not_assigned') {
+        queryBuilder.andWhere('task.workerId IS NULL');
+      } else if (filters.taskStatus === 'delivered') {
+        queryBuilder.andWhere('task.submittedOnDate IS NOT NULL');
+      }
+    }
+
+    if (filters?.clientPaymentStatus) {
+      if (filters.clientPaymentStatus === 'yes') {
+        queryBuilder.andWhere('COALESCE(task.clientPaymentMade, 0) = COALESCE(task.clientPaymentDecided, 0)');
+      } else if (filters.clientPaymentStatus === 'no') {
+        queryBuilder.andWhere('COALESCE(task.clientPaymentMade, 0) <> COALESCE(task.clientPaymentDecided, 0)');
+      }
+    }
+
+    if (filters?.workerPaymentStatus) {
+      if (filters.workerPaymentStatus === 'yes') {
+        queryBuilder.andWhere('COALESCE(task.workerPaymentMade, 0) = COALESCE(task.workerPaymentDecided, 0)');
+      } else if (filters.workerPaymentStatus === 'no') {
+        queryBuilder.andWhere('COALESCE(task.workerPaymentMade, 0) <> COALESCE(task.workerPaymentDecided, 0)');
+      }
     }
 
     if (filters?.taskType) {
@@ -74,15 +93,17 @@ export class TaskRepository {
       });
     }
 
-    // Get total count for pagination
     const total = await queryBuilder.getCount();
 
-    // Apply pagination
     const page = filters?.page || 1;
     const limit = filters?.limit || 10;
     const offset = (page - 1) * limit;
 
-    queryBuilder.orderBy('task.createdAt', 'DESC').skip(offset).take(limit);
+    queryBuilder
+      .orderBy('task.deadlineDate', 'DESC')
+      .addOrderBy('task.deadlineTime', 'DESC')
+      .skip(offset)
+      .take(limit);
 
     const tasks = await queryBuilder.getMany();
 

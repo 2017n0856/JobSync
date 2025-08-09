@@ -6,6 +6,7 @@ import {
   IsDateString,
   Min,
   Max,
+  IsIn,
 } from 'class-validator';
 import { TaskType } from '../../../common/enums/task-type.enum';
 
@@ -13,10 +14,6 @@ export class GetTaskQueryDto {
   @IsString()
   @IsOptional()
   name?: string;
-
-  @IsString()
-  @IsOptional()
-  status?: string;
 
   @IsDateString()
   @IsOptional()
@@ -26,13 +23,25 @@ export class GetTaskQueryDto {
   @IsOptional()
   deadlineDateTo?: string;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  clientId?: number;
+  clientName?: string;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  workerId?: number;
+  workerName?: string;
+
+  @IsIn(['assigned', 'not_assigned', 'delivered'])
+  @IsOptional()
+  taskStatus?: 'assigned' | 'not_assigned' | 'delivered';
+
+  @IsIn(['yes', 'no'])
+  @IsOptional()
+  clientPaymentStatus?: 'yes' | 'no';
+
+  @IsIn(['yes', 'no'])
+  @IsOptional()
+  workerPaymentStatus?: 'yes' | 'no';
 
   @IsEnum(TaskType)
   @IsOptional()

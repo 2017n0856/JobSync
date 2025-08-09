@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Body,
   Param,
   Query,
@@ -64,21 +65,31 @@ export class InstituteController {
 
   @Get()
   @ApiOperation({
-    summary:
-      'Get all institutes with optional country and enhanced fuzzy name search',
+    summary: 'Get all institutes with optional filters and pagination',
   })
   @ApiQuery({
     name: 'country',
     required: false,
-    description: 'Filter institutes by country name',
+    description: 'Filter institutes by country (case-insensitive substring match)',
     example: 'United States',
   })
   @ApiQuery({
     name: 'name',
     required: false,
-    description:
-      'Enhanced fuzzy search institutes by name (handles spelling errors, substrings, and multi-word searches)',
+    description: 'Search institutes by name (case-insensitive substring match)',
     example: 'Harvard',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (default: 1)',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page (default: 10, max: 100)',
+    type: Number,
   })
   @ApiResponse({
     status: 200,
@@ -87,7 +98,7 @@ export class InstituteController {
   })
   async getAllInstitutes(
     @Query() query: GetInstitutesQueryDto,
-  ): Promise<InstituteResponseDto[]> {
+  ): Promise<{ institutes: InstituteResponseDto[]; total: number; page: number; limit: number }> {
     return await this.instituteService.findAllInstitutes(query);
   }
 
@@ -111,5 +122,14 @@ export class InstituteController {
     @Body() updateInstituteDto: UpdateInstituteDto,
   ): Promise<InstituteResponseDto> {
     return await this.instituteService.updateInstitute(id, updateInstituteDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete institute by ID' })
+  @ApiParam({ name: 'id', description: 'Institute ID' })
+  @ApiResponse({ status: 200, description: 'Institute deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Institute not found' })
+  async deleteInstitute(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.instituteService.deleteInstitute(id);
   }
 }

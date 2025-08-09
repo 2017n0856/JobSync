@@ -59,33 +59,45 @@ export class WorkerController {
 
   @Get()
   @ApiOperation({
-    summary: 'Get all workers with optional filters',
+    summary: 'Get all workers with optional filters and pagination',
     description:
-      'Retrieves a list of all workers. Supports filtering by name, country, institute name, and specialties.',
+      'Retrieves a list of all workers. Supports filtering by name, country (case-insensitive substring), institute name, and specialty (exact, case-insensitive).',
   })
   @ApiQuery({
     name: 'name',
     required: false,
-    description: 'Filter by worker name',
+    description: 'Filter by worker name (case-insensitive substring)',
     example: 'Jane',
   })
   @ApiQuery({
     name: 'country',
     required: false,
-    description: 'Filter by country',
-    enum: ['AUSTRALIA', 'UNITED_STATES', 'UNITED_KINGDOM'],
+    description: 'Filter by country (case-insensitive substring)',
+    example: 'United',
   })
   @ApiQuery({
     name: 'instituteName',
     required: false,
-    description: 'Filter by institute name',
+    description: 'Filter by institute name (case-insensitive substring)',
     example: 'University',
   })
   @ApiQuery({
-    name: 'specialties',
+    name: 'specialty',
     required: false,
-    description: 'Filter by specialties (comma-separated)',
-    example: 'FINANCE,ANALYSIS',
+    description: 'Filter by single specialty (exact match, case-insensitive)',
+    example: 'FINANCE',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (default: 1)',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page (default: 10, max: 100)',
+    type: Number,
   })
   @ApiResponse({
     status: 200,
@@ -99,9 +111,14 @@ export class WorkerController {
   })
   async findAll(
     @Query() filters: GetWorkerQueryDto,
-  ): Promise<WorkerResponseDto[]> {
-    const workers = await this.workerService.findAll(filters);
-    return workers.map((worker) => this.mapToResponseDto(worker));
+  ): Promise<{ workers: WorkerResponseDto[]; total: number; page: number; limit: number }> {
+    const result = await this.workerService.findAll(filters);
+    return {
+      workers: result.workers.map((worker) => this.mapToResponseDto(worker)),
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+    };
   }
 
   @Get(':id')

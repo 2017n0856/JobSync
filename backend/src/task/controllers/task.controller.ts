@@ -47,12 +47,7 @@ export class TaskController {
   @ApiQuery({
     name: 'name',
     required: false,
-    description: 'Filter by task name',
-  })
-  @ApiQuery({
-    name: 'status',
-    required: false,
-    description: 'Filter by status',
+    description: 'Filter by task name (case-insensitive substring)',
   })
   @ApiQuery({
     name: 'deadlineDateFrom',
@@ -65,14 +60,29 @@ export class TaskController {
     description: 'Filter by deadline date to',
   })
   @ApiQuery({
-    name: 'clientId',
+    name: 'clientName',
     required: false,
-    description: 'Filter by client ID',
+    description: 'Filter by client name (case-insensitive substring)',
   })
   @ApiQuery({
-    name: 'workerId',
+    name: 'workerName',
     required: false,
-    description: 'Filter by worker ID',
+    description: 'Filter by worker name (case-insensitive substring)',
+  })
+  @ApiQuery({
+    name: 'taskStatus',
+    required: false,
+    description: "Task status: 'assigned' | 'not_assigned' | 'delivered'",
+  })
+  @ApiQuery({
+    name: 'clientPaymentStatus',
+    required: false,
+    description: "Client payment status: 'yes' | 'no'",
+  })
+  @ApiQuery({
+    name: 'workerPaymentStatus',
+    required: false,
+    description: "Worker payment status: 'yes' | 'no'",
   })
   @ApiQuery({
     name: 'taskType',

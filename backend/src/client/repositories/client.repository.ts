@@ -31,7 +31,9 @@ export class ClientRepository {
   }
 
   @LogQuery()
-  async findAll(filters?: GetClientQueryDto): Promise<Client[]> {
+  async findAll(
+    filters?: GetClientQueryDto,
+  ): Promise<{ clients: Client[]; total: number; page: number; limit: number }> {
     const queryBuilder = this.clientRepository
       .createQueryBuilder('client')
       .leftJoinAndSelect('client.institute', 'institute');
@@ -43,13 +45,14 @@ export class ClientRepository {
     }
 
     if (filters?.country) {
+      const clause = 'LOWER(client.country::text) LIKE LOWER(:country)';
       if (filters.name) {
-        queryBuilder.andWhere('client.country = :country', {
-          country: filters.country,
+        queryBuilder.andWhere(clause, {
+          country: `%${filters.country}%`,
         });
       } else {
-        queryBuilder.where('client.country = :country', {
-          country: filters.country,
+        queryBuilder.where(clause, {
+          country: `%${filters.country}%`,
         });
       }
     }
@@ -63,7 +66,19 @@ export class ClientRepository {
       );
     }
 
-    return await queryBuilder.orderBy('client.name', 'ASC').getMany();
+    const total = await queryBuilder.getCount();
+
+    const page = filters?.page && filters.page > 0 ? filters.page : 1;
+    const limit = filters?.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 10;
+    const offset = (page - 1) * limit;
+
+    const clients = await queryBuilder
+      .orderBy('client.name', 'ASC')
+      .skip(offset)
+      .take(limit)
+      .getMany();
+
+    return { clients, total, page, limit };
   }
 
   async update(

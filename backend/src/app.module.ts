@@ -29,7 +29,7 @@ import { TaskModule } from './task/task.module';
         password: configService.get('DB_PASSWORD', 'password'),
         database: configService.get('DB_NAME', 'jobsync'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: configService.get('NODE_ENV') !== 'production',
+        synchronize: false,
         logging: false,
       }),
       inject: [ConfigService],

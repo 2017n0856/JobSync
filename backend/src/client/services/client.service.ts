@@ -14,7 +14,6 @@ export class ClientService {
   constructor(private readonly clientRepository: ClientRepository) {}
 
   async create(createClientDto: CreateClientDto): Promise<Client> {
-    // Check if client with same name already exists
     const existingClient = await this.clientRepository.findByName(
       createClientDto.name,
     );
@@ -27,7 +26,9 @@ export class ClientService {
     return await this.clientRepository.create(createClientDto);
   }
 
-  async findAll(filters?: GetClientQueryDto): Promise<Client[]> {
+  async findAll(
+    filters?: GetClientQueryDto,
+  ): Promise<{ clients: Client[]; total: number; page: number; limit: number }> {
     return await this.clientRepository.findAll(filters);
   }
 
@@ -40,13 +41,11 @@ export class ClientService {
   }
 
   async update(id: number, updateClientDto: UpdateClientDto): Promise<Client> {
-    // Check if client exists
     const existingClient = await this.clientRepository.findById(id);
     if (!existingClient) {
       throw new NotFoundException(`Client with ID ${id} not found`);
     }
 
-    // If name is being updated, check for conflicts
     if (updateClientDto.name && updateClientDto.name !== existingClient.name) {
       const clientWithSameName = await this.clientRepository.findByName(
         updateClientDto.name,

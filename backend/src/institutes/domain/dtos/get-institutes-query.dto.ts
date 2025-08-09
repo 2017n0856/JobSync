@@ -1,4 +1,4 @@
-import { IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsOptional, IsString, MinLength, MaxLength, IsNumber, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class GetInstitutesQueryDto {
@@ -16,8 +16,7 @@ export class GetInstitutesQueryDto {
   country?: string;
 
   @ApiProperty({
-    description:
-      'Fuzzy search institutes by name (handles spelling errors and partial matches)',
+    description: 'Search institutes by name (case-insensitive substring match)',
     example: 'Harvard',
     required: false,
     minLength: 2,
@@ -28,4 +27,28 @@ export class GetInstitutesQueryDto {
   @MinLength(2)
   @MaxLength(100)
   name?: string;
+
+  @ApiProperty({
+    description: 'Page number (default: 1)',
+    required: false,
+    default: 1,
+    minimum: 1,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  page?: number = 1;
+
+  @ApiProperty({
+    description: 'Items per page (default: 10, max: 100)',
+    required: false,
+    default: 10,
+    minimum: 1,
+    maximum: 100,
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(100)
+  limit?: number = 10;
 }

@@ -58,27 +58,39 @@ export class ClientController {
 
   @Get()
   @ApiOperation({
-    summary: 'Get all clients with optional filters',
+    summary: 'Get all clients with optional filters and pagination',
     description:
-      'Retrieves a list of all clients. Supports filtering by name, country, and institute name.',
+      'Retrieves a list of all clients. Supports filtering by name, country (input), and institute name.',
   })
   @ApiQuery({
     name: 'name',
     required: false,
-    description: 'Filter by client name',
+    description: 'Filter by client name (case-insensitive substring)',
     example: 'Acme',
   })
   @ApiQuery({
     name: 'country',
     required: false,
-    description: 'Filter by country',
-    enum: ['AUSTRALIA', 'UNITED_STATES', 'UNITED_KINGDOM'],
+    description: 'Filter by country (input, case-insensitive substring)',
+    example: 'United',
   })
   @ApiQuery({
     name: 'instituteName',
     required: false,
-    description: 'Filter by institute name',
+    description: 'Filter by institute name (case-insensitive substring)',
     example: 'University',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number (default: 1)',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Items per page (default: 10, max: 100)',
+    type: Number,
   })
   @ApiResponse({
     status: 200,
@@ -92,9 +104,14 @@ export class ClientController {
   })
   async findAll(
     @Query() filters: GetClientQueryDto,
-  ): Promise<ClientResponseDto[]> {
-    const clients = await this.clientService.findAll(filters);
-    return clients.map((client) => this.mapToResponseDto(client));
+  ): Promise<{ clients: ClientResponseDto[]; total: number; page: number; limit: number }> {
+    const result = await this.clientService.findAll(filters);
+    return {
+      clients: result.clients.map((client) => this.mapToResponseDto(client)),
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+    };
   }
 
   @Get(':id')

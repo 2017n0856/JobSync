@@ -27,7 +27,9 @@ export class WorkerRepository {
     return await this.workerRepository.findOne({ where: { name } });
   }
 
-  async findAll(filters?: GetWorkerQueryDto): Promise<Worker[]> {
+  async findAll(
+    filters?: GetWorkerQueryDto,
+  ): Promise<{ workers: Worker[]; total: number; page: number; limit: number }> {
     const queryBuilder = this.workerRepository
       .createQueryBuilder('worker')
       .leftJoinAndSelect('worker.institute', 'institute');
@@ -39,13 +41,14 @@ export class WorkerRepository {
     }
 
     if (filters?.country) {
+      const clause = 'LOWER(worker.country::text) LIKE LOWER(:country)';
       if (filters.name) {
-        queryBuilder.andWhere('worker.country = :country', {
-          country: filters.country,
+        queryBuilder.andWhere(clause, {
+          country: `%${filters.country}%`,
         });
       } else {
-        queryBuilder.where('worker.country = :country', {
-          country: filters.country,
+        queryBuilder.where(clause, {
+          country: `%${filters.country}%`,
         });
       }
     }
@@ -59,26 +62,37 @@ export class WorkerRepository {
       );
     }
 
-    if (filters?.specialties && filters.specialties.length > 0) {
-      // Filter workers who have any of the specified specialties
-      const specialtyConditions = filters.specialties.map(
-        (_, index) => `worker.specialties LIKE :specialty${index}`,
-      );
-      const specialtyParams = filters.specialties.reduce(
-        (acc, specialty, index) => {
-          acc[`specialty${index}`] = `%${specialty}%`;
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
-
+    if (filters?.specialty) {
+      const s = filters.specialty;
       queryBuilder.andWhere(
-        `(${specialtyConditions.join(' OR ')})`,
-        specialtyParams,
+        `(
+          LOWER(worker.specialties) = LOWER(:equal)
+          OR LOWER(worker.specialties) LIKE LOWER(:prefix)
+          OR LOWER(worker.specialties) LIKE LOWER(:suffix)
+          OR LOWER(worker.specialties) LIKE LOWER(:middle)
+        )`,
+        {
+          equal: `${s}`,
+          prefix: `${s},%`,
+          suffix: `%,${s}`,
+          middle: `%,${s},%`,
+        },
       );
     }
 
-    return await queryBuilder.orderBy('worker.name', 'ASC').getMany();
+    const total = await queryBuilder.getCount();
+
+    const page = filters?.page && filters.page > 0 ? filters.page : 1;
+    const limit = filters?.limit && filters.limit > 0 ? Math.min(filters.limit, 100) : 10;
+    const offset = (page - 1) * limit;
+
+    const workers = await queryBuilder
+      .orderBy('worker.name', 'ASC')
+      .skip(offset)
+      .take(limit)
+      .getMany();
+
+    return { workers, total, page, limit };
   }
 
   async update(

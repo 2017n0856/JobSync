@@ -37,7 +37,7 @@ export class Task {
     name: 'deadline_time',
     type: 'time',
     nullable: true,
-    default: '11:59:59',
+    default: '11:59:00',
   })
   @IsDateString()
   @IsOptional()

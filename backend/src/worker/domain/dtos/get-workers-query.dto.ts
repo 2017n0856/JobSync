@@ -1,20 +1,30 @@
-import { IsOptional, IsString, IsEnum, IsArray } from 'class-validator';
-import { Country } from '../../../common/enums/country.enum';
+import { IsOptional, IsString, IsNumber, Min, Max } from 'class-validator';
 
 export class GetWorkerQueryDto {
   @IsString()
   @IsOptional()
   name?: string;
 
-  @IsEnum(Country)
+  @IsString()
   @IsOptional()
-  country?: Country;
+  country?: string;
 
   @IsString()
   @IsOptional()
   instituteName?: string;
 
-  @IsArray()
+  @IsString()
   @IsOptional()
-  specialties?: string[];
+  specialty?: string;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  page?: number = 1;
+
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  @Max(100)
+  limit?: number = 10;
 }
