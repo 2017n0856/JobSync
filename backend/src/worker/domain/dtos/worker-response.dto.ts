@@ -1,7 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Country } from '../../../common/enums/country.enum';
 import { Currency } from '../../../common/enums/currency.enum';
-import { Specialty } from '../../../common/enums/specialty.enum';
 
 export class WorkerResponseDto {
   @ApiProperty({ description: 'Worker ID', example: 1 })
@@ -59,11 +58,10 @@ export class WorkerResponseDto {
 
   @ApiPropertyOptional({
     description: 'Worker specialties/skills',
-    enum: Specialty,
     isArray: true,
-    example: [Specialty.FINANCE, Specialty.ANALYSIS],
+    example: ['FINANCE', 'ANALYSIS'],
   })
-  specialties?: Specialty[];
+  specialties?: string[];
 
   static example(): WorkerResponseDto {
     return {
@@ -79,7 +77,7 @@ export class WorkerResponseDto {
         name: 'University of Melbourne',
       },
       metadata: { experience: '5 years', education: 'Masters Degree' },
-      specialties: [Specialty.FINANCE, Specialty.ANALYSIS],
+      specialties: ['FINANCE', 'ANALYSIS'],
     };
   }
 }

@@ -1,6 +1,5 @@
 import { IsOptional, IsString, IsEnum, IsArray } from 'class-validator';
 import { Country } from '../../../common/enums/country.enum';
-import { Specialty } from '../../../common/enums/specialty.enum';
 
 export class GetWorkerQueryDto {
   @IsString()
@@ -16,7 +15,6 @@ export class GetWorkerQueryDto {
   instituteName?: string;
 
   @IsArray()
-  @IsEnum(Specialty, { each: true })
   @IsOptional()
-  specialties?: Specialty[];
+  specialties?: string[];
 }

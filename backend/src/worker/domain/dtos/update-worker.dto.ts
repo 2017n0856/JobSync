@@ -12,7 +12,6 @@ import {
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Country } from '../../../common/enums/country.enum';
 import { Currency } from '../../../common/enums/currency.enum';
-import { Specialty } from '../../../common/enums/specialty.enum';
 import { IsPhoneNumber } from '../../../common/validators/phone.validator';
 
 export class UpdateWorkerDto {
@@ -82,12 +81,10 @@ export class UpdateWorkerDto {
 
   @ApiPropertyOptional({
     description: 'Worker specialties/skills',
-    enum: Specialty,
     isArray: true,
-    example: [Specialty.FINANCE, Specialty.ANALYSIS],
+    example: ['FINANCE', 'ANALYSIS'],
   })
   @IsArray()
-  @IsEnum(Specialty, { each: true })
   @IsOptional()
-  specialties?: Specialty[];
+  specialties?: string[];
 }

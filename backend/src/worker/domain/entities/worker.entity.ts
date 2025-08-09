@@ -18,7 +18,6 @@ import {
 } from 'class-validator';
 import { Country } from '../../../common/enums/country.enum';
 import { Currency } from '../../../common/enums/currency.enum';
-import { Specialty } from '../../../common/enums/specialty.enum';
 import { Institute } from '../../../institutes/domain/entities/institute.entity';
 import { IsPhoneNumber } from '../../../common/validators/phone.validator';
 
@@ -71,9 +70,8 @@ export class Worker {
 
   @Column({ type: 'simple-array', nullable: true })
   @IsArray()
-  @IsEnum(Specialty, { each: true })
   @IsOptional()
-  specialties?: Specialty[];
+  specialties?: string[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
