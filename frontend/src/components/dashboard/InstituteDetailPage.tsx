@@ -5,6 +5,7 @@ import { ArrowLeftOutlined, BankOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { instituteService } from '../../services/instituteService'
 import { Institute } from '../../types/institute'
+import { notificationService } from '../../utils/notification'
 
 const { Title, Text } = Typography
 
@@ -40,10 +41,14 @@ export default function InstituteDetailPage() {
       
       try {
         setLoading(true)
+        console.log('Fetching institute with ID:', id)
         const data = await instituteService.getInstituteById(parseInt(id))
+        console.log('Institute data received:', data)
         setInstitute(data)
       } catch (err) {
+        console.error('Error fetching institute:', err)
         setError('Failed to load institute details')
+        notificationService.apiError('Failed to load institute details')
       } finally {
         setLoading(false)
       }
@@ -53,7 +58,7 @@ export default function InstituteDetailPage() {
   }, [id])
 
   const handleBack = () => {
-    navigate('/institutes')
+    navigate('/dashboard/institutes')
   }
 
   const formatDate = (dateString: string) => {

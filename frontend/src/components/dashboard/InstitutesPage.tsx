@@ -8,16 +8,24 @@ import {
   Input, 
   Alert,
   Tag,
-  Tooltip
+  Tooltip,
+  Modal,
+  Input as AntInput,
+  Space
 } from 'antd'
 import { 
   PlusOutlined, 
   SearchOutlined,
-  EyeOutlined 
+  EyeOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  CheckOutlined,
+  CloseOutlined
 } from '@ant-design/icons'
 import styled from 'styled-components'
-import { instituteService } from '../../services/instituteService'
+import { instituteService, UpdateInstituteData } from '../../services/instituteService'
 import { Institute, InstituteFilters } from '../../types/institute'
+import { notificationService } from '../../utils/notification'
 
 const { Title, Text } = Typography
 const { Search } = Input
@@ -57,6 +65,10 @@ export default function InstitutesPage() {
     pageSize: 10,
     total: 0,
   })
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editingData, setEditingData] = useState<{ name: string; country: string }>({ name: '', country: '' })
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   const fetchInstitutes = async (filterParams: InstituteFilters = filters) => {
     try {
@@ -70,6 +82,7 @@ export default function InstitutesPage() {
       })
     } catch (err) {
       setError('Failed to load institutes')
+      notificationService.apiError('Failed to load institutes')
     } finally {
       setLoading(false)
     }
@@ -102,65 +115,166 @@ export default function InstitutesPage() {
   }
 
   const handleInstituteClick = (id: number) => {
-    navigate(`/institutes/${id}`)
+    navigate(`/dashboard/institutes/${id}`)
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+  const handleEdit = (record: Institute) => {
+    setEditingId(record.id)
+    setEditingData({ name: record.name, country: record.country || '' })
   }
+
+  const handleEditCancel = () => {
+    setEditingId(null)
+    setEditingData({ name: '', country: '' })
+  }
+
+  const handleEditSave = async () => {
+    if (!editingId) return
+
+    try {
+      const updateData: UpdateInstituteData = {}
+      if (editingData.name) updateData.name = editingData.name
+      if (editingData.country) updateData.country = editingData.country
+
+      await instituteService.updateInstitute(editingId, updateData)
+      notificationService.updateSuccess('Institute')
+      setEditingId(null)
+      setEditingData({ name: '', country: '' })
+      fetchInstitutes()
+    } catch (err) {
+      notificationService.updateError('Institute')
+    }
+  }
+
+  const handleDelete = (record: Institute) => {
+    setDeletingId(record.id)
+    setDeleteModalVisible(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!deletingId) return
+
+    try {
+      await instituteService.deleteInstitute(deletingId)
+      notificationService.deleteSuccess('Institute')
+      setDeleteModalVisible(false)
+      setDeletingId(null)
+      fetchInstitutes()
+    } catch (err) {
+      notificationService.deleteError('Institute')
+    }
+  }
+
+
 
   const columns = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 80,
-      render: (id: number) => <Tag color="blue">{id}</Tag>,
+      title: '#',
+      key: 'serial',
+      width: 60,
+      render: (_: any, __: Institute, index: number) => {
+        const currentPage = pagination.current
+        const pageSize = pagination.pageSize
+        return <Tag color="blue">{((currentPage - 1) * pageSize) + index + 1}</Tag>
+      },
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (name: string, record: Institute) => (
-        <Button 
-          type="link" 
-          onClick={() => handleInstituteClick(record.id)}
-          style={{ padding: 0, height: 'auto' }}
-        >
-          {name}
-        </Button>
-      ),
+      render: (name: string, record: Institute) => {
+        if (editingId === record.id) {
+          return (
+            <AntInput
+              value={editingData.name}
+              onChange={(e) => setEditingData({ ...editingData, name: e.target.value })}
+              size="small"
+            />
+          )
+        }
+        return (
+          <Button 
+            type="link" 
+            onClick={() => handleInstituteClick(record.id)}
+            style={{ padding: 0, height: 'auto' }}
+          >
+            {name}
+          </Button>
+        )
+      },
     },
     {
       title: 'Country',
       dataIndex: 'country',
       key: 'country',
-      render: (country: string) => 
-        country ? <Tag color="green">{country}</Tag> : <Text type="secondary">-</Text>,
-    },
-    {
-      title: 'Created',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: (date: string) => formatDate(date),
+      render: (country: string, record: Institute) => {
+        if (editingId === record.id) {
+          return (
+            <AntInput
+              value={editingData.country}
+              onChange={(e) => setEditingData({ ...editingData, country: e.target.value })}
+              size="small"
+              placeholder="Enter country"
+            />
+          )
+        }
+        return country ? <Tag color="green">{country}</Tag> : <Text type="secondary">-</Text>
+      },
     },
     {
       title: 'Actions',
       key: 'actions',
-      width: 100,
-      render: (record: Institute) => (
-        <Tooltip title="View Details">
-          <Button
-            type="text"
-            icon={<EyeOutlined />}
-            onClick={() => handleInstituteClick(record.id)}
-          />
-        </Tooltip>
-      ),
+      width: 150,
+      render: (record: Institute) => {
+        if (editingId === record.id) {
+          return (
+            <Space size="small">
+              <Tooltip title="Save">
+                <Button
+                  type="text"
+                  icon={<CheckOutlined />}
+                  onClick={handleEditSave}
+                  style={{ color: '#52c41a' }}
+                />
+              </Tooltip>
+              <Tooltip title="Cancel">
+                <Button
+                  type="text"
+                  icon={<CloseOutlined />}
+                  onClick={handleEditCancel}
+                  style={{ color: '#ff4d4f' }}
+                />
+              </Tooltip>
+            </Space>
+          )
+        }
+        return (
+          <Space size="small">
+            <Tooltip title="View Details">
+              <Button
+                type="text"
+                icon={<EyeOutlined />}
+                onClick={() => handleInstituteClick(record.id)}
+              />
+            </Tooltip>
+            <Tooltip title="Edit">
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => handleEdit(record)}
+              />
+            </Tooltip>
+            <Tooltip title="Delete">
+              <Button
+                type="text"
+                icon={<DeleteOutlined />}
+                onClick={() => handleDelete(record)}
+                style={{ color: '#ff4d4f' }}
+              />
+            </Tooltip>
+          </Space>
+        )
+      },
     },
   ]
 
@@ -248,6 +362,21 @@ export default function InstitutesPage() {
           scroll={{ x: 800 }}
         />
       </Card>
+
+      <Modal
+        title="Confirm Delete"
+        open={deleteModalVisible}
+        onOk={confirmDelete}
+        onCancel={() => {
+          setDeleteModalVisible(false)
+          setDeletingId(null)
+        }}
+        okText="Delete"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+      >
+        <p>Are you sure you want to delete this institute? This action cannot be undone.</p>
+      </Modal>
     </div>
   )
 } 
