@@ -5,20 +5,11 @@ import {
   Typography, 
   Button, 
   Table, 
-  Input, 
-  Tag,
-  Tooltip,
-  Modal,
-  Input as AntInput,
-  Space
+  Input
 } from 'antd'
 import { 
   PlusOutlined, 
-  SearchOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  CheckOutlined,
-  CloseOutlined
+  SearchOutlined
 } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useInstituteStore } from '../../store'
@@ -78,8 +69,6 @@ export default function InstitutesPage() {
     isLoading,
     error,
     fetchInstitutes,
-    updateInstitute,
-    deleteInstitute,
     clearError
   } = useInstituteStore()
 
@@ -88,10 +77,6 @@ export default function InstitutesPage() {
     page: 1,
     limit: 10,
   })
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [editingData, setEditingData] = useState<{ name: string; country: string }>({ name: '', country: '' })
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
-  const [deletingId, setDeletingId] = useState<number | null>(null)
   
   // Search input values
   const [nameSearchValue, setNameSearchValue] = useState('')
@@ -181,52 +166,7 @@ export default function InstitutesPage() {
   }
 
   const handleInstituteClick = (id: number) => {
-    navigate(`/dashboard/institutes/${id}`)
-  }
-
-  const handleEdit = (record: Institute) => {
-    setEditingId(record.id)
-    setEditingData({ name: record.name, country: record.country || '' })
-  }
-
-  const handleEditCancel = () => {
-    setEditingId(null)
-    setEditingData({ name: '', country: '' })
-  }
-
-  const handleEditSave = async () => {
-    if (!editingId) return
-
-    try {
-      const updateData: any = {}
-      if (editingData.name) updateData.name = editingData.name
-      if (editingData.country) updateData.country = editingData.country
-
-      await updateInstitute(editingId, updateData)
-      notificationService.updateSuccess('Institute')
-      setEditingId(null)
-      setEditingData({ name: '', country: '' })
-    } catch (err) {
-      notificationService.updateError('Institute')
-    }
-  }
-
-  const handleDelete = (record: Institute) => {
-    setDeletingId(record.id)
-    setDeleteModalVisible(true)
-  }
-
-  const confirmDelete = async () => {
-    if (!deletingId) return
-
-    try {
-      await deleteInstitute(deletingId)
-      notificationService.deleteSuccess('Institute')
-      setDeleteModalVisible(false)
-      setDeletingId(null)
-    } catch (err) {
-      notificationService.deleteError('Institute')
-    }
+    navigate(`/institutes/${id}`)
   }
 
 
@@ -240,9 +180,9 @@ export default function InstitutesPage() {
         const currentPage = pagination.current
         const pageSize = pagination.pageSize
         return (
-          <Text>
+          <Typography.Text>
             {((currentPage - 1) * pageSize) + index + 1}
-          </Text>
+          </Typography.Text>
         )
       },
     },
@@ -250,96 +190,25 @@ export default function InstitutesPage() {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (name: string, record: Institute) => {
-        if (editingId === record.id) {
-          return (
-            <AntInput
-              value={editingData.name}
-              onChange={(e) => setEditingData({ ...editingData, name: e.target.value })}
-              size="small"
-            />
-          )
-        }
-        return (
-          <Button 
-            type="link" 
-            onClick={() => handleInstituteClick(record.id)}
-            style={{ padding: 0, height: 'auto', fontWeight: 'bold' }}
-          >
-            {name}
-          </Button>
-        )
-      },
+      render: (name: string, record: Institute) => (
+        <Button 
+          type="link" 
+          onClick={() => handleInstituteClick(record.id)}
+          style={{ padding: 0, height: 'auto', fontWeight: 'bold' }}
+        >
+          {name}
+        </Button>
+      ),
     },
     {
       title: 'Country',
       dataIndex: 'country',
       key: 'country',
-      render: (country: string, record: Institute) => {
-        if (editingId === record.id) {
-          return (
-            <AntInput
-              value={editingData.country}
-              onChange={(e) => setEditingData({ ...editingData, country: e.target.value })}
-              size="small"
-              placeholder="Enter country"
-            />
-          )
-        }
-        return (
-          <Text>
-            {country || '-'}
-          </Text>
-        )
-      },
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
-      width: 120,
-      render: (record: Institute) => {
-        if (editingId === record.id) {
-          return (
-            <Space size="small">
-              <Tooltip title="Save">
-                <Button
-                  type="text"
-                  icon={<CheckOutlined />}
-                  onClick={handleEditSave}
-                  style={{ color: '#52c41a' }}
-                />
-              </Tooltip>
-              <Tooltip title="Cancel">
-                <Button
-                  type="text"
-                  icon={<CloseOutlined />}
-                  onClick={handleEditCancel}
-                  style={{ color: '#ff4d4f' }}
-                />
-              </Tooltip>
-            </Space>
-          )
-        }
-        return (
-          <Space size="small">
-            <Tooltip title="Edit">
-              <Button
-                type="text"
-                icon={<EditOutlined />}
-                onClick={() => handleEdit(record)}
-              />
-            </Tooltip>
-            <Tooltip title="Delete">
-              <Button
-                type="text"
-                icon={<DeleteOutlined />}
-                onClick={() => handleDelete(record)}
-                style={{ color: '#ff4d4f' }}
-              />
-            </Tooltip>
-          </Space>
-        )
-      },
+      render: (country: string) => (
+        <Typography.Text>
+          {country || '-'}
+        </Typography.Text>
+      ),
     },
   ]
 
@@ -404,21 +273,6 @@ export default function InstitutesPage() {
           scroll={{ x: 800 }}
         />
       </Card>
-
-      <Modal
-        title="Confirm Delete"
-        open={deleteModalVisible}
-        onOk={confirmDelete}
-        onCancel={() => {
-          setDeleteModalVisible(false)
-          setDeletingId(null)
-        }}
-        okText="Delete"
-        cancelText="Cancel"
-        okButtonProps={{ danger: true }}
-      >
-        <p>Are you sure you want to delete this institute? This action cannot be undone.</p>
-      </Modal>
     </div>
   )
 } 

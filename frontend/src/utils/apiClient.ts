@@ -46,14 +46,14 @@ class ApiClient {
         const error = new Error(errorData.message || `HTTP error! status: ${response.status}`)
         ;(error as any).status = response.status
         
-        handleApiError(error)
+        handleApiError(error, undefined, options.method)
         throw error
       }
 
       return response.json()
     } catch (error) {
       if (error instanceof Error) {
-        handleApiError(error)
+        handleApiError(error, undefined, options.method)
       }
       throw error
     }

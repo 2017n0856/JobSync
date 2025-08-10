@@ -3,7 +3,6 @@ import {
   IsOptional,
   MinLength,
   MaxLength,
-  IsJSON,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -38,6 +37,5 @@ export class UpdateInstituteDto {
     example: { founded: 1636, type: 'University', accreditation: 'Regional' },
   })
   @IsOptional()
-  @IsJSON()
   metadata?: Record<string, any>;
 }

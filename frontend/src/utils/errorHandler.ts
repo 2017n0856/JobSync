@@ -5,8 +5,13 @@ import { notificationService } from './notification'
 let lastErrorNotification: string | null = null
 let lastErrorTime: number = 0
 
-export const handleApiError = (error: any, currentPath?: string) => {
+export const handleApiError = (error: any, currentPath?: string, operation?: string) => {
   console.error('API Error:', error)
+
+  // Don't show notifications for 409 Conflict - let components handle these
+  if (error.status === 409) {
+    return
+  }
 
   // Create a unique error identifier
   const errorId = `${error.status || 'unknown'}-${error.message || 'unknown'}`
@@ -19,6 +24,11 @@ export const handleApiError = (error: any, currentPath?: string) => {
   
   lastErrorNotification = errorId
   lastErrorTime = currentTime
+
+  // Don't show notifications for CRUD operations (PUT, DELETE) - let components handle these
+  if (operation === 'PUT' || operation === 'DELETE') {
+    return
+  }
 
   if (error.message?.includes('401') || error.status === 401) {
     const logout = useAuthStore.getState().logout

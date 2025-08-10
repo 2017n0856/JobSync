@@ -55,7 +55,7 @@ export const useClientStore = create<ClientState>()(
         } catch (error) {
           // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
-          if (status && [401, 403, 404, 500].includes(status)) {
+          if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
             // Re-throw the error so the component can handle it
             throw error

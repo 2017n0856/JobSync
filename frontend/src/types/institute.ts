@@ -2,7 +2,7 @@ export interface Institute {
   id: number
   name: string
   country?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, any> | string
   createdAt: string
   updatedAt: string
 }
