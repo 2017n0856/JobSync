@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   Card, 
@@ -15,7 +15,6 @@ import {
 import { 
   PlusOutlined, 
   SearchOutlined,
-  EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   CheckOutlined,
@@ -50,6 +49,23 @@ const FilterRow = styled.div`
   flex-wrap: wrap;
 `
 
+// Debounce hook for search
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
 export default function InstitutesPage() {
   const navigate = useNavigate()
   
@@ -76,6 +92,14 @@ export default function InstitutesPage() {
   const [editingData, setEditingData] = useState<{ name: string; country: string }>({ name: '', country: '' })
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
+  
+  // Search input values
+  const [nameSearchValue, setNameSearchValue] = useState('')
+  const [countrySearchValue, setCountrySearchValue] = useState('')
+  
+  // Debounced search values
+  const debouncedNameSearch = useDebounce(nameSearchValue, 800)
+  const debouncedCountrySearch = useDebounce(countrySearchValue, 800)
 
   // Pagination state derived from store
   const pagination = {
@@ -83,6 +107,18 @@ export default function InstitutesPage() {
     pageSize: limit,
     total: total,
   }
+
+  // Fetch institutes when debounced search values change
+  useEffect(() => {
+    const newFilters = {
+      ...filters,
+      name: debouncedNameSearch || undefined,
+      country: debouncedCountrySearch || undefined,
+      page: 1, // Reset to first page when searching
+    }
+    setFilters(newFilters)
+    fetchInstitutes(newFilters)
+  }, [debouncedNameSearch, debouncedCountrySearch])
 
   // Fetch institutes only if not already loaded or if filters changed
   useEffect(() => {
@@ -98,14 +134,41 @@ export default function InstitutesPage() {
     }
   }, [clearError])
 
-  const handleNameFilter = (value: string) => {
-    const newFilters = { ...filters, name: value || undefined, page: 1 }
-    setFilters(newFilters)
+  // Show error notification instead of Alert component
+  useEffect(() => {
+    if (error) {
+      notificationService.apiError('Failed to load institutes', error)
+    }
+  }, [error])
+
+  const handleNameSearchChange = (value: string) => {
+    setNameSearchValue(value)
+    
+    // If field is cleared, immediately trigger search
+    if (!value) {
+      const newFilters = {
+        ...filters,
+        name: undefined,
+        page: 1,
+      }
+      setFilters(newFilters)
+      fetchInstitutes(newFilters)
+    }
   }
 
-  const handleCountryFilter = (value: string) => {
-    const newFilters = { ...filters, country: value || undefined, page: 1 }
-    setFilters(newFilters)
+  const handleCountrySearchChange = (value: string) => {
+    setCountrySearchValue(value)
+    
+    // If field is cleared, immediately trigger search
+    if (!value) {
+      const newFilters = {
+        ...filters,
+        country: undefined,
+        page: 1,
+      }
+      setFilters(newFilters)
+      fetchInstitutes(newFilters)
+    }
   }
 
   const handleTableChange = (pagination: any) => {
@@ -176,7 +239,11 @@ export default function InstitutesPage() {
       render: (_: any, __: Institute, index: number) => {
         const currentPage = pagination.current
         const pageSize = pagination.pageSize
-        return <Tag color="blue">{((currentPage - 1) * pageSize) + index + 1}</Tag>
+        return (
+          <Text>
+            {((currentPage - 1) * pageSize) + index + 1}
+          </Text>
+        )
       },
     },
     {
@@ -197,7 +264,7 @@ export default function InstitutesPage() {
           <Button 
             type="link" 
             onClick={() => handleInstituteClick(record.id)}
-            style={{ padding: 0, height: 'auto' }}
+            style={{ padding: 0, height: 'auto', fontWeight: 'bold' }}
           >
             {name}
           </Button>
@@ -219,13 +286,17 @@ export default function InstitutesPage() {
             />
           )
         }
-        return country ? <Tag color="green">{country}</Tag> : <Text type="secondary">-</Text>
+        return (
+          <Text>
+            {country || '-'}
+          </Text>
+        )
       },
     },
     {
       title: 'Actions',
       key: 'actions',
-      width: 150,
+      width: 120,
       render: (record: Institute) => {
         if (editingId === record.id) {
           return (
@@ -251,13 +322,6 @@ export default function InstitutesPage() {
         }
         return (
           <Space size="small">
-            <Tooltip title="View Details">
-              <Button
-                type="text"
-                icon={<EyeOutlined />}
-                onClick={() => handleInstituteClick(record.id)}
-              />
-            </Tooltip>
             <Tooltip title="Edit">
               <Button
                 type="text"
@@ -279,13 +343,6 @@ export default function InstitutesPage() {
     },
   ]
 
-  // Show error notification instead of Alert component
-  useEffect(() => {
-    if (error) {
-      notificationService.apiError('Failed to load institutes', error)
-    }
-  }, [error])
-
   return (
     <div>
       <PageHeader>
@@ -306,10 +363,10 @@ export default function InstitutesPage() {
             <Text strong style={{ display: 'block', marginBottom: 4 }}>
               Filter by Name
             </Text>
-            <Search
+            <Input
               placeholder="Search institutes by name..."
               allowClear
-              onSearch={handleNameFilter}
+              onChange={(e) => handleNameSearchChange(e.target.value)}
               style={{ width: 250 }}
               prefix={<SearchOutlined />}
             />
@@ -318,10 +375,10 @@ export default function InstitutesPage() {
             <Text strong style={{ display: 'block', marginBottom: 4 }}>
               Filter by Country
             </Text>
-            <Search
+            <Input
               placeholder="Search institutes by country..."
               allowClear
-              onSearch={handleCountryFilter}
+              onChange={(e) => handleCountrySearchChange(e.target.value)}
               style={{ width: 250 }}
               prefix={<SearchOutlined />}
             />
@@ -335,6 +392,7 @@ export default function InstitutesPage() {
           dataSource={institutes}
           rowKey="id"
           loading={isLoading}
+          bordered
           pagination={{
             ...pagination,
             showSizeChanger: true,
