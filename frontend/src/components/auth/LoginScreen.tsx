@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { Form, Input, Button, Card, Typography } from 'antd'
 import { UserOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useAuthStore } from '../../store/authStore'
 import { getApiUrl, API_ENDPOINTS } from '../../constants/api'
+import { useAuthRedirect } from '../../hooks/useAuthRedirect'
 
 const { Title, Text } = Typography
 
@@ -33,7 +34,18 @@ const StyledForm = styled(Form)`
 export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const login = useAuthStore((state) => state.login)
+  const setRedirectUrl = useAuthStore((state) => state.setRedirectUrl)
+
+  useAuthRedirect()
+
+  useEffect(() => {
+    const redirect = searchParams.get('redirect')
+    if (redirect) {
+      setRedirectUrl(redirect)
+    }
+  }, [searchParams, setRedirectUrl])
 
   const handleSubmit = async (values: { emailOrUsername: string; password: string }) => {
     setIsLoading(true)
@@ -49,7 +61,7 @@ export default function LoginScreen() {
 
       if (response.ok) {
         const data = await response.json()
-        login(data.user, data.access_token)
+        login(data.user, data.accessToken)
         navigate('/dashboard')
       } else {
         const errorData = await response.json()

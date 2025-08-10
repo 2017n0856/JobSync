@@ -11,14 +11,21 @@ import InstitutesPage from './components/dashboard/InstitutesPage'
 import InstituteDetailPage from './components/dashboard/InstituteDetailPage'
 import StatsPage from './components/dashboard/StatsPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
+import ErrorBoundaryWrapper from './components/common/ErrorBoundary'
+import AuthInitializer from './components/common/AuthInitializer'
+import { useTokenValidation } from './hooks/useTokenValidation'
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  
+  useTokenValidation()
 
   return (
-    <Router>
-      <div className="App">
-        <Routes>
+    <ErrorBoundaryWrapper>
+      <AuthInitializer />
+      <Router>
+        <div className="App">
+          <Routes>
           <Route
             path="/login"
             element={
@@ -56,6 +63,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </ErrorBoundaryWrapper>
   )
 }
 
