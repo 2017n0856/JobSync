@@ -66,13 +66,13 @@ export class AuthService {
     let user: User | null = null;
 
     // Try to find by email first
-    if (loginDto.emailOrUsername.includes('@')) {
-      user = await this.userRepository.findByEmail(loginDto.emailOrUsername);
+    if (loginDto.email.includes('@')) {
+      user = await this.userRepository.findByEmail(loginDto.email);
     }
 
     // If not found by email, try by username
     if (!user) {
-      user = await this.userRepository.findByUsername(loginDto.emailOrUsername);
+      user = await this.userRepository.findByUsername(loginDto.email);
     }
 
     if (!user) {
