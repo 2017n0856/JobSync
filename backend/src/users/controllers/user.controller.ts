@@ -21,10 +21,13 @@ import { UserService } from '../services/user.service';
 import { UpdatePasswordDto } from '../domain/dtos/update-password.dto';
 import { UserResponseType } from '../domain/types/user-response.type';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { HttpMethodGuard } from '../../common/guards/http-method.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../domain/enums/role.enum';
 
 @ApiTags('User')
 @Controller('user')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, HttpMethodGuard)
 @ApiBearerAuth()
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -72,6 +75,7 @@ export class UserController {
 
   @Put(':id/password')
   @HttpCode(HttpStatus.OK)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @ApiOperation({ summary: 'Update user password' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({
@@ -99,6 +103,7 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Delete user by ID' })
   @ApiParam({ name: 'id', description: 'User ID' })
   @ApiResponse({
@@ -120,6 +125,7 @@ export class UserController {
 
   @Delete('username/:username')
   @HttpCode(HttpStatus.OK)
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Delete user by username' })
   @ApiParam({ name: 'username', description: 'Username' })
   @ApiResponse({

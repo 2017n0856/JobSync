@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { TaskService } from '../services/task.service';
 import { CreateTaskDto } from '../domain/dtos/create-task.dto';
@@ -22,13 +24,20 @@ import { UpdateTaskDto } from '../domain/dtos/update-task.dto';
 import { GetTaskQueryDto } from '../domain/dtos/get-tasks-query.dto';
 import { TaskResponseDto } from '../domain/dtos/task-response.dto';
 import { Task } from '../domain/entities/task.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { HttpMethodGuard } from '../../common/guards/http-method.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../users/domain/enums/role.enum';
 
 @ApiTags('Task')
+@ApiBearerAuth()
 @Controller('task')
+@UseGuards(JwtAuthGuard, HttpMethodGuard)
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Create a new task' })
   @ApiResponse({
     status: 201,
@@ -138,6 +147,7 @@ export class TaskController {
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN, Role.EDITOR)
   @ApiOperation({ summary: 'Update a task by ID' })
   @ApiParam({ name: 'id', description: 'Task ID' })
   @ApiResponse({
@@ -155,6 +165,7 @@ export class TaskController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Delete a task by ID' })
   @ApiParam({ name: 'id', description: 'Task ID' })
   @ApiResponse({ status: 200, description: 'Task deleted successfully' })

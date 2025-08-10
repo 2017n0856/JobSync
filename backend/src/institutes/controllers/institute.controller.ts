@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,20 +18,28 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { InstituteService } from '../services/institute.service';
 import { CreateInstituteDto } from '../domain/dtos/create-institute.dto';
 import { UpdateInstituteDto } from '../domain/dtos/update-institute.dto';
 import { InstituteResponseDto } from '../domain/dtos/institute-response.dto';
 import { GetInstitutesQueryDto } from '../domain/dtos/get-institutes-query.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { HttpMethodGuard } from '../../common/guards/http-method.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../users/domain/enums/role.enum';
 
 @ApiTags('Institute')
+@ApiBearerAuth()
 @Controller('institute')
+@UseGuards(JwtAuthGuard, HttpMethodGuard)
 export class InstituteController {
   constructor(private readonly instituteService: InstituteService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Create a new institute' })
   @ApiResponse({
     status: 201,
@@ -104,6 +113,7 @@ export class InstituteController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
+  @Roles(Role.ADMIN, Role.EDITOR)
   @ApiOperation({ summary: 'Update institute by ID' })
   @ApiParam({ name: 'id', description: 'Institute ID' })
   @ApiResponse({
@@ -125,6 +135,7 @@ export class InstituteController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Delete institute by ID' })
   @ApiParam({ name: 'id', description: 'Institute ID' })
   @ApiResponse({ status: 200, description: 'Institute deleted successfully' })

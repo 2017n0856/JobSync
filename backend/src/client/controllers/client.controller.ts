@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ClientService } from '../services/client.service';
 import { CreateClientDto } from '../domain/dtos/create-client.dto';
@@ -22,13 +24,20 @@ import { UpdateClientDto } from '../domain/dtos/update-client.dto';
 import { GetClientQueryDto } from '../domain/dtos/get-clients-query.dto';
 import { ClientResponseDto } from '../domain/dtos/client-response.dto';
 import { Client } from '../domain/entities/client.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { HttpMethodGuard } from '../../common/guards/http-method.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../users/domain/enums/role.enum';
 
 @ApiTags('Client')
+@ApiBearerAuth()
 @Controller('client')
+@UseGuards(JwtAuthGuard, HttpMethodGuard)
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a new client',
     description:
@@ -139,6 +148,7 @@ export class ClientController {
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN, Role.EDITOR)
   @ApiOperation({
     summary: 'Update a client by ID',
     description:
@@ -170,6 +180,7 @@ export class ClientController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a client by ID',
     description: 'Permanently deletes a client and all associated data.',

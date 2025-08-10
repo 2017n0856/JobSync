@@ -8,6 +8,7 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { WorkerService } from '../services/worker.service';
@@ -23,13 +25,20 @@ import { UpdateWorkerDto } from '../domain/dtos/update-worker.dto';
 import { GetWorkerQueryDto } from '../domain/dtos/get-workers-query.dto';
 import { WorkerResponseDto } from '../domain/dtos/worker-response.dto';
 import { Worker } from '../domain/entities/worker.entity';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { HttpMethodGuard } from '../../common/guards/http-method.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '../../users/domain/enums/role.enum';
 
 @ApiTags('Worker')
+@ApiBearerAuth()
 @Controller('worker')
+@UseGuards(JwtAuthGuard, HttpMethodGuard)
 export class WorkerController {
   constructor(private readonly workerService: WorkerService) {}
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Create a new worker',
     description:
@@ -146,6 +155,7 @@ export class WorkerController {
   }
 
   @Put(':id')
+  @Roles(Role.ADMIN, Role.EDITOR)
   @ApiOperation({
     summary: 'Update a worker by ID',
     description:
@@ -177,6 +187,7 @@ export class WorkerController {
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Delete a worker by ID',
     description: 'Permanently deletes a worker and all associated data.',
