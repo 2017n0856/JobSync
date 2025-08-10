@@ -8,6 +8,7 @@ import {
   Max,
   IsIn,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { TaskType } from '../../../common/enums/task-type.enum';
 
 export class GetTaskQueryDto {
@@ -47,13 +48,15 @@ export class GetTaskQueryDto {
   @IsOptional()
   taskType?: TaskType;
 
-  @IsNumber()
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   @Min(1)
   page?: number = 1;
 
-  @IsNumber()
   @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
   @Min(1)
   @Max(100)
   limit?: number = 10;

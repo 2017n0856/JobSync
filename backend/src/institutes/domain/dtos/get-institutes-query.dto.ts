@@ -1,5 +1,6 @@
 import { IsOptional, IsString, MinLength, MaxLength, IsNumber, Min, Max } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 
 export class GetInstitutesQueryDto {
   @ApiProperty({
@@ -35,6 +36,7 @@ export class GetInstitutesQueryDto {
     minimum: 1,
   })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(1)
   page?: number = 1;
@@ -47,6 +49,7 @@ export class GetInstitutesQueryDto {
     maximum: 100,
   })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(1)
   @Max(100)

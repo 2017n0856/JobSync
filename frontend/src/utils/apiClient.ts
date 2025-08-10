@@ -1,5 +1,6 @@
 import { tokenManager } from './tokenManager'
 import { handleApiError } from './errorHandler'
+import { formatQueryParams } from './queryParams'
 
 class ApiClient {
   private baseURL: string
@@ -24,11 +25,10 @@ class ApiClient {
     let url = `${this.baseURL}${endpoint}`
     
     if (params) {
+      const formattedParams = formatQueryParams(params)
       const searchParams = new URLSearchParams()
-      Object.keys(params).forEach(key => {
-        if (params[key] !== undefined && params[key] !== null) {
-          searchParams.append(key, params[key].toString())
-        }
+      Object.keys(formattedParams).forEach(key => {
+        searchParams.append(key, formattedParams[key].toString())
       })
       url += `?${searchParams.toString()}`
     }
