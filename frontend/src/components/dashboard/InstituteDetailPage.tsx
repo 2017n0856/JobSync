@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Card, Typography, Button, Descriptions, Spin, Alert, Tag } from 'antd'
+import { Card, Typography, Button, Descriptions, Spin, Tag } from 'antd'
 import { ArrowLeftOutlined, BankOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useInstituteStore } from '../../store'
@@ -54,6 +54,13 @@ export default function InstituteDetailPage() {
     fetchInstituteById(instituteId)
   }, [id, currentInstitute, fetchInstituteById])
 
+  // Show error notification instead of Alert component
+  useEffect(() => {
+    if (error) {
+      notificationService.apiError('Failed to load institute details', error)
+    }
+  }, [error])
+
   // Clear error when component unmounts
   useEffect(() => {
     return () => {
@@ -83,24 +90,6 @@ export default function InstituteDetailPage() {
     )
   }
 
-  if (error) {
-    return (
-      <div>
-        <PageHeader>
-          <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-            Back to Institutes
-          </Button>
-        </PageHeader>
-        <Alert
-          message="Error"
-          description={error}
-          type="error"
-          showIcon
-        />
-      </div>
-    )
-  }
-
   if (!currentInstitute) {
     return (
       <div>
@@ -109,12 +98,9 @@ export default function InstituteDetailPage() {
             Back to Institutes
           </Button>
         </PageHeader>
-        <Alert
-          message="Not Found"
-          description="Institute not found"
-          type="warning"
-          showIcon
-        />
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Text type="secondary">Institute not found</Text>
+        </div>
       </div>
     )
   }

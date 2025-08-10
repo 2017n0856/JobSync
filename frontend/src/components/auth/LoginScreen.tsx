@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { useAuthStore } from '../../store/authStore'
 import { getApiUrl, API_ENDPOINTS } from '../../constants/api'
 import { useAuthRedirect } from '../../hooks/useAuthRedirect'
+import { notificationService } from '../../utils/notification'
 
 const { Title, Text } = Typography
 
@@ -65,10 +66,16 @@ export default function LoginScreen() {
         navigate('/dashboard')
       } else {
         const errorData = await response.json()
-        alert(errorData.message || 'Login failed. Please check your credentials.')
+        notificationService.error({
+          message: 'Login Failed',
+          description: errorData.message || 'Please check your credentials and try again.'
+        })
       }
     } catch (error) {
-      alert('An error occurred. Please try again.')
+      notificationService.error({
+        message: 'Connection Error',
+        description: 'An error occurred. Please check your connection and try again.'
+      })
     } finally {
       setIsLoading(false)
     }

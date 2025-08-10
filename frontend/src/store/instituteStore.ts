@@ -53,10 +53,20 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to fetch institutes',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to fetch institutes',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -69,10 +79,20 @@ export const useInstituteStore = create<InstituteState>()(
             isLoadingDetail: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to fetch institute details',
-            isLoadingDetail: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoadingDetail: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to fetch institute details',
+              isLoadingDetail: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -96,10 +116,20 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to update institute',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to update institute',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -121,10 +151,20 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to delete institute',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to delete institute',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Card, Typography, Button, Table, Input, Alert, Tag, Space } from 'antd'
+import { Card, Typography, Button, Table, Input, Tag, Space } from 'antd'
 import { UserOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useClientStore } from '../../store'
@@ -54,6 +54,13 @@ export default function ClientsPage() {
       fetchClients(filters)
     }
   }, [clients.length, fetchClients, filters])
+
+  // Show error notification instead of Alert component
+  useEffect(() => {
+    if (error) {
+      notificationService.apiError('Failed to load clients', error)
+    }
+  }, [error])
 
   // Clear error when component unmounts
   useEffect(() => {
@@ -162,15 +169,7 @@ export default function ClientsPage() {
         </Button>
       </PageHeader>
 
-      {error && (
-        <Alert
-          message="Error"
-          description={error}
-          type="error"
-          showIcon
-          style={{ marginBottom: 16 }}
-        />
-      )}
+
 
       <FilterSection>
         <Search

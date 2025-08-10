@@ -53,10 +53,20 @@ export const useClientStore = create<ClientState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to fetch clients',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to fetch clients',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -69,10 +79,20 @@ export const useClientStore = create<ClientState>()(
             isLoadingDetail: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to fetch client details',
-            isLoadingDetail: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoadingDetail: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to fetch client details',
+              isLoadingDetail: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -86,10 +106,20 @@ export const useClientStore = create<ClientState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to create client',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to create client',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -113,10 +143,20 @@ export const useClientStore = create<ClientState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to update client',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to update client',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -138,10 +178,20 @@ export const useClientStore = create<ClientState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to delete client',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to delete client',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 

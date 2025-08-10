@@ -5,6 +5,7 @@ import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, EyeInvisibleOu
 import styled from 'styled-components'
 import { useAuthStore } from '../../store/authStore'
 import { getApiUrl, API_ENDPOINTS } from '../../constants/api'
+import { notificationService } from '../../utils/notification'
 
 const { Title, Text } = Typography
 
@@ -44,7 +45,10 @@ export default function SignupScreen() {
     confirmPassword: string 
   }) => {
     if (values.password !== values.confirmPassword) {
-      alert('Passwords do not match')
+      notificationService.error({
+        message: 'Password Mismatch',
+        description: 'Passwords do not match. Please try again.'
+      })
       return
     }
 
@@ -71,10 +75,16 @@ export default function SignupScreen() {
         navigate('/dashboard')
       } else {
         const errorData = await response.json()
-        alert(errorData.message || 'Signup failed. Please try again.')
+        notificationService.error({
+          message: 'Signup Failed',
+          description: errorData.message || 'Please check your information and try again.'
+        })
       }
     } catch (error) {
-      alert('An error occurred. Please try again.')
+      notificationService.error({
+        message: 'Connection Error',
+        description: 'An error occurred. Please check your connection and try again.'
+      })
     } finally {
       setIsLoading(false)
     }

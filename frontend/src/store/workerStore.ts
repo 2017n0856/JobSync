@@ -53,10 +53,20 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to fetch workers',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to fetch workers',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -69,10 +79,20 @@ export const useWorkerStore = create<WorkerState>()(
             isLoadingDetail: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to fetch worker details',
-            isLoadingDetail: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoadingDetail: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to fetch worker details',
+              isLoadingDetail: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -86,10 +106,20 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to create worker',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to create worker',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -113,10 +143,20 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to update worker',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to update worker',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 
@@ -138,10 +178,20 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          set({
-            error: error instanceof Error ? error.message : 'Failed to delete worker',
-            isLoading: false,
-          })
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to delete worker',
+              isLoading: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
         }
       },
 

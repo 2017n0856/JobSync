@@ -6,7 +6,6 @@ import {
   Button, 
   Table, 
   Input, 
-  Alert,
   Tag,
   Tooltip,
   Modal,
@@ -280,29 +279,12 @@ export default function InstitutesPage() {
     },
   ]
 
-  if (error) {
-    return (
-      <div>
-        <PageHeader>
-          <div>
-            <Title level={2}>Institutes</Title>
-            <Text type="secondary">
-              Manage educational and training institutes.
-            </Text>
-          </div>
-          <Button type="primary" icon={<PlusOutlined />} size="large">
-            Add Institute
-          </Button>
-        </PageHeader>
-        <Alert
-          message="Error"
-          description={error}
-          type="error"
-          showIcon
-        />
-      </div>
-    )
-  }
+  // Show error notification instead of Alert component
+  useEffect(() => {
+    if (error) {
+      notificationService.apiError('Failed to load institutes', error)
+    }
+  }, [error])
 
   return (
     <div>
