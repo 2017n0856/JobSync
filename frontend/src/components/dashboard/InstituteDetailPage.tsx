@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Card, Typography, Button, Descriptions, Spin, Alert, Tag } from 'antd'
 import { ArrowLeftOutlined, BankOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
-import { instituteService } from '../../services/instituteService'
+import { useInstituteStore } from '../../store'
 import { Institute } from '../../types/institute'
 import { notificationService } from '../../utils/notification'
 
@@ -31,34 +31,38 @@ const MetadataSection = styled.div`
 export default function InstituteDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [institute, setInstitute] = useState<Institute | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  
+  // Zustand store state
+  const {
+    currentInstitute,
+    isLoadingDetail,
+    error,
+    fetchInstituteById,
+    clearError
+  } = useInstituteStore()
 
   useEffect(() => {
-    const fetchInstitute = async () => {
-      if (!id) return
-      
-      try {
-        setLoading(true)
-        console.log('Fetching institute with ID:', id)
-        const data = await instituteService.getInstituteById(parseInt(id))
-        console.log('Institute data received:', data)
-        setInstitute(data)
-      } catch (err) {
-        console.error('Error fetching institute:', err)
-        setError('Failed to load institute details')
-        notificationService.apiError('Failed to load institute details')
-      } finally {
-        setLoading(false)
-      }
+    if (!id) return
+    
+    // Check if we already have this institute in the store
+    const instituteId = parseInt(id)
+    if (currentInstitute?.id === instituteId) {
+      return // Already loaded
     }
+    
+    // Fetch institute if not in store
+    fetchInstituteById(instituteId)
+  }, [id, currentInstitute, fetchInstituteById])
 
-    fetchInstitute()
-  }, [id])
+  // Clear error when component unmounts
+  useEffect(() => {
+    return () => {
+      clearError()
+    }
+  }, [clearError])
 
   const handleBack = () => {
-    navigate('/institutes')
+    navigate('/dashboard/institutes')
   }
 
   const formatDate = (dateString: string) => {
@@ -71,7 +75,7 @@ export default function InstituteDetailPage() {
     })
   }
 
-  if (loading) {
+  if (isLoadingDetail) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <Spin size="large" />
@@ -97,7 +101,7 @@ export default function InstituteDetailPage() {
     )
   }
 
-  if (!institute) {
+  if (!currentInstitute) {
     return (
       <div>
         <PageHeader>
@@ -123,7 +127,7 @@ export default function InstituteDetailPage() {
         </Button>
         <Title level={2} style={{ margin: 0 }}>
           <BankOutlined style={{ marginRight: 8 }} />
-          {institute.name}
+          {currentInstitute.name}
         </Title>
       </PageHeader>
 
@@ -134,31 +138,31 @@ export default function InstituteDetailPage() {
           column={{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
         >
           <Descriptions.Item label="ID">
-            <Tag color="blue">{institute.id}</Tag>
+            <Tag color="blue">{currentInstitute.id}</Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Name">
-            <Text strong>{institute.name}</Text>
+            <Text strong>{currentInstitute.name}</Text>
           </Descriptions.Item>
           <Descriptions.Item label="Country">
-            {institute.country ? (
-              <Tag color="green">{institute.country}</Tag>
+            {currentInstitute.country ? (
+              <Tag color="green">{currentInstitute.country}</Tag>
             ) : (
               <Text type="secondary">Not specified</Text>
             )}
           </Descriptions.Item>
           <Descriptions.Item label="Created">
-            {formatDate(institute.createdAt)}
+            {formatDate(currentInstitute.createdAt)}
           </Descriptions.Item>
           <Descriptions.Item label="Last Updated">
-            {formatDate(institute.updatedAt)}
+            {formatDate(currentInstitute.updatedAt)}
           </Descriptions.Item>
         </Descriptions>
 
-        {institute.metadata && Object.keys(institute.metadata).length > 0 && (
+        {currentInstitute.metadata && Object.keys(currentInstitute.metadata).length > 0 && (
           <MetadataSection>
             <Title level={4}>Additional Information</Title>
             <Descriptions bordered column={1}>
-              {Object.entries(institute.metadata).map(([key, value]) => (
+              {Object.entries(currentInstitute.metadata).map(([key, value]) => (
                 <Descriptions.Item key={key} label={key.charAt(0).toUpperCase() + key.slice(1)}>
                   {typeof value === 'object' ? (
                     <pre style={{ margin: 0, fontSize: '12px' }}>

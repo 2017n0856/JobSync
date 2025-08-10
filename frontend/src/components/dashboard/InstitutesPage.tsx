@@ -23,7 +23,7 @@ import {
   CloseOutlined
 } from '@ant-design/icons'
 import styled from 'styled-components'
-import { instituteService, UpdateInstituteData } from '../../services/instituteService'
+import { useInstituteStore } from '../../store'
 import { Institute, InstituteFilters } from '../../types/institute'
 import { notificationService } from '../../utils/notification'
 
@@ -53,55 +53,60 @@ const FilterRow = styled.div`
 
 export default function InstitutesPage() {
   const navigate = useNavigate()
-  const [institutes, setInstitutes] = useState<Institute[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  
+  // Zustand store state
+  const {
+    institutes,
+    total,
+    page,
+    limit,
+    isLoading,
+    error,
+    fetchInstitutes,
+    updateInstitute,
+    deleteInstitute,
+    clearError
+  } = useInstituteStore()
+
+  // Local state for UI interactions
   const [filters, setFilters] = useState<InstituteFilters>({
     page: 1,
     limit: 10,
-  })
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    total: 0,
   })
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editingData, setEditingData] = useState<{ name: string; country: string }>({ name: '', country: '' })
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
-  const fetchInstitutes = async (filterParams: InstituteFilters = filters) => {
-    try {
-      setLoading(true)
-      const response = await instituteService.getInstitutes(filterParams)
-      setInstitutes(response.institutes)
-      setPagination({
-        current: response.page,
-        pageSize: response.limit,
-        total: response.total,
-      })
-    } catch (err) {
-      setError('Failed to load institutes')
-      notificationService.apiError('Failed to load institutes')
-    } finally {
-      setLoading(false)
-    }
+  // Pagination state derived from store
+  const pagination = {
+    current: page,
+    pageSize: limit,
+    total: total,
   }
 
+  // Fetch institutes only if not already loaded or if filters changed
   useEffect(() => {
-    fetchInstitutes()
-  }, [])
+    if (institutes.length === 0 || filters.page !== page || filters.limit !== limit) {
+      fetchInstitutes(filters)
+    }
+  }, [filters, fetchInstitutes, institutes.length, page, limit])
+
+  // Clear error when component unmounts
+  useEffect(() => {
+    return () => {
+      clearError()
+    }
+  }, [clearError])
 
   const handleNameFilter = (value: string) => {
     const newFilters = { ...filters, name: value || undefined, page: 1 }
     setFilters(newFilters)
-    fetchInstitutes(newFilters)
   }
 
   const handleCountryFilter = (value: string) => {
     const newFilters = { ...filters, country: value || undefined, page: 1 }
     setFilters(newFilters)
-    fetchInstitutes(newFilters)
   }
 
   const handleTableChange = (pagination: any) => {
@@ -111,7 +116,6 @@ export default function InstitutesPage() {
       limit: pagination.pageSize 
     }
     setFilters(newFilters)
-    fetchInstitutes(newFilters)
   }
 
   const handleInstituteClick = (id: number) => {
@@ -132,15 +136,14 @@ export default function InstitutesPage() {
     if (!editingId) return
 
     try {
-      const updateData: UpdateInstituteData = {}
+      const updateData: any = {}
       if (editingData.name) updateData.name = editingData.name
       if (editingData.country) updateData.country = editingData.country
 
-      await instituteService.updateInstitute(editingId, updateData)
+      await updateInstitute(editingId, updateData)
       notificationService.updateSuccess('Institute')
       setEditingId(null)
       setEditingData({ name: '', country: '' })
-      fetchInstitutes()
     } catch (err) {
       notificationService.updateError('Institute')
     }
@@ -155,11 +158,10 @@ export default function InstitutesPage() {
     if (!deletingId) return
 
     try {
-      await instituteService.deleteInstitute(deletingId)
+      await deleteInstitute(deletingId)
       notificationService.deleteSuccess('Institute')
       setDeleteModalVisible(false)
       setDeletingId(null)
-      fetchInstitutes()
     } catch (err) {
       notificationService.deleteError('Institute')
     }
@@ -350,7 +352,7 @@ export default function InstitutesPage() {
           columns={columns}
           dataSource={institutes}
           rowKey="id"
-          loading={loading}
+          loading={isLoading}
           pagination={{
             ...pagination,
             showSizeChanger: true,

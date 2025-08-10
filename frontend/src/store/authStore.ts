@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
 import { tokenManager } from '../utils/tokenManager'
 
 interface User {
@@ -21,20 +22,27 @@ interface AuthState {
   clearRedirectUrl: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  redirectUrl: null,
-  login: (user: User, token: string, redirectUrl?: string) => {
-    tokenManager.setToken(token)
-    tokenManager.setUser(user)
-    set({ user, token, isAuthenticated: true, redirectUrl: redirectUrl || null })
-  },
-  logout: () => {
-    tokenManager.clearAll()
-    set({ user: null, token: null, isAuthenticated: false, redirectUrl: null })
-  },
-  setRedirectUrl: (url: string) => set({ redirectUrl: url }),
-  clearRedirectUrl: () => set({ redirectUrl: null }),
-})) 
+export const useAuthStore = create<AuthState>()(
+  devtools(
+    (set) => ({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      redirectUrl: null,
+      login: (user: User, token: string, redirectUrl?: string) => {
+        tokenManager.setToken(token)
+        tokenManager.setUser(user)
+        set({ user, token, isAuthenticated: true, redirectUrl: redirectUrl || null })
+      },
+      logout: () => {
+        tokenManager.clearAll()
+        set({ user: null, token: null, isAuthenticated: false, redirectUrl: null })
+      },
+      setRedirectUrl: (url: string) => set({ redirectUrl: url }),
+      clearRedirectUrl: () => set({ redirectUrl: null }),
+    }),
+    {
+      name: 'auth-store', // Name that will appear in the devtools
+    }
+  )
+) 

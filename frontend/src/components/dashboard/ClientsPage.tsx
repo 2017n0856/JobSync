@@ -1,8 +1,12 @@
-import { Card, Typography, Button, Empty } from 'antd'
-import { UserOutlined, PlusOutlined } from '@ant-design/icons'
+import { useState, useEffect } from 'react'
+import { Card, Typography, Button, Table, Input, Alert, Tag, Space } from 'antd'
+import { UserOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
+import { useClientStore } from '../../store'
+import { notificationService } from '../../utils/notification'
 
 const { Title, Text } = Typography
+const { Search } = Input
 
 const PageHeader = styled.div`
   display: flex;
@@ -11,13 +15,139 @@ const PageHeader = styled.div`
   margin-bottom: 24px;
 `
 
-const StyledCard = styled(Card)`
-  .ant-card-body {
-    padding: 48px;
-  }
+const FilterSection = styled.div`
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 6px;
 `
 
 export default function ClientsPage() {
+  // Zustand store state
+  const {
+    clients,
+    total,
+    page,
+    limit,
+    isLoading,
+    error,
+    fetchClients,
+    clearError
+  } = useClientStore()
+
+  // Local state for filters
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 10,
+  })
+
+  // Pagination state derived from store
+  const pagination = {
+    current: page,
+    pageSize: limit,
+    total: total,
+  }
+
+  // Fetch clients only if not already loaded
+  useEffect(() => {
+    if (clients.length === 0) {
+      fetchClients(filters)
+    }
+  }, [clients.length, fetchClients, filters])
+
+  // Clear error when component unmounts
+  useEffect(() => {
+    return () => {
+      clearError()
+    }
+  }, [clearError])
+
+  const handleNameFilter = (value: string) => {
+    const newFilters = { ...filters, name: value || undefined, page: 1 }
+    setFilters(newFilters)
+    fetchClients(newFilters)
+  }
+
+  const handleTableChange = (pagination: any) => {
+    const newFilters = { 
+      ...filters, 
+      page: pagination.current,
+      limit: pagination.pageSize 
+    }
+    setFilters(newFilters)
+    fetchClients(newFilters)
+  }
+
+  const columns = [
+    {
+      title: '#',
+      key: 'serial',
+      width: 60,
+      render: (_: any, __: any, index: number) => {
+        const currentPage = pagination.current
+        const pageSize = pagination.pageSize
+        return <Tag color="blue">{((currentPage - 1) * pageSize) + index + 1}</Tag>
+      },
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: (name: string) => (
+        <Text strong>{name}</Text>
+      ),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (email: string) => (
+        <Text copyable>{email}</Text>
+      ),
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
+      render: (phone: string) => (
+        phone ? <Text copyable>{phone}</Text> : <Text type="secondary">Not provided</Text>
+      ),
+    },
+    {
+      title: 'Country',
+      dataIndex: 'country',
+      key: 'country',
+      render: (country: string) => (
+        country ? <Tag color="green">{country}</Tag> : <Text type="secondary">Not specified</Text>
+      ),
+    },
+    {
+      title: 'Created',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (date: string) => (
+        <Text type="secondary">
+          {new Date(date).toLocaleDateString()}
+        </Text>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 120,
+      render: (record: any) => (
+        <Space>
+          <Button type="link" size="small">
+            View
+          </Button>
+          <Button type="link" size="small">
+            Edit
+          </Button>
+        </Space>
+      ),
+    },
+  ]
+
   return (
     <div>
       <PageHeader>
@@ -32,22 +162,43 @@ export default function ClientsPage() {
         </Button>
       </PageHeader>
 
-      <StyledCard>
-        <Empty
-          image={<UserOutlined style={{ fontSize: 64, color: '#d9d9d9' }} />}
-          description={
-            <span>
-              <Text type="secondary">No clients</Text>
-              <br />
-              <Text type="secondary">Get started by creating a new client.</Text>
-            </span>
-          }
-        >
-          <Button type="primary" icon={<PlusOutlined />}>
-            Add Client
-          </Button>
-        </Empty>
-      </StyledCard>
+      {error && (
+        <Alert
+          message="Error"
+          description={error}
+          type="error"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
+      <FilterSection>
+        <Search
+          placeholder="Search by name..."
+          allowClear
+          enterButton={<SearchOutlined />}
+          size="large"
+          onSearch={handleNameFilter}
+          style={{ maxWidth: 400 }}
+        />
+      </FilterSection>
+
+      <Card>
+        <Table
+          columns={columns}
+          dataSource={clients}
+          rowKey="id"
+          loading={isLoading}
+          pagination={{
+            ...pagination,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} of ${total} clients`,
+          }}
+          onChange={handleTableChange}
+        />
+      </Card>
     </div>
   )
 } 
