@@ -19,7 +19,7 @@ export const API_ENDPOINTS = {
     BASE: '/tasks',
   },
   INSTITUTES: {
-    BASE: '/institutes',
+    BASE: '/institute',
   },
 } as const
 

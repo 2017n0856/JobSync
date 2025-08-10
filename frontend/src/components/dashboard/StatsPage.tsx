@@ -1,4 +1,4 @@
-import { Row, Col, Card, Typography, Progress, Statistic } from 'antd'
+import { Row, Col, Card, Typography } from 'antd'
 import { BarChartOutlined, RiseOutlined, FallOutlined } from '@ant-design/icons'
 import styled from 'styled-components'
 

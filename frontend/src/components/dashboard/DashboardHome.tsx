@@ -3,10 +3,7 @@ import {
   UserOutlined, 
   TeamOutlined, 
   FileTextOutlined, 
-  BankOutlined,
-  PlusOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined
+  BankOutlined
 } from '@ant-design/icons'
 import styled from 'styled-components'
 

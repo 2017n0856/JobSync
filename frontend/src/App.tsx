@@ -8,6 +8,7 @@ import ClientsPage from './components/dashboard/ClientsPage'
 import WorkersPage from './components/dashboard/WorkersPage'
 import TasksPage from './components/dashboard/TasksPage'
 import InstitutesPage from './components/dashboard/InstitutesPage'
+import InstituteDetailPage from './components/dashboard/InstituteDetailPage'
 import StatsPage from './components/dashboard/StatsPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 
@@ -49,6 +50,7 @@ function App() {
             <Route path="workers" element={<WorkersPage />} />
             <Route path="tasks" element={<TasksPage />} />
             <Route path="institutes" element={<InstitutesPage />} />
+            <Route path="institutes/:id" element={<InstituteDetailPage />} />
             <Route path="stats" element={<StatsPage />} />
           </Route>
         </Routes>
