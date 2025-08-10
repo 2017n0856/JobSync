@@ -9,12 +9,12 @@ interface NotificationOptions {
 }
 
 class NotificationService {
-  private defaultDuration = 4.5
+  private defaultDuration = 2
 
   success(options: NotificationOptions) {
     notification.success({
       message: options.message,
-      description: options.description,
+    //   description: options.description,
       duration: options.duration || this.defaultDuration,
       icon: React.createElement(CheckCircleOutlined, { style: { color: '#52c41a' } }),
       placement: 'topRight',
@@ -24,7 +24,7 @@ class NotificationService {
   error(options: NotificationOptions) {
     notification.error({
       message: options.message,
-      description: options.description,
+    //   description: options.description,
       duration: options.duration || this.defaultDuration,
       icon: React.createElement(CloseCircleOutlined, { style: { color: '#ff4d4f' } }),
       placement: 'topRight',
@@ -34,7 +34,7 @@ class NotificationService {
   warning(options: NotificationOptions) {
     notification.warning({
       message: options.message,
-      description: options.description,
+    //   description: options.description,
       duration: options.duration || this.defaultDuration,
       icon: React.createElement(WarningOutlined, { style: { color: '#faad14' } }),
       placement: 'topRight',
@@ -44,7 +44,7 @@ class NotificationService {
   info(options: NotificationOptions) {
     notification.info({
       message: options.message,
-      description: options.description,
+    //   description: options.description,
       duration: options.duration || this.defaultDuration,
       icon: React.createElement(InfoCircleOutlined, { style: { color: '#1890ff' } }),
       placement: 'topRight',
@@ -62,42 +62,42 @@ class NotificationService {
   deleteSuccess(resourceName: string) {
     this.success({ 
       message: `${resourceName} deleted successfully`,
-      description: 'The item has been permanently removed.'
+    //   description: 'The item has been permanently removed.'
     })
   }
 
   deleteError(resourceName: string) {
     this.error({ 
       message: `Failed to delete ${resourceName}`,
-      description: 'Please try again or contact support if the problem persists.'
+    //   description: 'Please try again or contact support if the problem persists.'
     })
   }
 
   updateSuccess(resourceName: string) {
     this.success({ 
       message: `${resourceName} updated successfully`,
-      description: 'Your changes have been saved.'
+    //   description: 'Your changes have been saved.'
     })
   }
 
   updateError(resourceName: string) {
     this.error({ 
       message: `Failed to update ${resourceName}`,
-      description: 'Please check your input and try again.'
+    //   description: 'Please check your input and try again.'
     })
   }
 
   createSuccess(resourceName: string) {
     this.success({ 
       message: `${resourceName} created successfully`,
-      description: 'The new item has been added to the system.'
+    //   description: 'The new item has been added to the system.'
     })
   }
 
   createError(resourceName: string) {
     this.error({ 
       message: `Failed to create ${resourceName}`,
-      description: 'Please check your input and try again.'
+    //   description: 'Please check your input and try again.'
     })
   }
 }
