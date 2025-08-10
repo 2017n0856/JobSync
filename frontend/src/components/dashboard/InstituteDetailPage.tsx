@@ -58,7 +58,7 @@ export default function InstituteDetailPage() {
   }, [id])
 
   const handleBack = () => {
-    navigate('/dashboard/institutes')
+    navigate('/institutes')
   }
 
   const formatDate = (dateString: string) => {

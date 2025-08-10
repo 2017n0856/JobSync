@@ -53,12 +53,57 @@ function App() {
             }
           >
             <Route index element={<DashboardHome />} />
-            <Route path="clients" element={<ClientsPage />} />
-            <Route path="workers" element={<WorkersPage />} />
-            <Route path="tasks" element={<TasksPage />} />
-            <Route path="institutes" element={<InstitutesPage />} />
-            <Route path="institutes/:id" element={<InstituteDetailPage />} />
-            <Route path="stats" element={<StatsPage />} />
+          </Route>
+          <Route
+            path="/clients"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<ClientsPage />} />
+          </Route>
+          <Route
+            path="/workers"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<WorkersPage />} />
+          </Route>
+          <Route
+            path="/tasks"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<TasksPage />} />
+          </Route>
+          <Route
+            path="/institutes"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<InstitutesPage />} />
+            <Route path=":id" element={<InstituteDetailPage />} />
+          </Route>
+          <Route
+            path="/stats"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<StatsPage />} />
           </Route>
         </Routes>
       </div>
