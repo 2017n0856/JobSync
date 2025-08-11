@@ -15,6 +15,7 @@ import styled from 'styled-components'
 import { useInstituteStore } from '../../store'
 import { Institute, InstituteFilters } from '../../types/institute'
 import { notificationService } from '../../utils/notification'
+import CreateInstituteModal from './CreateInstituteModal'
 
 const { Title, Text } = Typography
 const { Search } = Input
@@ -81,6 +82,7 @@ export default function InstitutesPage() {
   // Search input values
   const [nameSearchValue, setNameSearchValue] = useState('')
   const [countrySearchValue, setCountrySearchValue] = useState('')
+  const [createModalVisible, setCreateModalVisible] = useState(false)
   
   // Debounced search values
   const debouncedNameSearch = useDebounce(nameSearchValue, 800)
@@ -169,7 +171,13 @@ export default function InstitutesPage() {
     navigate(`/institutes/${id}`)
   }
 
+  const handleCreateInstitute = () => {
+    setCreateModalVisible(true)
+  }
 
+  const handleCreateSuccess = () => {
+    fetchInstitutes(filters)
+  }
 
   const columns = [
     {
@@ -221,7 +229,12 @@ export default function InstitutesPage() {
             Manage educational and training institutes.
           </Text>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} size="large">
+        <Button 
+          type="primary" 
+          icon={<PlusOutlined />} 
+          size="large"
+          onClick={handleCreateInstitute}
+        >
           Add Institute
         </Button>
       </PageHeader>
@@ -273,6 +286,12 @@ export default function InstitutesPage() {
           scroll={{ x: 800 }}
         />
       </Card>
+
+      <CreateInstituteModal
+        visible={createModalVisible}
+        onCancel={() => setCreateModalVisible(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   )
 } 

@@ -21,6 +21,7 @@ interface InstituteState {
   // Actions
   fetchInstitutes: (filters?: InstituteFilters) => Promise<void>
   fetchInstituteById: (id: number) => Promise<void>
+  createInstitute: (data: any) => Promise<void>
   updateInstitute: (id: number, data: any) => Promise<void>
   deleteInstitute: (id: number) => Promise<void>
   clearError: () => void
@@ -89,6 +90,35 @@ export const useInstituteStore = create<InstituteState>()(
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch institute details',
               isLoadingDetail: false,
+            })
+            // Re-throw the error so the component can handle it
+            throw error
+          }
+        }
+      },
+
+      createInstitute: async (data: any) => {
+        set({ isLoading: true, error: null })
+        try {
+          const newInstitute = await instituteService.createInstitute(data)
+          
+          const institutes = [newInstitute, ...get().institutes]
+          
+          set({
+            institutes,
+            isLoading: false,
+          })
+        } catch (error) {
+          // Don't set store error for HTTP status codes that are handled by errorHandler
+          const status = (error as any)?.status
+          if (status && [401, 403, 404, 409, 500].includes(status)) {
+            set({ isLoading: false })
+            // Re-throw the error so the component can handle it
+            throw error
+          } else {
+            set({
+              error: error instanceof Error ? error.message : 'Failed to create institute',
+              isLoading: false,
             })
             // Re-throw the error so the component can handle it
             throw error
