@@ -3,21 +3,17 @@ import { devtools } from 'zustand/middleware'
 import { workerService, Worker, WorkerListResponse, WorkerFilters, CreateWorkerData, UpdateWorkerData } from '../services/workerService'
 
 interface WorkerState {
-  // Data
   workers: Worker[]
   currentWorker: Worker | null
   total: number
   page: number
   limit: number
   
-  // Loading states
   isLoading: boolean
   isLoadingDetail: boolean
   
-  // Error states
   error: string | null
   
-  // Actions
   fetchWorkers: (filters?: WorkerFilters) => Promise<void>
   fetchWorkerById: (id: number) => Promise<void>
   createWorker: (data: CreateWorkerData) => Promise<void>
@@ -30,7 +26,6 @@ interface WorkerState {
 export const useWorkerStore = create<WorkerState>()(
   devtools(
     (set, get) => ({
-      // Initial state
       workers: [],
       currentWorker: null,
       total: 0,
@@ -40,7 +35,6 @@ export const useWorkerStore = create<WorkerState>()(
       isLoadingDetail: false,
       error: null,
 
-      // Actions
       fetchWorkers: async (filters: WorkerFilters = {}) => {
         set({ isLoading: true, error: null })
         try {
@@ -53,18 +47,15 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch workers',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -79,18 +70,15 @@ export const useWorkerStore = create<WorkerState>()(
             isLoadingDetail: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoadingDetail: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch worker details',
               isLoadingDetail: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -106,18 +94,15 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to create worker',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -128,12 +113,10 @@ export const useWorkerStore = create<WorkerState>()(
         try {
           const updatedWorker = await workerService.updateWorker(id, data)
           
-          // Update in workers list
           const workers = get().workers.map(worker =>
             worker.id === id ? updatedWorker : worker
           )
           
-          // Update current worker if it's the one being updated
           const currentWorker = get().currentWorker
           const newCurrentWorker = currentWorker?.id === id ? updatedWorker : currentWorker
           
@@ -143,18 +126,15 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to update worker',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -165,10 +145,8 @@ export const useWorkerStore = create<WorkerState>()(
         try {
           await workerService.deleteWorker(id)
           
-          // Remove from workers list
           const workers = get().workers.filter(worker => worker.id !== id)
           
-          // Clear current worker if it's the one being deleted
           const currentWorker = get().currentWorker
           const newCurrentWorker = currentWorker?.id === id ? null : currentWorker
           
@@ -178,18 +156,15 @@ export const useWorkerStore = create<WorkerState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to delete worker',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }

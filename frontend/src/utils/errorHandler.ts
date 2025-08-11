@@ -1,23 +1,19 @@
 import { useAuthStore } from '../store/authStore'
 import { notificationService } from './notification'
 
-// Track if we've already shown a notification for the current error
 let lastErrorNotification: string | null = null
 let lastErrorTime: number = 0
 
 export const handleApiError = (error: any, currentPath?: string, operation?: string) => {
   console.error('API Error:', error)
 
-  // Don't show notifications for 409 Conflict - let components handle these
   if (error.status === 409) {
     return
   }
 
-  // Create a unique error identifier
   const errorId = `${error.status || 'unknown'}-${error.message || 'unknown'}`
   const currentTime = Date.now()
   
-  // Prevent duplicate notifications within 2 seconds
   if (lastErrorNotification === errorId && currentTime - lastErrorTime < 2000) {
     return
   }
@@ -25,7 +21,6 @@ export const handleApiError = (error: any, currentPath?: string, operation?: str
   lastErrorNotification = errorId
   lastErrorTime = currentTime
 
-  // Don't show notifications for CRUD operations (PUT, DELETE) - let components handle these
   if (operation === 'PUT' || operation === 'DELETE') {
     return
   }

@@ -16,7 +16,7 @@ export const useTokenValidation = () => {
       }
 
       checkToken()
-      intervalRef.current = setInterval(checkToken, 60000) // Check every minute
+      intervalRef.current = setInterval(checkToken, 60000)
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current)

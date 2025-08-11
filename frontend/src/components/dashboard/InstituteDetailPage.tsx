@@ -9,8 +9,7 @@ import {
   Space,
   Modal,
   Form,
-  message,
-  Divider
+  message
 } from 'antd'
 import { 
   ArrowLeftOutlined, 
@@ -96,7 +95,6 @@ export default function InstituteDetailPage() {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   
-  // Zustand store state
   const {
     currentInstitute,
     isLoadingDetail,
@@ -107,7 +105,6 @@ export default function InstituteDetailPage() {
     clearError
   } = useInstituteStore()
 
-  // Local state
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -117,31 +114,26 @@ export default function InstituteDetailPage() {
   useEffect(() => {
     if (!id) return
     
-    // Check if we already have this institute in the store
     const instituteId = parseInt(id)
     if (currentInstitute?.id === instituteId) {
-      return // Already loaded
+      return
     }
     
-    // Fetch institute if not in store
     fetchInstituteById(instituteId)
   }, [id, currentInstitute, fetchInstituteById])
 
-  // Show error notification instead of Alert component
   useEffect(() => {
     if (error) {
       notificationService.apiError('Failed to load institute details', error)
     }
   }, [error])
 
-  // Clear error when component unmounts
   useEffect(() => {
     return () => {
       clearError()
     }
   }, [clearError])
 
-  // Initialize form and metadata when institute loads
   useEffect(() => {
     if (currentInstitute) {
       form.setFieldsValue({
@@ -149,11 +141,9 @@ export default function InstituteDetailPage() {
         country: currentInstitute.country || '',
       })
       
-      // Convert metadata object to array for editing
       if (currentInstitute.metadata) {
         let metadataObj: Record<string, any>
         
-        // Handle metadata that might be stored as JSON string (existing data)
         if (typeof currentInstitute.metadata === 'string') {
           try {
             metadataObj = JSON.parse(currentInstitute.metadata)
@@ -185,7 +175,6 @@ export default function InstituteDetailPage() {
 
   const handleCancel = () => {
     setIsEditing(false)
-    // Reset form to original values
     if (currentInstitute) {
       form.setFieldsValue({
         name: currentInstitute.name,
@@ -195,7 +184,6 @@ export default function InstituteDetailPage() {
       if (currentInstitute.metadata) {
         let metadataObj: Record<string, any>
         
-        // Handle metadata that might be stored as JSON string (existing data)
         if (typeof currentInstitute.metadata === 'string') {
           try {
             metadataObj = JSON.parse(currentInstitute.metadata)
@@ -222,12 +210,10 @@ export default function InstituteDetailPage() {
       setIsSaving(true)
       const values = await form.validateFields()
       
-      // Convert metadata array back to object
       const metadata: Record<string, any> = {}
       metadataItems.forEach(item => {
         if (item.key.trim()) {
           try {
-            // Try to parse as JSON, if fails use as string
             metadata[item.key.trim()] = JSON.parse(item.value)
           } catch {
             metadata[item.key.trim()] = item.value
@@ -238,7 +224,6 @@ export default function InstituteDetailPage() {
       const updateData = {
         name: values.name,
         country: values.country || undefined,
-        // Send metadata as object (not JSON string)
         metadata: Object.keys(metadata).length > 0 ? metadata : undefined
       }
 
@@ -247,10 +232,8 @@ export default function InstituteDetailPage() {
       setIsEditing(false)
     } catch (err: any) {
       if (err.errorFields) {
-        // Form validation error
         message.error('Please check the form fields')
       } else {
-        // Check for specific error types
         if (err.status === 409) {
           notificationService.error({
             message: 'Duplicate Institute Name',
@@ -371,7 +354,6 @@ export default function InstituteDetailPage() {
 
       <StyledCard>
         <Form form={form} layout="vertical">
-          {/* Basic Information Section */}
           <Title level={3} style={{ marginBottom: 24, color: '#262626' }}>
             Basic Information
           </Title>
@@ -434,7 +416,6 @@ export default function InstituteDetailPage() {
             </div>
           </FieldContainer>
 
-          {/* Metadata Section */}
           <MetadataSection>
             <SectionTitle>
               <Title level={3} style={{ margin: 0, color: '#262626' }}>
@@ -498,7 +479,6 @@ export default function InstituteDetailPage() {
                   (() => {
                     let metadataObj: Record<string, any>
                     
-                    // Handle metadata that might be stored as JSON string (existing data)
                     if (typeof currentInstitute.metadata === 'string') {
                       try {
                         metadataObj = JSON.parse(currentInstitute.metadata)

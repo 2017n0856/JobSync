@@ -3,21 +3,17 @@ import { devtools } from 'zustand/middleware'
 import { taskService, Task, TaskListResponse, TaskFilters, CreateTaskData, UpdateTaskData } from '../services/taskService'
 
 interface TaskState {
-  // Data
   tasks: Task[]
   currentTask: Task | null
   total: number
   page: number
   limit: number
   
-  // Loading states
   isLoading: boolean
   isLoadingDetail: boolean
   
-  // Error states
   error: string | null
   
-  // Actions
   fetchTasks: (filters?: TaskFilters) => Promise<void>
   fetchTaskById: (id: number) => Promise<void>
   createTask: (data: CreateTaskData) => Promise<void>
@@ -30,7 +26,6 @@ interface TaskState {
 export const useTaskStore = create<TaskState>()(
   devtools(
     (set, get) => ({
-      // Initial state
       tasks: [],
       currentTask: null,
       total: 0,
@@ -40,7 +35,6 @@ export const useTaskStore = create<TaskState>()(
       isLoadingDetail: false,
       error: null,
 
-      // Actions
       fetchTasks: async (filters: TaskFilters = {}) => {
         set({ isLoading: true, error: null })
         try {
@@ -53,18 +47,15 @@ export const useTaskStore = create<TaskState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch tasks',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -79,18 +70,15 @@ export const useTaskStore = create<TaskState>()(
             isLoadingDetail: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoadingDetail: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch task details',
               isLoadingDetail: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -106,18 +94,15 @@ export const useTaskStore = create<TaskState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to create task',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -128,12 +113,10 @@ export const useTaskStore = create<TaskState>()(
         try {
           const updatedTask = await taskService.updateTask(id, data)
           
-          // Update in tasks list
           const tasks = get().tasks.map(task =>
             task.id === id ? updatedTask : task
           )
           
-          // Update current task if it's the one being updated
           const currentTask = get().currentTask
           const newCurrentTask = currentTask?.id === id ? updatedTask : currentTask
           
@@ -143,18 +126,15 @@ export const useTaskStore = create<TaskState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to update task',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -165,10 +145,8 @@ export const useTaskStore = create<TaskState>()(
         try {
           await taskService.deleteTask(id)
           
-          // Remove from tasks list
           const tasks = get().tasks.filter(task => task.id !== id)
           
-          // Clear current task if it's the one being deleted
           const currentTask = get().currentTask
           const newCurrentTask = currentTask?.id === id ? null : currentTask
           
@@ -178,18 +156,15 @@ export const useTaskStore = create<TaskState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to delete task',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }

@@ -6,7 +6,6 @@ import { useClientStore } from '../../store'
 import { notificationService } from '../../utils/notification'
 
 const { Title, Text } = Typography
-const { Search } = Input
 
 const PageHeader = styled.div`
   display: flex;
@@ -23,7 +22,6 @@ const FilterSection = styled.div`
 `
 
 export default function ClientsPage() {
-  // Zustand store state
   const {
     clients,
     total,
@@ -35,34 +33,29 @@ export default function ClientsPage() {
     clearError
   } = useClientStore()
 
-  // Local state for filters
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
   })
 
-  // Pagination state derived from store
   const pagination = {
     current: page,
     pageSize: limit,
     total: total,
   }
 
-  // Fetch clients only if not already loaded
   useEffect(() => {
     if (clients.length === 0) {
       fetchClients(filters)
     }
   }, [clients.length, fetchClients, filters])
 
-  // Show error notification instead of Alert component
   useEffect(() => {
     if (error) {
       notificationService.apiError('Failed to load clients', error)
     }
   }, [error])
 
-  // Clear error when component unmounts
   useEffect(() => {
     return () => {
       clearError()
@@ -169,10 +162,8 @@ export default function ClientsPage() {
         </Button>
       </PageHeader>
 
-
-
       <FilterSection>
-        <Search
+        <Input.Search
           placeholder="Search by name..."
           allowClear
           enterButton={<SearchOutlined />}

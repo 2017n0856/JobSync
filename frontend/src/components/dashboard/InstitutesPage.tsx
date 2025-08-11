@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   Card, 
@@ -18,7 +18,6 @@ import { notificationService } from '../../utils/notification'
 import CreateInstituteModal from './CreateInstituteModal'
 
 const { Title, Text } = Typography
-const { Search } = Input
 
 const PageHeader = styled.div`
   display: flex;
@@ -41,7 +40,6 @@ const FilterRow = styled.div`
   flex-wrap: wrap;
 `
 
-// Debounce hook for search
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
@@ -61,7 +59,6 @@ const useDebounce = (value: string, delay: number) => {
 export default function InstitutesPage() {
   const navigate = useNavigate()
   
-  // Zustand store state
   const {
     institutes,
     total,
@@ -73,55 +70,47 @@ export default function InstitutesPage() {
     clearError
   } = useInstituteStore()
 
-  // Local state for UI interactions
   const [filters, setFilters] = useState<InstituteFilters>({
     page: 1,
     limit: 10,
   })
   
-  // Search input values
   const [nameSearchValue, setNameSearchValue] = useState('')
   const [countrySearchValue, setCountrySearchValue] = useState('')
   const [createModalVisible, setCreateModalVisible] = useState(false)
   
-  // Debounced search values
   const debouncedNameSearch = useDebounce(nameSearchValue, 800)
   const debouncedCountrySearch = useDebounce(countrySearchValue, 800)
 
-  // Pagination state derived from store
   const pagination = {
     current: page,
     pageSize: limit,
     total: total,
   }
 
-  // Fetch institutes when debounced search values change
   useEffect(() => {
     const newFilters = {
       ...filters,
       name: debouncedNameSearch || undefined,
       country: debouncedCountrySearch || undefined,
-      page: 1, // Reset to first page when searching
+      page: 1,
     }
     setFilters(newFilters)
     fetchInstitutes(newFilters)
   }, [debouncedNameSearch, debouncedCountrySearch])
 
-  // Fetch institutes only if not already loaded or if filters changed
   useEffect(() => {
     if (institutes.length === 0 || filters.page !== page || filters.limit !== limit) {
       fetchInstitutes(filters)
     }
   }, [filters, fetchInstitutes, institutes.length, page, limit])
 
-  // Clear error when component unmounts
   useEffect(() => {
     return () => {
       clearError()
     }
   }, [clearError])
 
-  // Show error notification instead of Alert component
   useEffect(() => {
     if (error) {
       notificationService.apiError('Failed to load institutes', error)
@@ -131,7 +120,6 @@ export default function InstitutesPage() {
   const handleNameSearchChange = (value: string) => {
     setNameSearchValue(value)
     
-    // If field is cleared, immediately trigger search
     if (!value) {
       const newFilters = {
         ...filters,
@@ -146,7 +134,6 @@ export default function InstitutesPage() {
   const handleCountrySearchChange = (value: string) => {
     setCountrySearchValue(value)
     
-    // If field is cleared, immediately trigger search
     if (!value) {
       const newFilters = {
         ...filters,

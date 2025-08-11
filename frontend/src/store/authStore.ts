@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>()(
       clearRedirectUrl: () => set({ redirectUrl: null }),
     }),
     {
-      name: 'auth-store', // Name that will appear in the devtools
+      name: 'auth-store',
     }
   )
 ) 

@@ -5,7 +5,7 @@ import { apiClient } from '../utils/apiClient'
 export interface UpdateInstituteData {
   name?: string
   country?: string
-  metadata?: Record<string, any> // Object for API
+  metadata?: Record<string, any>
 }
 
 export interface CreateInstituteData {

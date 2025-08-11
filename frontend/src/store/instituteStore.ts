@@ -4,21 +4,17 @@ import { Institute, InstituteListResponse, InstituteFilters } from '../types/ins
 import { instituteService } from '../services/instituteService'
 
 interface InstituteState {
-  // Data
   institutes: Institute[]
   currentInstitute: Institute | null
   total: number
   page: number
   limit: number
   
-  // Loading states
   isLoading: boolean
   isLoadingDetail: boolean
   
-  // Error states
   error: string | null
   
-  // Actions
   fetchInstitutes: (filters?: InstituteFilters) => Promise<void>
   fetchInstituteById: (id: number) => Promise<void>
   createInstitute: (data: any) => Promise<void>
@@ -31,7 +27,6 @@ interface InstituteState {
 export const useInstituteStore = create<InstituteState>()(
   devtools(
     (set, get) => ({
-      // Initial state
       institutes: [],
       currentInstitute: null,
       total: 0,
@@ -41,7 +36,6 @@ export const useInstituteStore = create<InstituteState>()(
       isLoadingDetail: false,
       error: null,
 
-      // Actions
       fetchInstitutes: async (filters: InstituteFilters = {}) => {
         set({ isLoading: true, error: null })
         try {
@@ -54,18 +48,15 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch institutes',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -80,18 +71,15 @@ export const useInstituteStore = create<InstituteState>()(
             isLoadingDetail: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoadingDetail: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to fetch institute details',
               isLoadingDetail: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -109,18 +97,15 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to create institute',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -131,12 +116,10 @@ export const useInstituteStore = create<InstituteState>()(
         try {
           const updatedInstitute = await instituteService.updateInstitute(id, data)
           
-          // Update in institutes list
           const institutes = get().institutes.map(inst =>
             inst.id === id ? updatedInstitute : inst
           )
           
-          // Update current institute if it's the one being updated
           const currentInstitute = get().currentInstitute
           const newCurrentInstitute = currentInstitute?.id === id ? updatedInstitute : currentInstitute
           
@@ -146,18 +129,15 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to update institute',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
@@ -168,10 +148,8 @@ export const useInstituteStore = create<InstituteState>()(
         try {
           await instituteService.deleteInstitute(id)
           
-          // Remove from institutes list
           const institutes = get().institutes.filter(inst => inst.id !== id)
           
-          // Clear current institute if it's the one being deleted
           const currentInstitute = get().currentInstitute
           const newCurrentInstitute = currentInstitute?.id === id ? null : currentInstitute
           
@@ -181,18 +159,15 @@ export const useInstituteStore = create<InstituteState>()(
             isLoading: false,
           })
         } catch (error) {
-          // Don't set store error for HTTP status codes that are handled by errorHandler
           const status = (error as any)?.status
           if (status && [401, 403, 404, 409, 500].includes(status)) {
             set({ isLoading: false })
-            // Re-throw the error so the component can handle it
             throw error
           } else {
             set({
               error: error instanceof Error ? error.message : 'Failed to delete institute',
               isLoading: false,
             })
-            // Re-throw the error so the component can handle it
             throw error
           }
         }
