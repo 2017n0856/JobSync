@@ -48,7 +48,7 @@ export default function LoginScreen() {
     }
   }, [searchParams, setRedirectUrl])
 
-  const handleSubmit = async (values: { emailOrUsername: string; password: string }) => {
+  const handleSubmit = async (values: { email: string; password: string }) => {
     setIsLoading(true)
 
     try {
@@ -100,7 +100,7 @@ export default function LoginScreen() {
           layout="vertical"
         >
           <Form.Item
-            name="emailOrUsername"
+            name="email"
             rules={[
               { required: true, message: 'Please input your email or username!' }
             ]}

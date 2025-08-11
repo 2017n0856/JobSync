@@ -99,20 +99,20 @@ export class AuthService {
   }
 
   async validateUser(
-    emailOrUsername: string,
+    email: string,
     password: string,
   ): Promise<User | null> {
     // Find user by email or username
     let user: User | null = null;
 
     // Try to find by email first
-    if (emailOrUsername.includes('@')) {
-      user = await this.userRepository.findByEmail(emailOrUsername);
+    if (email.includes('@')) {
+      user = await this.userRepository.findByEmail(email);
     }
 
     // If not found by email, try by username
     if (!user) {
-      user = await this.userRepository.findByUsername(emailOrUsername);
+      user = await this.userRepository.findByUsername(email);
     }
 
     if (!user) {
