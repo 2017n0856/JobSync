@@ -50,6 +50,11 @@ class ApiClient {
         throw error
       }
 
+      // For DELETE requests, return void instead of trying to parse JSON
+      if (options.method === 'DELETE') {
+        return
+      }
+
       return response.json()
     } catch (error) {
       if (error instanceof Error) {

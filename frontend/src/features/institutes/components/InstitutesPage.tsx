@@ -96,14 +96,11 @@ export default function InstitutesPage() {
       page: 1,
     }
     setFilters(newFilters)
-    fetchInstitutes(newFilters)
   }, [debouncedNameSearch, debouncedCountrySearch])
 
   useEffect(() => {
-    if (institutes.length === 0 || filters.page !== page || filters.limit !== limit) {
-      fetchInstitutes(filters)
-    }
-  }, [filters, fetchInstitutes, institutes.length, page, limit])
+    fetchInstitutes(filters)
+  }, [fetchInstitutes, filters.page, filters.limit, filters.name, filters.country])
 
   useEffect(() => {
     return () => {
@@ -119,30 +116,10 @@ export default function InstitutesPage() {
 
   const handleNameSearchChange = (value: string) => {
     setNameSearchValue(value)
-    
-    if (!value) {
-      const newFilters = {
-        ...filters,
-        name: undefined,
-        page: 1,
-      }
-      setFilters(newFilters)
-      fetchInstitutes(newFilters)
-    }
   }
 
   const handleCountrySearchChange = (value: string) => {
     setCountrySearchValue(value)
-    
-    if (!value) {
-      const newFilters = {
-        ...filters,
-        country: undefined,
-        page: 1,
-      }
-      setFilters(newFilters)
-      fetchInstitutes(newFilters)
-    }
   }
 
   const handleTableChange = (pagination: any) => {
@@ -163,7 +140,8 @@ export default function InstitutesPage() {
   }
 
   const handleCreateSuccess = () => {
-    fetchInstitutes(filters)
+    // Refresh the list by updating filters
+    setFilters({ ...filters })
   }
 
   const columns = [

@@ -45,10 +45,8 @@ export default function ClientsPage() {
   }
 
   useEffect(() => {
-    if (clients.length === 0) {
-      fetchClients(filters)
-    }
-  }, [clients.length, fetchClients, filters])
+    fetchClients(filters)
+  }, [fetchClients, filters.page, filters.limit])
 
   useEffect(() => {
     if (error) {
@@ -65,7 +63,6 @@ export default function ClientsPage() {
   const handleNameFilter = (value: string) => {
     const newFilters = { ...filters, name: value || undefined, page: 1 }
     setFilters(newFilters)
-    fetchClients(newFilters)
   }
 
   const handleTableChange = (pagination: any) => {
@@ -75,7 +72,6 @@ export default function ClientsPage() {
       limit: pagination.pageSize 
     }
     setFilters(newFilters)
-    fetchClients(newFilters)
   }
 
   const columns = [

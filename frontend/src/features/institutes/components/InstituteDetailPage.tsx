@@ -257,7 +257,7 @@ export default function InstituteDetailPage() {
       setIsDeleting(true)
       await deleteInstitute(currentInstitute!.id)
       notificationService.deleteSuccess('Institute')
-      navigate('/dashboard/institutes')
+      navigate('/institutes')
     } catch (err) {
       notificationService.deleteError('Institute')
     } finally {
