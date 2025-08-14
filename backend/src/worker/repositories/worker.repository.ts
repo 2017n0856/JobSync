@@ -63,20 +63,11 @@ export class WorkerRepository {
     }
 
     if (filters?.specialty) {
-      const s = filters.specialty;
+      const specialty = filters.specialty.toLowerCase();
+      // Convert both search term and specialties to lowercase strings and do substring matching
       queryBuilder.andWhere(
-        `(
-          LOWER(worker.specialties) = LOWER(:equal)
-          OR LOWER(worker.specialties) LIKE LOWER(:prefix)
-          OR LOWER(worker.specialties) LIKE LOWER(:suffix)
-          OR LOWER(worker.specialties) LIKE LOWER(:middle)
-        )`,
-        {
-          equal: `${s}`,
-          prefix: `${s},%`,
-          suffix: `%,${s}`,
-          middle: `%,${s},%`,
-        },
+        `LOWER(CAST(worker.specialties AS text)) LIKE LOWER(:specialty)`,
+        { specialty: `%${specialty}%` }
       );
     }
 

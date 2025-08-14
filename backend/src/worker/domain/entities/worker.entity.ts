@@ -68,7 +68,7 @@ export class Worker {
   @IsOptional()
   metadata?: Record<string, any>;
 
-  @Column({ type: 'simple-array', nullable: true })
+  @Column({ type: 'text', nullable: true })
   @IsArray()
   @IsOptional()
   specialties?: string[];
