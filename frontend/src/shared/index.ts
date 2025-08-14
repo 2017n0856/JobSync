@@ -16,4 +16,5 @@ export * from './utils/queryParams'
 export * from './constants/api'
 
 // Types
-export * from './types/institute' 
+export * from './types/institute'
+export * from './types/worker' 

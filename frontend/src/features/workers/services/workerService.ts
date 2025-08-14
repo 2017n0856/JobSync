@@ -1,53 +1,27 @@
 import { API_ENDPOINTS } from '../../../shared/constants/api'
+import { Worker, WorkerListResponse, WorkerFilters, Country, Currency } from '../../../shared/types/worker'
 import { apiClient } from '../../../shared/utils/apiClient'
-
-export interface Worker {
-  id: number
-  name: string
-  email: string
-  phoneNumber?: string
-  country?: string
-  skills?: string[]
-  hourlyRate?: number
-  metadata?: Record<string, any>
-  createdAt: string
-  updatedAt: string
-}
-
-export interface WorkerListResponse {
-  workers: Worker[]
-  total: number
-  page: number
-  limit: number
-}
-
-export interface WorkerFilters {
-  name?: string
-  email?: string
-  country?: string
-  skills?: string[]
-  page?: number
-  limit?: number
-}
 
 export interface CreateWorkerData {
   name: string
-  email: string
+  country?: Country
   phoneNumber?: string
-  country?: string
-  skills?: string[]
-  hourlyRate?: number
+  email?: string
+  currency?: Currency
+  instituteId?: number
   metadata?: Record<string, any>
+  specialties?: string[]
 }
 
 export interface UpdateWorkerData {
   name?: string
-  email?: string
+  country?: Country
   phoneNumber?: string
-  country?: string
-  skills?: string[]
-  hourlyRate?: number
+  email?: string
+  currency?: Currency
+  instituteId?: number
   metadata?: Record<string, any>
+  specialties?: string[]
 }
 
 export const workerService = {

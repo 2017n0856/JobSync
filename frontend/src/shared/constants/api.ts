@@ -10,13 +10,13 @@ export const API_ENDPOINTS = {
     PROFILE: '/users/profile',
   },
   CLIENTS: {
-    BASE: '/clients',
+    BASE: '/client',
   },
   WORKERS: {
-    BASE: '/workers',
+    BASE: '/worker',
   },
   TASKS: {
-    BASE: '/tasks',
+    BASE: '/task',
   },
   INSTITUTES: {
     BASE: '/institute',

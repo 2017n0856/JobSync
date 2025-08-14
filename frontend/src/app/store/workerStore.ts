@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { workerService, Worker, WorkerFilters, CreateWorkerData, UpdateWorkerData } from '../../features/workers/services/workerService'
+import { Worker, WorkerFilters } from '../../shared/types/worker'
+import { workerService, CreateWorkerData, UpdateWorkerData } from '../../features/workers/services/workerService'
 
 interface WorkerState {
   workers: Worker[]

@@ -4,7 +4,7 @@ import { LoginScreen, SignupScreen, ProtectedRoute, useTokenValidation } from '.
 import { DashboardLayout, ErrorBoundary, AuthInitializer } from '../shared'
 import { DashboardHome, StatsPage } from '../features/dashboard'
 import { ClientsPage } from '../features/clients'
-import { WorkersPage } from '../features/workers'
+import { WorkersPage, WorkerDetailPage } from '../features/workers'
 import { TasksPage } from '../features/tasks'
 import { InstitutesPage, InstituteDetailPage } from '../features/institutes'
 
@@ -66,6 +66,7 @@ function App() {
             }
           >
             <Route index element={<WorkersPage />} />
+            <Route path=":id" element={<WorkerDetailPage />} />
           </Route>
           <Route
             path="/tasks"
