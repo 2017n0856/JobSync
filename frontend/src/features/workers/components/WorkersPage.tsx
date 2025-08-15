@@ -188,26 +188,6 @@ export default function WorkersPage() {
       ),
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-      render: (email: string) => (
-        <Typography.Text>
-          {email || '-'}
-        </Typography.Text>
-      ),
-    },
-    {
-      title: 'Phone',
-      dataIndex: 'phoneNumber',
-      key: 'phoneNumber',
-      render: (phoneNumber: string) => (
-        <Typography.Text>
-          {phoneNumber || '-'}
-        </Typography.Text>
-      ),
-    },
-    {
       title: 'Country',
       dataIndex: 'country',
       key: 'country',
@@ -246,16 +226,6 @@ export default function WorkersPage() {
             <Tag color="default">+{specialties.length - 2} more</Tag>
           )}
         </div>
-      ),
-    },
-    {
-      title: 'Currency',
-      dataIndex: 'currency',
-      key: 'currency',
-      render: (currency: Currency) => (
-        <Typography.Text>
-          {currency || '-'}
-        </Typography.Text>
       ),
     },
   ]
@@ -347,7 +317,6 @@ export default function WorkersPage() {
               `${range[0]}-${range[1]} of ${total} workers`,
           }}
           onChange={handleTableChange}
-          scroll={{ x: 1400 }}
         />
       </Card>
 
