@@ -214,7 +214,7 @@ export default function WorkersPage() {
       render: (specialties: string[]) => (
         <div>
           {specialties && specialties.length > 0 ? (
-            specialties.slice(0, 2).map((specialty, index) => (
+            specialties.slice(0, 4).map((specialty, index) => (
               <Tag key={index} color="blue" style={{ marginBottom: 4 }}>
                 {specialty}
               </Tag>
@@ -222,8 +222,8 @@ export default function WorkersPage() {
           ) : (
             <Typography.Text type="secondary">-</Typography.Text>
           )}
-          {specialties && specialties.length > 2 && (
-            <Tag color="default">+{specialties.length - 2} more</Tag>
+          {specialties && specialties.length > 4 && (
+            <Tag color="default">+{specialties.length - 4} more</Tag>
           )}
         </div>
       ),
