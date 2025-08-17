@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useWorkerStore } from '../../../app/store/workerStore'
-import { Worker, WorkerFilters, Country, Currency } from '../../../shared/types/worker'
+import { Worker, WorkerFilters, Country } from '../../../shared/types/worker'
 import { notificationService } from '../../../shared/utils/notification'
 import CreateWorkerModal from './CreateWorkerModal'
 

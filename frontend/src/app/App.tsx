@@ -3,7 +3,7 @@ import { useAuthStore } from './store/authStore'
 import { LoginScreen, SignupScreen, ProtectedRoute, useTokenValidation } from '../features/auth'
 import { DashboardLayout, ErrorBoundary, AuthInitializer } from '../shared'
 import { DashboardHome, StatsPage } from '../features/dashboard'
-import { ClientsPage } from '../features/clients'
+import { ClientsPage, ClientDetailPage } from '../features/clients'
 import { WorkersPage, WorkerDetailPage } from '../features/workers'
 import { TasksPage } from '../features/tasks'
 import { InstitutesPage, InstituteDetailPage } from '../features/institutes'
@@ -56,6 +56,7 @@ function App() {
             }
           >
             <Route index element={<ClientsPage />} />
+            <Route path=":id" element={<ClientDetailPage />} />
           </Route>
           <Route
             path="/workers"

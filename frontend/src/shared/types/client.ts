@@ -1,6 +1,6 @@
 import { Country, Currency } from './enums'
 
-export interface Worker {
+export interface Client {
   id: number
   name: string
   country?: Country
@@ -13,23 +13,21 @@ export interface Worker {
     name: string
   }
   metadata?: Record<string, any> | string
-  specialties?: string[]
   createdAt: string
   updatedAt: string
 }
 
-export interface WorkerListResponse {
-  workers: Worker[]
+export interface ClientListResponse {
+  clients: Client[]
   total: number
   page: number
   limit: number
 }
 
-export interface WorkerFilters {
+export interface ClientFilters {
   name?: string
   country?: string
   instituteName?: string
-  specialty?: string
   page?: number
   limit?: number
 }

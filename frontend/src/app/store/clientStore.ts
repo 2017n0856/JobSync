@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { clientService, Client, ClientFilters, CreateClientData, UpdateClientData } from '../../features/clients/services/clientService'
+import { Client, ClientFilters } from '../../shared/types/client'
+import { clientService, CreateClientData, UpdateClientData } from '../../features/clients/services/clientService'
 
 interface ClientState {
   clients: Client[]
@@ -87,10 +88,8 @@ export const useClientStore = create<ClientState>()(
       createClient: async (data: CreateClientData) => {
         set({ isLoading: true, error: null })
         try {
-          const newClient = await clientService.createClient(data)
-          const clients = [...get().clients, newClient]
+          await clientService.createClient(data)
           set({
-            clients,
             isLoading: false,
           })
         } catch (error) {

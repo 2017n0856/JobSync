@@ -1,46 +1,25 @@
 import { API_ENDPOINTS } from '../../../shared/constants/api'
+import { Client, ClientListResponse, ClientFilters, Country, Currency } from '../../../shared/types/client'
 import { apiClient } from '../../../shared/utils/apiClient'
-
-export interface Client {
-  id: number
-  name: string
-  email: string
-  phoneNumber?: string
-  country?: string
-  metadata?: Record<string, any>
-  createdAt: string
-  updatedAt: string
-}
-
-export interface ClientListResponse {
-  clients: Client[]
-  total: number
-  page: number
-  limit: number
-}
-
-export interface ClientFilters {
-  name?: string
-  email?: string
-  country?: string
-  page?: number
-  limit?: number
-}
 
 export interface CreateClientData {
   name: string
-  email: string
+  country?: Country
   phoneNumber?: string
-  country?: string
-  metadata?: Record<string, any>
+  email?: string
+  currency?: Currency
+  instituteId?: number
+  metadata?: string
 }
 
 export interface UpdateClientData {
   name?: string
-  email?: string
+  country?: Country
   phoneNumber?: string
-  country?: string
-  metadata?: Record<string, any>
+  email?: string
+  currency?: Currency
+  instituteId?: number
+  metadata?: string
 }
 
 export const clientService = {
