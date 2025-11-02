@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TaskType } from '../../../common/enums/task-type.enum';
+import { Currency } from '../../../common/enums/currency.enum';
 
 export class TaskResponseDto {
   @ApiProperty({ description: 'Task ID', example: 1 })
@@ -55,25 +56,14 @@ export class TaskResponseDto {
   workerPaymentMade: number;
 
   @ApiPropertyOptional({
-    description: 'ID of the client this task belongs to',
-    example: 1,
-  })
-  clientId?: number;
-
-  @ApiPropertyOptional({
     description: 'Associated client details',
     example: { id: 1, name: 'Acme Corporation' },
   })
   client?: {
     id: number;
     name: string;
+    currency: Currency;
   };
-
-  @ApiPropertyOptional({
-    description: 'ID of the worker assigned to this task',
-    example: 1,
-  })
-  workerId?: number;
 
   @ApiPropertyOptional({
     description: 'Associated worker details',
@@ -82,6 +72,7 @@ export class TaskResponseDto {
   worker?: {
     id: number;
     name: string;
+    currency: Currency;
   };
 
   @ApiProperty({
@@ -110,15 +101,15 @@ export class TaskResponseDto {
       clientPaymentMade: 500.0,
       workerPaymentDecided: 400.0,
       workerPaymentMade: 400.0,
-      clientId: 1,
       client: {
         id: 1,
         name: 'Acme Corporation',
+        currency: Currency.AUD,
       },
-      workerId: 1,
       worker: {
         id: 1,
         name: 'John Doe',
+        currency: Currency.PKR,
       },
       taskType: TaskType.ASSIGNMENT,
       metadata: { priority: 'High', complexity: 'Medium', estimatedHours: 8 },

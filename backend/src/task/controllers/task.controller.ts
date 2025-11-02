@@ -186,18 +186,18 @@ export class TaskController {
       clientPaymentMade: task.clientPaymentMade,
       workerPaymentDecided: task.workerPaymentDecided,
       workerPaymentMade: task.workerPaymentMade,
-      clientId: task.clientId,
       client: task.client
         ? {
             id: task.client.id,
             name: task.client.name,
+            currency: task.client.currency,
           }
         : undefined,
-      workerId: task.workerId,
       worker: task.worker
         ? {
             id: task.worker.id,
             name: task.worker.name,
+            currency: task.worker.currency,
           }
         : undefined,
       taskType: task.taskType,
