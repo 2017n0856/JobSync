@@ -5,7 +5,8 @@ import {
   Typography, 
   Button, 
   Table, 
-  Input
+  Input,
+  message
 } from 'antd'
 import { 
   PlusOutlined, 
@@ -14,7 +15,6 @@ import {
 import styled from 'styled-components'
 import { useInstituteStore } from '../../../app/store/instituteStore'
 import { Institute, InstituteFilters } from '../../../shared/types/institute'
-import { notificationService } from '../../../shared/utils/notification'
 import CreateInstituteModal from './CreateInstituteModal'
 
 const { Title, Text } = Typography
@@ -110,7 +110,7 @@ export default function InstitutesPage() {
 
   useEffect(() => {
     if (error) {
-      notificationService.apiError('Failed to load institutes', error)
+      message.error('Failed to load institutes')
     }
   }, [error])
 
@@ -140,7 +140,6 @@ export default function InstitutesPage() {
   }
 
   const handleCreateSuccess = () => {
-    // Refresh the list by updating filters
     setFilters({ ...filters })
   }
 
@@ -248,7 +247,7 @@ export default function InstitutesPage() {
               `${range[0]}-${range[1]} of ${total} institutes`,
           }}
           onChange={handleTableChange}
-          scroll={{ x: 800 }}
+          scroll={{ x: 600 }}
         />
       </Card>
 

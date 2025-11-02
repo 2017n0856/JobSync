@@ -6,7 +6,8 @@ import {
   Button, 
   Table, 
   Input,
-  Tag
+  Tag,
+  message
 } from 'antd'
 import { 
   PlusOutlined, 
@@ -15,7 +16,6 @@ import {
 import styled from 'styled-components'
 import { useWorkerStore } from '../../../app/store/workerStore'
 import { Worker, WorkerFilters, Country } from '../../../shared/types/worker'
-import { notificationService } from '../../../shared/utils/notification'
 import CreateWorkerModal from './CreateWorkerModal'
 
 const { Title, Text } = Typography
@@ -117,7 +117,7 @@ export default function WorkersPage() {
 
   useEffect(() => {
     if (error) {
-      notificationService.apiError('Failed to load workers', error)
+      message.error('Failed to load workers')
     }
   }, [error])
 

@@ -1,30 +1,28 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { 
   Card, 
   Typography, 
   Button, 
-  Spin, 
-  Input,
-  Space,
-  Modal,
-  Form,
+  Descriptions, 
+  Modal, 
   message,
-  Tag,
-  Select
+  Form,
+  Input,
+  Select,
+  Space
 } from 'antd'
 import { 
-  ArrowLeftOutlined, 
   EditOutlined, 
   SaveOutlined, 
-  CloseOutlined,
+  CloseOutlined, 
   DeleteOutlined,
+  ArrowLeftOutlined,
   PlusOutlined,
   MinusCircleOutlined
 } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useWorkerStore } from '../../../app/store/workerStore'
-import { notificationService } from '../../../shared/utils/notification'
 import { Country, Currency } from '../../../shared/types/worker'
 
 const { Title, Text } = Typography
@@ -32,63 +30,36 @@ const { Option } = Select
 
 const PageHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
   margin-bottom: 24px;
 `
 
-const StyledCard = styled(Card)`
-  .ant-card-body {
-    padding: 32px;
-  }
-`
-
-const FieldContainer = styled.div`
-  margin-bottom: 24px;
-  
-  .field-value {
-    font-size: 16px;
-    color: #595959;
-  }
-  
-  .field-input {
-    margin-top: 4px;
-  }
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 8px;
 `
 
 const MetadataSection = styled.div`
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
+  margin-top: 16px;
 `
 
 const MetadataEditor = styled.div`
   .metadata-item {
     display: flex;
     gap: 12px;
-    margin-bottom: 12px;
     align-items: center;
+    margin-bottom: 12px;
   }
   
   .metadata-input {
     flex: 1;
   }
-  
-  .metadata-actions {
-    display: flex;
-    gap: 8px;
-  }
-`
-
-const SpecialtiesSection = styled.div`
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
 `
 
 const SpecialtiesEditor = styled.div`
   .specialties-input {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   
   .specialties-tags {
@@ -98,22 +69,9 @@ const SpecialtiesEditor = styled.div`
   }
 `
 
-const SectionTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  
-  h4 {
-    margin: 0;
-    color: #262626;
-  }
-`
-
 export default function WorkerDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [form] = Form.useForm()
   
   const {
     currentWorker,
@@ -127,8 +85,8 @@ export default function WorkerDetailPage() {
   } = useWorkerStore()
 
   const [isEditing, setIsEditing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [form] = Form.useForm()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [metadataItems, setMetadataItems] = useState<Array<{ key: string; value: string }>>([])
   const [specialties, setSpecialties] = useState<string[]>([])
@@ -138,29 +96,23 @@ export default function WorkerDetailPage() {
     if (id) {
       fetchWorkerById(parseInt(id))
     }
+  }, [id, fetchWorkerById])
+
+  useEffect(() => {
     return () => {
       clearError()
       clearCurrentWorker()
     }
-  }, [id, fetchWorkerById, clearError, clearCurrentWorker])
+  }, [clearError, clearCurrentWorker])
 
   useEffect(() => {
     if (error) {
-      notificationService.apiError('Failed to load worker details', error)
+      message.error('Failed to load worker details')
     }
   }, [error])
 
   useEffect(() => {
-    if (currentWorker) {
-      form.setFieldsValue({
-        name: currentWorker.name,
-        email: currentWorker.email,
-        phoneNumber: currentWorker.phoneNumber,
-        country: currentWorker.country,
-        currency: currentWorker.currency,
-        instituteId: currentWorker.instituteId,
-      })
-      
+    if (currentWorker && !isEditing) {
       if (currentWorker.metadata && typeof currentWorker.metadata === 'object') {
         const metadataArray = Object.entries(currentWorker.metadata).map(([key, value]) => ({
           key,
@@ -171,30 +123,16 @@ export default function WorkerDetailPage() {
         setMetadataItems([])
       }
       
-      setSpecialties(currentWorker.specialties || [])
+      if (currentWorker.specialties) {
+        setSpecialties(currentWorker.specialties)
+      } else {
+        setSpecialties([])
+      }
     }
-  }, [currentWorker, form])
-
-  const handleBack = () => {
-    navigate('/workers')
-  }
+  }, [currentWorker, isEditing])
 
   const handleEdit = () => {
-    setIsEditing(true)
-  }
-
-  const handleCancel = () => {
-    setIsEditing(false)
     if (currentWorker) {
-      form.setFieldsValue({
-        name: currentWorker.name,
-        email: currentWorker.email,
-        phoneNumber: currentWorker.phoneNumber,
-        country: currentWorker.country,
-        currency: currentWorker.currency,
-        instituteId: currentWorker.instituteId,
-      })
-      
       if (currentWorker.metadata && typeof currentWorker.metadata === 'object') {
         const metadataArray = Object.entries(currentWorker.metadata).map(([key, value]) => ({
           key,
@@ -205,13 +143,29 @@ export default function WorkerDetailPage() {
         setMetadataItems([])
       }
       
-      setSpecialties(currentWorker.specialties || [])
+      if (currentWorker.specialties) {
+        setSpecialties(currentWorker.specialties)
+      } else {
+        setSpecialties([])
+      }
+      
+      form.setFieldsValue({
+        name: currentWorker.name,
+        email: currentWorker.email,
+        phoneNumber: currentWorker.phoneNumber,
+        country: currentWorker.country,
+        currency: currentWorker.currency,
+        instituteId: currentWorker.instituteId,
+      })
+      setIsEditing(true)
     }
   }
 
   const handleSave = async () => {
+    if (!currentWorker) return
+    
+    setIsSubmitting(true)
     try {
-      setIsSaving(true)
       const values = await form.validateFields()
       
       const metadata: Record<string, any> = {}
@@ -224,55 +178,51 @@ export default function WorkerDetailPage() {
           }
         }
       })
-
+      
       const updateData = {
         name: values.name,
-        email: values.email || undefined,
-        phoneNumber: values.phoneNumber || undefined,
         country: values.country || undefined,
+        phoneNumber: values.phoneNumber || undefined,
+        email: values.email || undefined,
         currency: values.currency || undefined,
         instituteId: values.instituteId || undefined,
         specialties: specialties.length > 0 ? specialties : undefined,
         metadata: Object.keys(metadata).length > 0 ? metadata : undefined
       }
-
-      if (id) {
-        await updateWorker(parseInt(id), updateData)
-        notificationService.updateSuccess('Worker')
-        setIsEditing(false)
-      }
-    } catch (err: any) {
-      if (err.errorFields) {
-        message.error('Please check the form fields')
-      } else {
-        if (err.status === 409) {
-          notificationService.error({
-            message: 'Duplicate Worker Name',
-            description: 'A worker with this name already exists. Please choose a different name.'
-          })
-        } else {
-          notificationService.updateError('Worker')
-        }
-      }
+      
+      await updateWorker(currentWorker.id, updateData)
+      message.success('Worker updated successfully')
+      setIsEditing(false)
+    } catch (error) {
+      message.error('Failed to update worker')
     } finally {
-      setIsSaving(false)
+      setIsSubmitting(false)
     }
   }
 
+  const handleCancel = () => {
+    setIsEditing(false)
+    form.resetFields()
+  }
+
   const handleDelete = async () => {
+    if (!currentWorker) return
+    
+    setIsSubmitting(true)
     try {
-      setIsDeleting(true)
-      if (id) {
-        await deleteWorker(parseInt(id))
-        notificationService.deleteSuccess('Worker')
-        navigate('/workers')
-      }
+      await deleteWorker(currentWorker.id)
+      message.success('Worker deleted successfully')
+      navigate('/workers')
     } catch (error) {
-      notificationService.deleteError('Worker')
+      message.error('Failed to delete worker')
     } finally {
-      setIsDeleting(false)
+      setIsSubmitting(false)
       setDeleteModalVisible(false)
     }
+  }
+
+  const handleBack = () => {
+    navigate('/workers')
   }
 
   const addMetadataItem = () => {
@@ -309,49 +259,44 @@ export default function WorkerDetailPage() {
 
   if (isLoadingDetail) {
     return (
-      <div style={{ textAlign: 'center', padding: '100px 0' }}>
-        <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
+      <Card>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
           <Text>Loading worker details...</Text>
         </div>
-      </div>
+      </Card>
     )
   }
 
   if (!currentWorker) {
     return (
-      <div style={{ textAlign: 'center', padding: '100px 0' }}>
-        <Text>Worker not found</Text>
-        <br />
-        <Button type="primary" onClick={handleBack} style={{ marginTop: 16 }}>
-          Back to Workers
-        </Button>
-      </div>
+      <Card>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <Text>Worker not found</Text>
+        </div>
+      </Card>
     )
   }
 
   return (
     <div>
       <PageHeader>
-        <Button 
-          icon={<ArrowLeftOutlined />} 
-          onClick={handleBack}
-          size="large"
-        >
-          Back
-        </Button>
-        <div style={{ flex: 1 }}>
-          <Title level={2} style={{ margin: 0 }}>
-            {isEditing ? 'Edit Worker' : currentWorker.name}
-          </Title>
+        <div>
+          <Button 
+            icon={<ArrowLeftOutlined />} 
+            onClick={handleBack}
+            style={{ marginBottom: 16 }}
+          >
+            Back to Workers
+          </Button>
+          <Title level={2}>{currentWorker.name}</Title>
+          <Text type="secondary">Worker Details</Text>
         </div>
-        <Space>
+        <ActionButtons>
           {!isEditing ? (
             <>
               <Button 
                 icon={<EditOutlined />} 
                 onClick={handleEdit}
-                size="large"
               >
                 Edit
               </Button>
@@ -359,7 +304,6 @@ export default function WorkerDetailPage() {
                 danger 
                 icon={<DeleteOutlined />} 
                 onClick={() => setDeleteModalVisible(true)}
-                size="large"
               >
                 Delete
               </Button>
@@ -367,137 +311,165 @@ export default function WorkerDetailPage() {
           ) : (
             <>
               <Button 
-                icon={<CloseOutlined />} 
-                onClick={handleCancel}
-                size="large"
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="primary" 
                 icon={<SaveOutlined />} 
+                type="primary"
+                loading={isSubmitting}
                 onClick={handleSave}
-                loading={isSaving}
-                size="large"
               >
                 Save
               </Button>
+              <Button 
+                icon={<CloseOutlined />} 
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
             </>
           )}
-        </Space>
+        </ActionButtons>
       </PageHeader>
 
-      <StyledCard>
-        <Form form={form} layout="vertical" disabled={!isEditing}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-            <FieldContainer>
-              <Text strong>Full Name</Text>
-              {!isEditing ? (
-                <div className="field-value">{currentWorker.name}</div>
+      <Card>
+        {!isEditing ? (
+          <Descriptions bordered column={2}>
+            <Descriptions.Item label="Name" span={2}>
+              <Text strong>{currentWorker.name}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Email">
+              <Text>{currentWorker.email || '-'}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Phone Number">
+              <Text>{currentWorker.phoneNumber || '-'}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Country">
+              <Text>{currentWorker.country || '-'}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Currency">
+              <Text>{currentWorker.currency || '-'}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Institute" span={2}>
+              {currentWorker.instituteId ? (
+                <Link to={`/institutes/${currentWorker.instituteId}`}>
+                  <Text>{currentWorker.institute?.name || '-'}</Text>
+                </Link>
               ) : (
-                <Form.Item
-                  name="name"
-                  rules={[{ required: true, message: 'Full name is required' }]}
-                  className="field-input"
-                >
-                  <Input size="large" />
-                </Form.Item>
+                <Text>-</Text>
               )}
-            </FieldContainer>
-
-            <FieldContainer>
-              <Text strong>Email Address</Text>
-              {!isEditing ? (
-                <div className="field-value">{currentWorker.email || '-'}</div>
-              ) : (
-                <Form.Item
-                  name="email"
-                  rules={[
-                    { type: 'email', message: 'Please enter a valid email' }
-                  ]}
-                  className="field-input"
-                >
-                  <Input size="large" />
-                </Form.Item>
-              )}
-            </FieldContainer>
-
-            <FieldContainer>
-              <Text strong>Phone Number</Text>
-              {!isEditing ? (
-                <div className="field-value">{currentWorker.phoneNumber || '-'}</div>
-              ) : (
-                <Form.Item name="phoneNumber" className="field-input">
-                  <Input size="large" />
-                </Form.Item>
-              )}
-            </FieldContainer>
-
-            <FieldContainer>
-              <Text strong>Country</Text>
-              {!isEditing ? (
-                <div className="field-value">{currentWorker.country || '-'}</div>
-              ) : (
-                <Form.Item name="country" className="field-input">
-                  <Select
-                    size="large"
-                    placeholder="Select country"
-                    allowClear
-                  >
-                    {Object.entries(Country).map(([key, value]) => (
-                      <Option key={key} value={value}>
-                        {value}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              )}
-            </FieldContainer>
-
-            <FieldContainer>
-              <Text strong>Currency</Text>
-              {!isEditing ? (
-                <div className="field-value">{currentWorker.currency || '-'}</div>
-              ) : (
-                <Form.Item name="currency" className="field-input">
-                  <Select
-                    size="large"
-                    placeholder="Select currency"
-                    allowClear
-                  >
-                    {Object.entries(Currency).map(([key, value]) => (
-                      <Option key={key} value={value}>
-                        {value}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              )}
-            </FieldContainer>
-
-            <FieldContainer>
-              <Text strong>Institute ID</Text>
-              {!isEditing ? (
-                <div className="field-value">{currentWorker.instituteId || '-'}</div>
-              ) : (
-                <Form.Item name="instituteId" className="field-input">
-                  <Input size="large" type="number" />
-                </Form.Item>
-              )}
-            </FieldContainer>
-
-            <FieldContainer>
-              <Text strong>Institute</Text>
-              <div className="field-value">
-                {currentWorker.institute?.name || '-'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Specialties" span={2}>
+              <div>
+                {currentWorker.specialties && currentWorker.specialties.length > 0 ? (
+                  currentWorker.specialties.map((specialty, index) => (
+                    <Text key={index} style={{ marginRight: 8 }}>
+                      {specialty}
+                    </Text>
+                  ))
+                ) : (
+                  <Text type="secondary">No specialties</Text>
+                )}
               </div>
-            </FieldContainer>
-          </div>
+            </Descriptions.Item>
+            {currentWorker.metadata && (
+              <Descriptions.Item label="Additional Information" span={2}>
+                <MetadataSection>
+                  {(() => {
+                    let metadataObj: Record<string, any>
+                    
+                    if (typeof currentWorker.metadata === 'string') {
+                      try {
+                        metadataObj = JSON.parse(currentWorker.metadata)
+                      } catch {
+                        metadataObj = {}
+                      }
+                    } else {
+                      metadataObj = currentWorker.metadata
+                    }
+                    
+                    if (Object.keys(metadataObj).length > 0) {
+                      return Object.entries(metadataObj).map(([key, value]) => (
+                        <div key={key} style={{ marginBottom: 8 }}>
+                          <Text strong>{key}:</Text> {String(value)}
+                        </div>
+                      ))
+                    }
+                    return <Text type="secondary">No additional information</Text>
+                  })()}
+                </MetadataSection>
+              </Descriptions.Item>
+            )}
+          </Descriptions>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+          >
+            <Form.Item
+              name="name"
+              label="Worker Name"
+              rules={[
+                { required: true, message: 'Please enter worker name' },
+                { min: 2, message: 'Name must be at least 2 characters' },
+                { max: 50, message: 'Name must not exceed 50 characters' }
+              ]}
+            >
+              <Input placeholder="Enter worker name" />
+            </Form.Item>
 
-          <SpecialtiesSection>
-            <SectionTitle>
-              <Title level={4}>Specialties</Title>
-              {isEditing && (
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { type: 'email', message: 'Please enter a valid email' }
+              ]}
+            >
+              <Input placeholder="Enter email address" />
+            </Form.Item>
+
+            <Form.Item
+              name="phoneNumber"
+              label="Phone Number"
+            >
+              <Input placeholder="Enter phone number" />
+            </Form.Item>
+
+            <Form.Item
+              name="country"
+              label="Country"
+            >
+              <Select placeholder="Select country">
+                {Object.entries(Country).map(([key, value]) => (
+                  <Option key={key} value={value}>
+                    {value}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="currency"
+              label="Currency"
+            >
+              <Select placeholder="Select currency">
+                {Object.entries(Currency).map(([key, value]) => (
+                  <Option key={key} value={value}>
+                    {value}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              name="instituteId"
+              label="Institute ID"
+            >
+              <Input placeholder="Enter institute ID" type="number" />
+            </Form.Item>
+
+            <div style={{ marginTop: 32 }}>
+              <Space style={{ marginBottom: 20 }}>
+                <Title level={4} style={{ margin: 0 }}>
+                  Specialties
+                </Title>
                 <Button 
                   type="dashed" 
                   icon={<PlusOutlined />}
@@ -506,50 +478,47 @@ export default function WorkerDetailPage() {
                 >
                   Add Specialty
                 </Button>
-              )}
-            </SectionTitle>
-            
-            <SpecialtiesEditor>
-              {isEditing && (
+              </Space>
+              
+              <SpecialtiesEditor>
                 <div className="specialties-input">
                   <Input
                     placeholder="Enter a specialty and press Enter or click Add Specialty"
                     value={specialtyInput}
                     onChange={(e) => setSpecialtyInput(e.target.value)}
                     onKeyPress={handleSpecialtyInputKeyPress}
-                    size="large"
                   />
                 </div>
-              )}
-              
-              <div className="specialties-tags">
-                {specialties.map((specialty, index) => (
-                  <Tag
-                    key={index}
-                    color="blue"
-                    closable={isEditing}
-                    onClose={() => isEditing && removeSpecialty(specialty)}
-                    style={{ marginBottom: 8 }}
-                  >
-                    {specialty}
-                  </Tag>
-                ))}
-              </div>
-              
-              {specialties.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '20px', color: '#8c8c8c' }}>
-                  <Text type="secondary">
-                    No specialties added yet.
-                  </Text>
+                
+                <div className="specialties-tags">
+                  {specialties.map((specialty, index) => (
+                    <Button
+                      key={index}
+                      type="primary"
+                      size="small"
+                      onClick={() => removeSpecialty(specialty)}
+                      style={{ marginBottom: 8 }}
+                    >
+                      {specialty} ×
+                    </Button>
+                  ))}
                 </div>
-              )}
-            </SpecialtiesEditor>
-          </SpecialtiesSection>
+                
+                {specialties.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#8c8c8c' }}>
+                    <Text type="secondary">
+                      No specialties added yet. Add specialties to help categorize workers.
+                    </Text>
+                  </div>
+                )}
+              </SpecialtiesEditor>
+            </div>
 
-          <MetadataSection>
-            <SectionTitle>
-              <Title level={4}>Additional Information</Title>
-              {isEditing && (
+            <MetadataSection>
+              <Space style={{ marginBottom: 20 }}>
+                <Title level={4} style={{ margin: 0 }}>
+                  Additional Information
+                </Title>
                 <Button 
                   type="dashed" 
                   icon={<PlusOutlined />}
@@ -557,44 +526,28 @@ export default function WorkerDetailPage() {
                 >
                   Add Field
                 </Button>
-              )}
-            </SectionTitle>
-            
-            {!isEditing && currentWorker.metadata && typeof currentWorker.metadata === 'object' ? (
-              <div>
-                {Object.entries(currentWorker.metadata).map(([key, value]) => (
-                  <FieldContainer key={key}>
-                    <Text strong>{key}</Text>
-                    <div className="field-value">
-                      {typeof value === 'string' ? value : JSON.stringify(value)}
-                    </div>
-                  </FieldContainer>
-                ))}
-              </div>
-            ) : isEditing ? (
+              </Space>
+              
               <MetadataEditor>
                 {metadataItems.map((item, index) => (
                   <div key={index} className="metadata-item">
                     <Input
-                      placeholder="Field name"
+                      placeholder="Field name (e.g., Address, Experience, Certifications)"
                       value={item.key}
                       onChange={(e) => updateMetadataItem(index, 'key', e.target.value)}
                       style={{ width: 250 }}
-                      size="large"
                     />
                     <Input
                       placeholder="Field value"
                       value={item.value}
                       onChange={(e) => updateMetadataItem(index, 'value', e.target.value)}
                       className="metadata-input"
-                      size="large"
                     />
                     <Button 
                       type="text" 
                       danger 
                       icon={<MinusCircleOutlined />}
                       onClick={() => removeMetadataItem(index)}
-                      size="large"
                     >
                       Remove
                     </Button>
@@ -602,45 +555,32 @@ export default function WorkerDetailPage() {
                 ))}
                 {metadataItems.length === 0 && (
                   <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8c8c' }}>
-                    <Text type="secondary">
+                    <Text type="secondary" style={{ fontSize: '16px' }}>
                       No additional information added.
+                    </Text>
+                    <br />
+                    <Text type="secondary">
+                      Click "Add Field" to add custom information like address, experience, certifications, etc.
                     </Text>
                   </div>
                 )}
               </MetadataEditor>
-            ) : (
-              <div style={{ textAlign: 'center', padding: '20px', color: '#8c8c8c' }}>
-                <Text type="secondary">
-                  No additional information available.
-                </Text>
-              </div>
-            )}
-          </MetadataSection>
-        </Form>
-      </StyledCard>
+            </MetadataSection>
+          </Form>
+        )}
+      </Card>
 
       <Modal
         title="Delete Worker"
         open={deleteModalVisible}
+        onOk={handleDelete}
         onCancel={() => setDeleteModalVisible(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setDeleteModalVisible(false)}>
-            Cancel
-          </Button>,
-          <Button 
-            key="delete" 
-            danger 
-            onClick={handleDelete}
-            loading={isDeleting}
-          >
-            Delete
-          </Button>
-        ]}
+        confirmLoading={isSubmitting}
+        okText="Delete"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
       >
-        <p>
-          Are you sure you want to delete worker "{currentWorker.name}"? 
-          This action cannot be undone.
-        </p>
+        <p>Are you sure you want to delete "{currentWorker.name}"? This action cannot be undone.</p>
       </Modal>
     </div>
   )

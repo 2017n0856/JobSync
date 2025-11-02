@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { 
   Card, 
   Typography, 
@@ -328,7 +328,13 @@ export default function ClientDetailPage() {
               <Text>{currentClient.currency || '-'}</Text>
             </Descriptions.Item>
             <Descriptions.Item label="Institute" span={2}>
-              <Text>{currentClient.institute?.name || '-'}</Text>
+              {currentClient.instituteId ? (
+                <Link to={`/institutes/${currentClient.instituteId}`}>
+                  <Text>{currentClient.institute?.name || '-'}</Text>
+                </Link>
+              ) : (
+                <Text>-</Text>
+              )}
             </Descriptions.Item>
             {currentClient.metadata && (
               <Descriptions.Item label="Additional Information" span={2}>

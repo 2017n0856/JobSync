@@ -3,11 +3,11 @@ import {
   Modal, 
   Form, 
   Input, 
+  Select, 
   Button, 
-  message,
+  Space, 
   Typography,
-  Space,
-  Select
+  message
 } from 'antd'
 import { 
   PlusOutlined, 
@@ -15,33 +15,14 @@ import {
 } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useWorkerStore } from '../../../app/store/workerStore'
-import { notificationService } from '../../../shared/utils/notification'
 import { Country, Currency } from '../../../shared/types/worker'
 
 const { Title } = Typography
 const { Option } = Select
 
-const MetadataEditor = styled.div`
-  .metadata-item {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-    align-items: center;
-  }
-  
-  .metadata-input {
-    flex: 1;
-  }
-  
-  .metadata-actions {
-    display: flex;
-    gap: 8px;
-  }
-`
-
 const SpecialtiesEditor = styled.div`
   .specialties-input {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   
   .specialties-tags {
@@ -51,32 +32,41 @@ const SpecialtiesEditor = styled.div`
   }
 `
 
+const MetadataEditor = styled.div`
+  .metadata-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .metadata-input {
+    flex: 1;
+  }
+`
+
 interface CreateWorkerModalProps {
   visible: boolean
   onCancel: () => void
   onSuccess: () => void
 }
 
-export default function CreateWorkerModal({ visible, onCancel, onSuccess }: CreateWorkerModalProps) {
+export default function CreateWorkerModal({ 
+  visible, 
+  onCancel, 
+  onSuccess 
+}: CreateWorkerModalProps) {
   const [form] = Form.useForm()
   const [isSaving, setIsSaving] = useState(false)
-  const [metadataItems, setMetadataItems] = useState<Array<{ key: string; value: string }>>([])
   const [specialties, setSpecialties] = useState<string[]>([])
   const [specialtyInput, setSpecialtyInput] = useState('')
-
+  const [metadataItems, setMetadataItems] = useState<Array<{ key: string; value: string }>>([])
+  
   const { createWorker } = useWorkerStore()
 
-  const handleCancel = () => {
-    form.resetFields()
-    setMetadataItems([])
-    setSpecialties([])
-    setSpecialtyInput('')
-    onCancel()
-  }
-
   const handleSave = async () => {
+    setIsSaving(true)
     try {
-      setIsSaving(true)
       const values = await form.validateFields()
       
       const metadata: Record<string, any> = {}
@@ -102,7 +92,7 @@ export default function CreateWorkerModal({ visible, onCancel, onSuccess }: Crea
       }
 
       await createWorker(createData)
-      notificationService.createSuccess('Worker')
+      message.success('Worker created successfully')
       handleCancel()
       onSuccess()
     } catch (err: any) {
@@ -110,17 +100,22 @@ export default function CreateWorkerModal({ visible, onCancel, onSuccess }: Crea
         message.error('Please check the form fields')
       } else {
         if (err.status === 409) {
-          notificationService.error({
-            message: 'Duplicate Worker Name',
-            description: 'A worker with this name already exists. Please choose a different name.'
-          })
+          message.error('A worker with this name already exists. Please choose a different name.')
         } else {
-          notificationService.createError('Worker')
+          message.error('Failed to create worker')
         }
       }
     } finally {
       setIsSaving(false)
     }
+  }
+
+  const handleCancel = () => {
+    form.resetFields()
+    setSpecialties([])
+    setSpecialtyInput('')
+    setMetadataItems([])
+    onCancel()
   }
 
   const addMetadataItem = () => {
@@ -180,21 +175,32 @@ export default function CreateWorkerModal({ visible, onCancel, onSuccess }: Crea
       width={800}
       destroyOnClose
     >
-      <Form form={form} layout="vertical">
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={{
+          country: Country.AUSTRALIA,
+          currency: Currency.AUD,
+        }}
+      >
         <Form.Item
           name="name"
-          label="Full Name"
-          rules={[{ required: true, message: 'Full name is required' }]}
+          label="Worker Name"
+          rules={[
+            { required: true, message: 'Please enter worker name' },
+            { min: 2, message: 'Name must be at least 2 characters' },
+            { max: 50, message: 'Name must not exceed 50 characters' }
+          ]}
         >
           <Input 
             size="large" 
-            placeholder="Enter worker's full name"
+            placeholder="Enter worker's name"
           />
         </Form.Item>
 
         <Form.Item
           name="email"
-          label="Email Address"
+          label="Email"
           rules={[
             { type: 'email', message: 'Please enter a valid email' }
           ]}

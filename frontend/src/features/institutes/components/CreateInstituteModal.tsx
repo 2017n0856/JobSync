@@ -4,9 +4,9 @@ import {
   Form, 
   Input, 
   Button, 
-  message,
+  Space, 
   Typography,
-  Space
+  message
 } from 'antd'
 import { 
   PlusOutlined, 
@@ -14,7 +14,6 @@ import {
 } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useInstituteStore } from '../../../app/store/instituteStore'
-import { notificationService } from '../../../shared/utils/notification'
 
 const { Title } = Typography
 
@@ -22,17 +21,12 @@ const MetadataEditor = styled.div`
   .metadata-item {
     display: flex;
     gap: 12px;
-    margin-bottom: 12px;
     align-items: center;
+    margin-bottom: 12px;
   }
   
   .metadata-input {
     flex: 1;
-  }
-  
-  .metadata-actions {
-    display: flex;
-    gap: 8px;
   }
 `
 
@@ -42,22 +36,20 @@ interface CreateInstituteModalProps {
   onSuccess: () => void
 }
 
-export default function CreateInstituteModal({ visible, onCancel, onSuccess }: CreateInstituteModalProps) {
+export default function CreateInstituteModal({ 
+  visible, 
+  onCancel, 
+  onSuccess 
+}: CreateInstituteModalProps) {
   const [form] = Form.useForm()
   const [isSaving, setIsSaving] = useState(false)
   const [metadataItems, setMetadataItems] = useState<Array<{ key: string; value: string }>>([])
-
+  
   const { createInstitute } = useInstituteStore()
 
-  const handleCancel = () => {
-    form.resetFields()
-    setMetadataItems([])
-    onCancel()
-  }
-
   const handleSave = async () => {
+    setIsSaving(true)
     try {
-      setIsSaving(true)
       const values = await form.validateFields()
       
       const metadata: Record<string, any> = {}
@@ -78,7 +70,7 @@ export default function CreateInstituteModal({ visible, onCancel, onSuccess }: C
       }
 
       await createInstitute(createData)
-      notificationService.createSuccess('Institute')
+      message.success('Institute created successfully')
       handleCancel()
       onSuccess()
     } catch (err: any) {
@@ -86,17 +78,20 @@ export default function CreateInstituteModal({ visible, onCancel, onSuccess }: C
         message.error('Please check the form fields')
       } else {
         if (err.status === 409) {
-          notificationService.error({
-            message: 'Duplicate Institute Name',
-            description: 'An institute with this name already exists. Please choose a different name.'
-          })
+          message.error('An institute with this name already exists. Please choose a different name.')
         } else {
-          notificationService.createError('Institute')
+          message.error('Failed to create institute')
         }
       }
     } finally {
       setIsSaving(false)
     }
+  }
+
+  const handleCancel = () => {
+    form.resetFields()
+    setMetadataItems([])
+    onCancel()
   }
 
   const addMetadataItem = () => {
@@ -178,7 +173,7 @@ export default function CreateInstituteModal({ visible, onCancel, onSuccess }: C
             {metadataItems.map((item, index) => (
               <div key={index} className="metadata-item">
                 <Input
-                  placeholder="Field name (e.g., Address, Phone, Website)"
+                  placeholder="Field name (e.g., Founded, Type, Accreditation)"
                   value={item.key}
                   onChange={(e) => updateMetadataItem(index, 'key', e.target.value)}
                   style={{ width: 250 }}
@@ -209,7 +204,7 @@ export default function CreateInstituteModal({ visible, onCancel, onSuccess }: C
                 </Typography.Text>
                 <br />
                 <Typography.Text type="secondary">
-                  Click "Add Field" to add custom information like address, phone number, website, etc.
+                  Click "Add Field" to add custom information like founded year, type, accreditation, etc.
                 </Typography.Text>
               </div>
             )}

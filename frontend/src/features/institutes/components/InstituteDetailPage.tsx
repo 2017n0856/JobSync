@@ -4,96 +4,59 @@ import {
   Card, 
   Typography, 
   Button, 
-  Spin, 
-  Input,
-  Space,
-  Modal,
+  Descriptions, 
+  Modal, 
+  message,
   Form,
-  message
+  Input,
+  Space
 } from 'antd'
 import { 
-  ArrowLeftOutlined, 
-  BankOutlined, 
   EditOutlined, 
   SaveOutlined, 
-  CloseOutlined,
+  CloseOutlined, 
   DeleteOutlined,
+  ArrowLeftOutlined,
   PlusOutlined,
   MinusCircleOutlined
 } from '@ant-design/icons'
 import styled from 'styled-components'
 import { useInstituteStore } from '../../../app/store/instituteStore'
 
-import { notificationService } from '../../../shared/utils/notification'
-
 const { Title, Text } = Typography
 
 const PageHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 16px;
   margin-bottom: 24px;
 `
 
-const StyledCard = styled(Card)`
-  .ant-card-body {
-    padding: 32px;
-  }
-`
-
-const FieldContainer = styled.div`
-  margin-bottom: 24px;
-  
-  .field-value {
-    font-size: 16px;
-    color: #595959;
-  }
-  
-  .field-input {
-    margin-top: 4px;
-  }
+const ActionButtons = styled.div`
+  display: flex;
+  gap: 8px;
 `
 
 const MetadataSection = styled.div`
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
+  margin-top: 16px;
 `
 
 const MetadataEditor = styled.div`
   .metadata-item {
     display: flex;
     gap: 12px;
-    margin-bottom: 12px;
     align-items: center;
+    margin-bottom: 12px;
   }
   
   .metadata-input {
     flex: 1;
-  }
-  
-  .metadata-actions {
-    display: flex;
-    gap: 8px;
-  }
-`
-
-const SectionTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  
-  h4 {
-    margin: 0;
-    color: #262626;
   }
 `
 
 export default function InstituteDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [form] = Form.useForm()
   
   const {
     currentInstitute,
@@ -102,45 +65,37 @@ export default function InstituteDetailPage() {
     fetchInstituteById,
     updateInstitute,
     deleteInstitute,
-    clearError
+    clearError,
+    clearCurrentInstitute
   } = useInstituteStore()
 
   const [isEditing, setIsEditing] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [form] = Form.useForm()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [metadataItems, setMetadataItems] = useState<Array<{ key: string; value: string }>>([])
 
   useEffect(() => {
-    if (!id) return
-    
-    const instituteId = parseInt(id)
-    if (currentInstitute?.id === instituteId) {
-      return
+    if (id) {
+      fetchInstituteById(parseInt(id))
     }
-    
-    fetchInstituteById(instituteId)
-  }, [id, currentInstitute, fetchInstituteById])
-
-  useEffect(() => {
-    if (error) {
-      notificationService.apiError('Failed to load institute details', error)
-    }
-  }, [error])
+  }, [id, fetchInstituteById])
 
   useEffect(() => {
     return () => {
       clearError()
+      clearCurrentInstitute()
     }
-  }, [clearError])
+  }, [clearError, clearCurrentInstitute])
 
   useEffect(() => {
-    if (currentInstitute) {
-      form.setFieldsValue({
-        name: currentInstitute.name,
-        country: currentInstitute.country || '',
-      })
-      
+    if (error) {
+      message.error('Failed to load institute details')
+    }
+  }, [error])
+
+  useEffect(() => {
+    if (currentInstitute && !isEditing) {
       if (currentInstitute.metadata) {
         let metadataObj: Record<string, any>
         
@@ -163,24 +118,10 @@ export default function InstituteDetailPage() {
         setMetadataItems([])
       }
     }
-  }, [currentInstitute, form])
-
-  const handleBack = () => {
-    navigate('/institutes')
-  }
+  }, [currentInstitute, isEditing])
 
   const handleEdit = () => {
-    setIsEditing(true)
-  }
-
-  const handleCancel = () => {
-    setIsEditing(false)
     if (currentInstitute) {
-      form.setFieldsValue({
-        name: currentInstitute.name,
-        country: currentInstitute.country || '',
-      })
-      
       if (currentInstitute.metadata) {
         let metadataObj: Record<string, any>
         
@@ -202,12 +143,20 @@ export default function InstituteDetailPage() {
       } else {
         setMetadataItems([])
       }
+      
+      form.setFieldsValue({
+        name: currentInstitute.name,
+        country: currentInstitute.country,
+      })
+      setIsEditing(true)
     }
   }
 
   const handleSave = async () => {
+    if (!currentInstitute) return
+    
+    setIsSubmitting(true)
     try {
-      setIsSaving(true)
       const values = await form.validateFields()
       
       const metadata: Record<string, any> = {}
@@ -220,50 +169,46 @@ export default function InstituteDetailPage() {
           }
         }
       })
-
+      
       const updateData = {
         name: values.name,
         country: values.country || undefined,
         metadata: Object.keys(metadata).length > 0 ? metadata : undefined
       }
-
-      await updateInstitute(currentInstitute!.id, updateData)
-      notificationService.updateSuccess('Institute')
+      
+      await updateInstitute(currentInstitute.id, updateData)
+      message.success('Institute updated successfully')
       setIsEditing(false)
-    } catch (err: any) {
-      if (err.errorFields) {
-        message.error('Please check the form fields')
-      } else {
-        if (err.status === 409) {
-          notificationService.error({
-            message: 'Duplicate Institute Name',
-            description: 'An institute with this name already exists. Please choose a different name.'
-          })
-        } else {
-          notificationService.updateError('Institute')
-        }
-      }
+    } catch (error) {
+      message.error('Failed to update institute')
     } finally {
-      setIsSaving(false)
+      setIsSubmitting(false)
     }
   }
 
-  const handleDelete = () => {
-    setDeleteModalVisible(true)
+  const handleCancel = () => {
+    setIsEditing(false)
+    form.resetFields()
   }
 
-  const confirmDelete = async () => {
+  const handleDelete = async () => {
+    if (!currentInstitute) return
+    
+    setIsSubmitting(true)
     try {
-      setIsDeleting(true)
-      await deleteInstitute(currentInstitute!.id)
-      notificationService.deleteSuccess('Institute')
+      await deleteInstitute(currentInstitute.id)
+      message.success('Institute deleted successfully')
       navigate('/institutes')
-    } catch (err) {
-      notificationService.deleteError('Institute')
+    } catch (error) {
+      message.error('Failed to delete institute')
     } finally {
-      setIsDeleting(false)
+      setIsSubmitting(false)
       setDeleteModalVisible(false)
     }
+  }
+
+  const handleBack = () => {
+    navigate('/institutes')
   }
 
   const addMetadataItem = () => {
@@ -282,201 +227,89 @@ export default function InstituteDetailPage() {
 
   if (isLoadingDetail) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <Spin size="large" />
-      </div>
+      <Card>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <Text>Loading institute details...</Text>
+        </div>
+      </Card>
     )
   }
 
   if (!currentInstitute) {
     return (
-      <div>
-        <PageHeader>
-          <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-            Back to Institutes
-          </Button>
-        </PageHeader>
-        <div style={{ textAlign: 'center', padding: '50px' }}>
-          <Text type="secondary">Institute not found</Text>
+      <Card>
+        <div style={{ textAlign: 'center', padding: '40px' }}>
+          <Text>Institute not found</Text>
         </div>
-      </div>
+      </Card>
     )
   }
 
   return (
     <div>
       <PageHeader>
-        <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-          Back to Institutes
-        </Button>
-        <Title level={2} style={{ margin: 0 }}>
-          <BankOutlined style={{ marginRight: 8 }} />
-          {currentInstitute.name}
-        </Title>
-        <Space style={{ marginLeft: 'auto' }}>
-          {isEditing ? (
-            <>
-              <Button 
-                type="primary" 
-                icon={<SaveOutlined />} 
-                onClick={handleSave}
-                loading={isSaving}
-              >
-                Save Changes
-              </Button>
-              <Button 
-                icon={<CloseOutlined />} 
-                onClick={handleCancel}
-                disabled={isSaving}
-              >
-                Cancel
-              </Button>
-            </>
-          ) : (
+        <div>
+          <Button 
+            icon={<ArrowLeftOutlined />} 
+            onClick={handleBack}
+            style={{ marginBottom: 16 }}
+          >
+            Back to Institutes
+          </Button>
+          <Title level={2}>{currentInstitute.name}</Title>
+          <Text type="secondary">Institute Details</Text>
+        </div>
+        <ActionButtons>
+          {!isEditing ? (
             <>
               <Button 
                 icon={<EditOutlined />} 
                 onClick={handleEdit}
               >
-                Edit Institute
+                Edit
               </Button>
               <Button 
                 danger 
                 icon={<DeleteOutlined />} 
-                onClick={handleDelete}
+                onClick={() => setDeleteModalVisible(true)}
               >
-                Delete Institute
+                Delete
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                icon={<SaveOutlined />} 
+                type="primary"
+                loading={isSubmitting}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+              <Button 
+                icon={<CloseOutlined />} 
+                onClick={handleCancel}
+              >
+                Cancel
               </Button>
             </>
           )}
-        </Space>
+        </ActionButtons>
       </PageHeader>
 
-      <StyledCard>
-        <Form form={form} layout="vertical">
-          <Title level={3} style={{ marginBottom: 24, color: '#262626' }}>
-            Basic Information
-          </Title>
-          
-          <FieldContainer>
-            <div className="field-value" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-              <Text strong style={{ fontSize: '16px', color: '#262626', minWidth: '120px' }}>
-                Institute ID:
-              </Text>
-              <Text code style={{ fontSize: '16px', color: '#595959' }}>{currentInstitute.id}</Text>
-            </div>
-          </FieldContainer>
-
-          <FieldContainer>
-            <div className="field-value" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-              <Text strong style={{ fontSize: '16px', color: '#262626', minWidth: '120px' }}>
-                Institute Name:
-              </Text>
-              {isEditing ? (
-                <Form.Item 
-                  name="name" 
-                  rules={[{ required: true, message: 'Institute name is required' }]}
-                  style={{ marginBottom: 0, flex: 1 }}
-                >
-                  <Input 
-                    size="large" 
-                    placeholder="Enter institute name"
-                    className="field-input"
-                  />
-                </Form.Item>
-              ) : (
-                <Text strong style={{ fontSize: '18px', color: '#262626' }}>
-                  {currentInstitute.name}
-                </Text>
-              )}
-            </div>
-          </FieldContainer>
-
-          <FieldContainer>
-            <div className="field-value" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-              <Text strong style={{ fontSize: '16px', color: '#262626', minWidth: '120px' }}>
-                Country:
-              </Text>
-              {isEditing ? (
-                <Form.Item 
-                  name="country" 
-                  style={{ marginBottom: 0, flex: 1 }}
-                >
-                  <Input 
-                    size="large" 
-                    placeholder="Enter country"
-                    className="field-input"
-                  />
-                </Form.Item>
-              ) : (
-                <Text style={{ fontSize: '16px', color: '#595959' }}>
-                  {currentInstitute.country || 'Not specified'}
-                </Text>
-              )}
-            </div>
-          </FieldContainer>
-
-          <MetadataSection>
-            <SectionTitle>
-              <Title level={3} style={{ margin: 0, color: '#262626' }}>
-                Additional Information
-              </Title>
-              {isEditing && (
-                <Button 
-                  type="dashed" 
-                  icon={<PlusOutlined />}
-                  onClick={addMetadataItem}
-                >
-                  Add Field
-                </Button>
-              )}
-            </SectionTitle>
-            
-            {isEditing ? (
-              <MetadataEditor>
-                {metadataItems.map((item, index) => (
-                  <div key={index} className="metadata-item">
-                    <Input
-                      placeholder="Field name (e.g., Address, Phone, Website)"
-                      value={item.key}
-                      onChange={(e) => updateMetadataItem(index, 'key', e.target.value)}
-                      style={{ width: 250 }}
-                      size="large"
-                    />
-                    <Input
-                      placeholder="Field value"
-                      value={item.value}
-                      onChange={(e) => updateMetadataItem(index, 'value', e.target.value)}
-                      className="metadata-input"
-                      size="large"
-                    />
-                    <Button 
-                      type="text" 
-                      danger 
-                      icon={<MinusCircleOutlined />}
-                      onClick={() => removeMetadataItem(index)}
-                      size="large"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-                {metadataItems.length === 0 && (
-                  <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8c8c' }}>
-                    <Text type="secondary" style={{ fontSize: '16px' }}>
-                      No additional information available.
-                    </Text>
-                    <br />
-                    <Text type="secondary">
-                      Click "Add Field" to add custom information like address, phone number, website, etc.
-                    </Text>
-                  </div>
-                )}
-              </MetadataEditor>
-            ) : (
-              <div>
-                {currentInstitute.metadata ? (
-                  (() => {
+      <Card>
+        {!isEditing ? (
+          <Descriptions bordered column={2}>
+            <Descriptions.Item label="Name" span={2}>
+              <Text strong>{currentInstitute.name}</Text>
+            </Descriptions.Item>
+            <Descriptions.Item label="Country">
+              <Text>{currentInstitute.country || '-'}</Text>
+            </Descriptions.Item>
+            {currentInstitute.metadata ? (
+              <Descriptions.Item label="Additional Information" span={2}>
+                <MetadataSection>
+                  {(() => {
                     let metadataObj: Record<string, any>
                     
                     if (typeof currentInstitute.metadata === 'string') {
@@ -491,68 +324,108 @@ export default function InstituteDetailPage() {
                     
                     if (Object.keys(metadataObj).length > 0) {
                       return Object.entries(metadataObj).map(([key, value]) => (
-                        <FieldContainer key={key}>
-                          <div className="field-value" style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                            <Text strong style={{ fontSize: '16px', color: '#262626', minWidth: '120px' }}>
-                              {key}:
-                            </Text>
-                            <div style={{ flex: 1 }}>
-                              {typeof value === 'object' ? (
-                                <pre style={{ 
-                                  margin: 0, 
-                                  fontSize: '14px', 
-                                  backgroundColor: '#f5f5f5', 
-                                  padding: '12px', 
-                                  borderRadius: '6px',
-                                  overflow: 'auto',
-                                  border: '1px solid #e8e8e8'
-                                }}>
-                                  {JSON.stringify(value, null, 2)}
-                                </pre>
-                              ) : (
-                                <Text style={{ fontSize: '16px', color: '#595959' }}>
-                                  {String(value)}
-                                </Text>
-                              )}
-                            </div>
-                          </div>
-                        </FieldContainer>
-                      ))
-                    } else {
-                      return (
-                        <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8c8c' }}>
-                          <Text type="secondary" style={{ fontSize: '16px' }}>
-                            No additional information available.
-                          </Text>
+                        <div key={key} style={{ marginBottom: 8 }}>
+                          <Text strong>{key}:</Text> {String(value)}
                         </div>
-                      )
+                      ))
                     }
-                  })()
-                ) : (
+                    return <Text type="secondary">No additional information</Text>
+                  })()}
+                </MetadataSection>
+              </Descriptions.Item>
+            ) : null}
+          </Descriptions>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+          >
+            <Form.Item
+              name="name"
+              label="Institute Name"
+              rules={[
+                { required: true, message: 'Please enter institute name' },
+                { min: 2, message: 'Name must be at least 2 characters' },
+                { max: 255, message: 'Name must not exceed 255 characters' }
+              ]}
+            >
+              <Input placeholder="Enter institute name" />
+            </Form.Item>
+
+            <Form.Item
+              name="country"
+              label="Country"
+            >
+              <Input placeholder="Enter country" />
+            </Form.Item>
+
+            <MetadataSection>
+              <Space style={{ marginBottom: 20 }}>
+                <Title level={4} style={{ margin: 0 }}>
+                  Additional Information
+                </Title>
+                <Button 
+                  type="dashed" 
+                  icon={<PlusOutlined />}
+                  onClick={addMetadataItem}
+                >
+                  Add Field
+                </Button>
+              </Space>
+              
+              <MetadataEditor>
+                {metadataItems.map((item, index) => (
+                  <div key={index} className="metadata-item">
+                    <Input
+                      placeholder="Field name (e.g., Founded, Type, Accreditation)"
+                      value={item.key}
+                      onChange={(e) => updateMetadataItem(index, 'key', e.target.value)}
+                      style={{ width: 250 }}
+                    />
+                    <Input
+                      placeholder="Field value"
+                      value={item.value}
+                      onChange={(e) => updateMetadataItem(index, 'value', e.target.value)}
+                      className="metadata-input"
+                    />
+                    <Button 
+                      type="text" 
+                      danger 
+                      icon={<MinusCircleOutlined />}
+                      onClick={() => removeMetadataItem(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                {metadataItems.length === 0 && (
                   <div style={{ textAlign: 'center', padding: '40px 20px', color: '#8c8c8c' }}>
                     <Text type="secondary" style={{ fontSize: '16px' }}>
-                      No additional information available.
+                      No additional information added.
+                    </Text>
+                    <br />
+                    <Text type="secondary">
+                      Click "Add Field" to add custom information like founded year, type, accreditation, etc.
                     </Text>
                   </div>
                 )}
-              </div>
-            )}
-          </MetadataSection>
-        </Form>
-      </StyledCard>
+              </MetadataEditor>
+            </MetadataSection>
+          </Form>
+        )}
+      </Card>
 
       <Modal
-        title="Confirm Delete Institute"
+        title="Delete Institute"
         open={deleteModalVisible}
-        onOk={confirmDelete}
+        onOk={handleDelete}
         onCancel={() => setDeleteModalVisible(false)}
-        okText="Delete Institute"
+        confirmLoading={isSubmitting}
+        okText="Delete"
         cancelText="Cancel"
         okButtonProps={{ danger: true }}
-        confirmLoading={isDeleting}
       >
-        <p>Are you sure you want to delete <strong>"{currentInstitute.name}"</strong>?</p>
-        <p style={{ color: '#ff4d4f' }}>This action cannot be undone and will permanently remove the institute from the system.</p>
+        <p>Are you sure you want to delete "{currentInstitute.name}"? This action cannot be undone.</p>
       </Modal>
     </div>
   )
