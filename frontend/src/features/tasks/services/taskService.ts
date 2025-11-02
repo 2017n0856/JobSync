@@ -1,22 +1,32 @@
 import { API_ENDPOINTS } from '../../../shared/constants/api'
 import { apiClient } from '../../../shared/utils/apiClient'
+import { TaskType, Currency } from '../../../shared/types/enums'
 
 export interface Task {
   id: number
-  title: string
+  name: string
   description?: string
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled'
-  priority: 'low' | 'medium' | 'high'
-  type: string
-  clientId?: number
-  workerId?: number
-  instituteId?: number
-  dueDate?: string
-  estimatedHours?: number
-  actualHours?: number
+  deadlineTime?: string
+  deadlineDate?: string
+  submittedOnDate?: string
+  clientPaymentDecided: number
+  clientPaymentMade: number
+  workerPaymentDecided: number
+  workerPaymentMade: number
+  client?: {
+    id: number
+    name: string
+    currency: Currency
+  }
+  worker?: {
+    id: number
+    name: string
+    currency: Currency
+  }
+  taskType: TaskType
   metadata?: Record<string, any>
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface TaskListResponse {
@@ -27,13 +37,15 @@ export interface TaskListResponse {
 }
 
 export interface TaskFilters {
-  title?: string
-  status?: string
-  priority?: string
-  type?: string
-  clientId?: number
-  workerId?: number
-  instituteId?: number
+  name?: string
+  deadlineDateFrom?: string
+  deadlineDateTo?: string
+  clientName?: string
+  workerName?: string
+  taskStatus?: 'assigned' | 'not_assigned' | 'delivered'
+  clientPaymentStatus?: 'yes' | 'no'
+  workerPaymentStatus?: 'yes' | 'no'
+  taskType?: TaskType
   page?: number
   limit?: number
 }

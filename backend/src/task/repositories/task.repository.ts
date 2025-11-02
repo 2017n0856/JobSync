@@ -100,8 +100,8 @@ export class TaskRepository {
     const offset = (page - 1) * limit;
 
     queryBuilder
-      .orderBy('task.deadlineDate', 'DESC')
-      .addOrderBy('task.deadlineTime', 'DESC')
+      .orderBy('task.deadlineDate', 'DESC', 'NULLS FIRST')
+      .addOrderBy('task.deadlineTime', 'DESC', 'NULLS LAST')
       .skip(offset)
       .take(limit);
 
