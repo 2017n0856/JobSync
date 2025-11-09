@@ -52,6 +52,18 @@ const FilterGroup = styled.div`
   gap: 4px;
 `
 
+const CompactTableCard = styled(Card)`
+  .ant-table-thead > tr > th {
+    padding: 4px !important;
+    font-size: 12px !important;
+  }
+  
+  .ant-table-tbody > tr > td {
+    padding: 4px !important;
+    font-size: 10px !important;
+  }
+`
+
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value)
 
@@ -216,12 +228,63 @@ export default function TasksPage() {
     navigate(`/tasks/${id}`)
   }
 
+  const getCellStyle = (record: Task, columnKey: string) => {
+    const isSubmitted = !!record.submittedOnDate
+    const deadlineDate = record.deadlineDate ? dayjs(record.deadlineDate) : null
+    const daysUntilDeadline = deadlineDate ? deadlineDate.diff(dayjs(), 'day') : null
+    const isDeadlineWithin5Days = !isSubmitted && deadlineDate && daysUntilDeadline !== null && daysUntilDeadline >= 0 && daysUntilDeadline <= 5
+    
+    const clientPaymentDecided = typeof record.clientPaymentDecided === 'string' 
+      ? parseFloat(record.clientPaymentDecided) 
+      : record.clientPaymentDecided
+    const clientPaymentMade = typeof record.clientPaymentMade === 'string' 
+      ? parseFloat(record.clientPaymentMade) 
+      : record.clientPaymentMade
+    const isClientPaymentEqual = clientPaymentDecided !== undefined && 
+      clientPaymentMade !== undefined && 
+      Math.round(clientPaymentDecided) === Math.round(clientPaymentMade)
+    
+    const workerPaymentDecided = typeof record.workerPaymentDecided === 'string' 
+      ? parseFloat(record.workerPaymentDecided) 
+      : record.workerPaymentDecided
+    const workerPaymentMade = typeof record.workerPaymentMade === 'string' 
+      ? parseFloat(record.workerPaymentMade) 
+      : record.workerPaymentMade
+    const isWorkerPaymentEqual = record.worker && 
+      workerPaymentDecided !== undefined && 
+      workerPaymentMade !== undefined && 
+      Math.round(workerPaymentDecided) === Math.round(workerPaymentMade)
+
+    // Submitted condition - light blue for Client, Task, Deadline, Submitted
+    if (isSubmitted && ['clientName', 'name', 'deadlineDate', 'submitted'].includes(columnKey)) {
+      return { backgroundColor: '#e0f5ff' }
+    }
+    
+    // Not submitted + deadline within 5 days - yellow for Client, Task, Deadline, Submitted
+    if (isDeadlineWithin5Days && ['clientName', 'name', 'deadlineDate', 'submitted'].includes(columnKey)) {
+      return { backgroundColor: '#fcf5cc' }
+    }
+    
+    // Client payment equal - light blue for Payment, Received
+    if (isClientPaymentEqual && ['clientPaymentDecided', 'clientPaymentMade'].includes(columnKey)) {
+      return { backgroundColor: '#e0f5ff' }
+    }
+    
+    // Worker payment equal - light blue for Worker, Payment (worker), Transferred
+    if (isWorkerPaymentEqual && ['workerName', 'workerPaymentDecided', 'workerPaymentMade'].includes(columnKey)) {
+      return { backgroundColor: '#e0f5ff' }
+    }
+    
+    return {}
+  }
+
   const columns = [
     {
       title: 'Client',
       dataIndex: ['client', 'name'],
       key: 'clientName',
-      width: 100,
+      width: 80,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'clientName') }),
       render: (_: string, record: Task) => (
         <Typography.Text>
           {record.client?.name || '-'}
@@ -232,12 +295,12 @@ export default function TasksPage() {
       title: 'Task',
       dataIndex: 'name',
       key: 'name',
-      width: 200,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'name') }),
       render: (name: string, record: Task) => (
         <Button 
           type="link" 
           onClick={() => handleTaskClick(record.id)}
-          style={{ padding: 0, height: 'auto', fontWeight: 'bold' }}
+          style={{ padding: 0, height: 'auto', fontWeight: '400', color: '#000', textDecoration: 'underline' }}
         >
           {name}
         </Button>
@@ -247,7 +310,8 @@ export default function TasksPage() {
       title: 'Deadline',
       dataIndex: 'deadlineDate',
       key: 'deadlineDate',
-      width: 100,
+      width: 85,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'deadlineDate') }),
       render: (deadlineDate: string) => (
         <Typography.Text>
           {deadlineDate ? dayjs(deadlineDate).format('DD-MMM-YY') : '-'}
@@ -258,7 +322,8 @@ export default function TasksPage() {
       title: 'Submitted',
       dataIndex: 'submittedOnDate',
       key: 'submitted',
-      width: 90,
+      width: 75,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'submitted') }),
       render: (submittedOnDate: string) => (
         <Typography.Text>
           {submittedOnDate ? 'Yes' : 'No'}
@@ -269,7 +334,8 @@ export default function TasksPage() {
       title: 'Payment',
       dataIndex: 'clientPaymentDecided',
       key: 'clientPaymentDecided',
-      width: 90,
+      width: 80,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'clientPaymentDecided') }),
       render: (amount: number | string, record: Task) => {
         if (amount === undefined || amount === null || amount === '') {
           return <Typography.Text>-</Typography.Text>
@@ -285,7 +351,8 @@ export default function TasksPage() {
       title: 'Received',
       dataIndex: 'clientPaymentMade',
       key: 'clientPaymentMade',
-      width: 90,
+      width: 80,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'clientPaymentMade') }),
       render: (amount: number | string, record: Task) => {
         if (amount === undefined || amount === null || amount === '') {
           return <Typography.Text>-</Typography.Text>
@@ -301,7 +368,8 @@ export default function TasksPage() {
       title: 'Worker',
       dataIndex: ['worker', 'name'],
       key: 'workerName',
-      width: 120,
+      width: 80,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'workerName') }),
       render: (_: string, record: Task) => (
         <Typography.Text>
           {record.worker?.name || '-'}
@@ -312,7 +380,8 @@ export default function TasksPage() {
       title: 'Payment',
       dataIndex: 'workerPaymentDecided',
       key: 'workerPaymentDecided',
-      width: 120,
+      width: 70,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'workerPaymentDecided') }),
       render: (amount: number | string, record: Task) => {
         if (!record.worker) {
           return <Typography.Text>-</Typography.Text>
@@ -331,7 +400,8 @@ export default function TasksPage() {
       title: 'Transferred',
       dataIndex: 'workerPaymentMade',
       key: 'workerPaymentMade',
-      width: 120,
+      width: 80,
+      onCell: (record: Task) => ({ style: getCellStyle(record, 'workerPaymentMade') }),
       render: (amount: number | string, record: Task) => {
         if (!record.worker) {
           return <Typography.Text>-</Typography.Text>
@@ -483,7 +553,7 @@ export default function TasksPage() {
         </Space>
       </FilterSection>
 
-      <Card>
+      <CompactTableCard>
         <Table
           columns={columns}
           dataSource={tasks}
@@ -498,9 +568,9 @@ export default function TasksPage() {
               `${range[0]}-${range[1]} of ${total} tasks`,
           }}
           onChange={handleTableChange}
-          scroll={{ x: 1800 }}
         />
-      </Card>
+      </CompactTableCard>
     </div>
   )
 }
+
