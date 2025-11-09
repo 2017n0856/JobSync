@@ -19,4 +19,7 @@ export * from './constants/api'
 export * from './types/enums'
 export * from './types/institute'
 export * from './types/worker'
-export * from './types/client' 
+export * from './types/client'
+
+// Styles & Theme
+export * from './styles/theme' 

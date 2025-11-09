@@ -19,6 +19,7 @@ import { useTaskStore } from '../../../app/store/taskStore'
 import { Task, TaskFilters } from '../services/taskService'
 import { TaskType } from '../../../shared/types/enums'
 import { notificationService } from '../../../shared/utils/notification'
+import { brandColors } from '../../../shared/styles/theme'
 import dayjs from 'dayjs'
 
 const { Title, Text } = Typography
@@ -257,22 +258,22 @@ export default function TasksPage() {
 
     // Submitted condition - light blue for Client, Task, Deadline, Submitted
     if (isSubmitted && ['clientName', 'name', 'deadlineDate', 'submitted'].includes(columnKey)) {
-      return { backgroundColor: '#e0f5ff' }
+      return { backgroundColor: brandColors.status.submitted }
     }
     
     // Not submitted + deadline within 5 days - yellow for Client, Task, Deadline, Submitted
     if (isDeadlineWithin5Days && ['clientName', 'name', 'deadlineDate', 'submitted'].includes(columnKey)) {
-      return { backgroundColor: '#fcf5cc' }
+      return { backgroundColor: brandColors.status.deadlineWarning }
     }
     
     // Client payment equal - light blue for Payment, Received
     if (isClientPaymentEqual && ['clientPaymentDecided', 'clientPaymentMade'].includes(columnKey)) {
-      return { backgroundColor: '#e0f5ff' }
+      return { backgroundColor: brandColors.status.paymentComplete }
     }
     
     // Worker payment equal - light blue for Worker, Payment (worker), Transferred
     if (isWorkerPaymentEqual && ['workerName', 'workerPaymentDecided', 'workerPaymentMade'].includes(columnKey)) {
-      return { backgroundColor: '#e0f5ff' }
+      return { backgroundColor: brandColors.status.paymentComplete }
     }
     
     return {}
